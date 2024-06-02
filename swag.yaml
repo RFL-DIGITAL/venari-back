@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  title: 'Бекенд Venari'
+  contact:
+    email: kupryashin.stepan@yandex.ru
+  version: 3.0.0
+servers:
+  -
+    url: 'https://backend-venari.rfld.ru'
+    description: 'Боевой сервер'
+paths:
+  /api/register:
+    get:
+      tags:
+        - UserController
+      summary: 'метод регистрации'
+      operationId: c491d067c8de8d0e0a4cc77bb7d7b363
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/registerUser'
+components:
+  schemas:
+    registerUser:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        user:
+          type: string
+          example: user
+        access_token:
+          type: string
+      type: object
+externalDocs:
+  description: 'Как документировать этот код'
+  url: 'https://zircote.github.io/swagger-php/guide/annotations.html'
