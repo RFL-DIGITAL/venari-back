@@ -16,7 +16,7 @@ class UserController extends Controller
 
     /**
      *
-     * метод регистрации
+     * Метод регистрации
      *
      *
      *
@@ -40,7 +40,10 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequset $requset) {
-        $data = $this->userService->register($requset->get('login'), $requset->get('email'), $requset->get('password'));
+        $data = $this->userService->register($requset->get('login'),
+            $requset->get('email'),
+            $requset->get('password'));
+
         return $this->successResponse($data);
     }
 }
