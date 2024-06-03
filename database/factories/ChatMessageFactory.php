@@ -22,12 +22,12 @@ class ChatMessageFactory extends Factory
 
     public function definition(): array
     {
-        $users = User::pluck('id')->toArray();
-        $chats = Chat::pluck('id')->toArray();
+        $users_id = User::pluck('id')->toArray();
+        $chats_id = Chat::pluck('id')->toArray();
 
         return [
-            'owner_id' => $this->faker->randomElement($users),
-            'chat_id' => $this->faker->randomElement($chats),
+            'owner_id' => $this->faker->randomElement($users_id),
+            'chat_id' => $this->faker->randomElement($chats_id),
             'body' => $this->faker->sentence(),
         ];
     }
