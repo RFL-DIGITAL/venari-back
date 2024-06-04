@@ -16,7 +16,7 @@ use OpenApi\Annotations as OA;
  *     ),
  *     @OA\Server(
  *         description="Боевой сервер",
- *         url="https://backend-venari.rfld.ru"
+ *         url="https://venari.backend.rfld.ru"
  *     ),
  *     @OA\ExternalDocumentation(
  *         description="Как документировать этот код",
