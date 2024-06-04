@@ -11,6 +11,8 @@ class Vacancy extends Model
 {
     use HasFactory;
 
+    public static int $DEFAULT_DEPARTMENT_ID = 1;
+
     /** @var string Стаж работы */
     public string $work_record;
 
@@ -25,5 +27,8 @@ class Vacancy extends Model
 
     public function city(): BelongsTo {
         return $this->belongsTo(City::class);
+    }
+    public function department(): BelongsTo {
+        return $this->belongsTo(Department::class);
     }
 }

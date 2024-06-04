@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequset;
 use App\Services\UserService;
-use Illuminate\Http\Request;
-use OpenApi\Annotations as OA;
+
 class UserController extends Controller
 {
 
-    // иництализация сервиса в контроллере
+    // инициализация сервиса в контроллере
     public function __construct(protected UserService $userService){}
 
 
@@ -36,13 +35,13 @@ class UserController extends Controller
      *    )
      *  )
      *
-     * @param RegisterRequset $requset
+     * @param RegisterRequset $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(RegisterRequset $requset) {
-        $data = $this->userService->register($requset->get('login'),
-            $requset->get('email'),
-            $requset->get('password'));
+    public function register(RegisterRequset $request) {
+        $data = $this->userService->register($request->get('login'),
+            $request->get('email'),
+            $request->get('password'));
 
         return $this->successResponse($data);
     }

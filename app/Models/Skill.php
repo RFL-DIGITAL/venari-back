@@ -11,6 +11,10 @@ class Skill extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name'
+    ];
+
     public function resumes(): BelongsToMany {
         return $this->belongsToMany(Resume::class, 'resume_skills');
     }
