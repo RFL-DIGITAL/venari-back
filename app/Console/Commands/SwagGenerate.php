@@ -27,6 +27,7 @@ class SwagGenerate extends Command
      */
     public function handle()
     {
+        require_once __DIR__.'/../../Models.php';
 
         $p = @\OpenApi\Generator::scan([app_path()]);
         print_r($p->toJson());

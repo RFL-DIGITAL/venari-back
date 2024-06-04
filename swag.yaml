@@ -13,7 +13,7 @@ paths:
     get:
       tags:
         - UserController
-      summary: 'метод регистрации'
+      summary: 'Метод регистрации'
       operationId: c491d067c8de8d0e0a4cc77bb7d7b363
       responses:
         '200':
@@ -22,6 +22,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/registerUser'
+  /api/vacancies:
+    get:
+      tags:
+        - VacanciesController
+      summary: 'Метод получения всех вакансий'
+      operationId: fd766d0407dcea2e1ac725a62898247a
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getVacancies'
 components:
   schemas:
     registerUser:
@@ -34,6 +47,45 @@ components:
           example: user
         access_token:
           type: string
+      type: object
+    getVacancies:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        vacancies:
+          type: array
+          items:
+            $ref: '#/components/schemas/vacancy'
+      type: object
+    vacancy:
+      properties:
+        department_id:
+          type: integer
+        position_id:
+          type: integer
+        description:
+          type: string
+        salary:
+          type: string
+        is_online:
+          type: boolean
+        has_social_support:
+          type: boolean
+        schedule:
+          type: string
+        is_flexible:
+          type: boolean
+        link_to_test_document:
+          type: string
+        is_fulltime:
+          type: boolean
+        city_id:
+          type: integer
+        is_closed:
+          type: boolean
+        is_outer:
+          type: boolean
       type: object
 externalDocs:
   description: 'Как документировать этот код'
