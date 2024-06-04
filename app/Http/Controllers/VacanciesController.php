@@ -39,8 +39,6 @@ class VacanciesController extends Controller
 
         shuffle($vacancies);
 
-        return $this->successResponse(json_encode([
-            $vacancies
-        ]));
+        return $this->successResponse($vacancies);
     }
 }
