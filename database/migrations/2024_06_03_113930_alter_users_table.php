@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+
             $table->nullableMorphs('hrable');
-            $table->date('date_of_birth');
+            $table->date('date_of_birth')->nullable();
             $table->boolean('sex');
             $table->foreignId("workingStatus_id")->nullable();
             $table->foreignId("position_id")->nullable();
