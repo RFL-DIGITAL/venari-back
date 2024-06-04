@@ -1,0 +1,37 @@
+name: "Deploy Venari Backend"
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Run Deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASS }}
+          port: 22
+          script: |
+            cd ${{secrets.PROJECT_FOLDER }};
+            cd venari-back;
+            git checkout master;
+            git pull origin master;
+            php artisan swag:generate;
+            cd ..;
+            cp -r venari-back/* public_html/;
+            cd public_html;
+            composer install;
+            ln -s public/index.php index.php;
+            php artisan migrate;
+            ln -s public/.htaccess .htaccess;
+            chmod -R ugo+rw vendor;
+            chmod -R ugo+rw database;
+            chmod -R ugo+rw storage;
+            chmod -R ugo+rw bootstrap;
+            chmod -R ugo+rw storage;
+            chmod -R ugo+rw storage/logs;
+            ln -s public/build build;

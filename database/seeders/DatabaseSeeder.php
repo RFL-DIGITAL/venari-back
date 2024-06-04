@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +11,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Порядок важен, так как при заполнении дочерних таблиц необходимы значения
+        // в родительских.
+        $this->call([
+            WorkingStatusSeeder::class,
+            CitySeeder::class,
+            CompanySeeder::class,
+            HRSeeder::class,
+            UserSeeder::class,
+            MessageSeeder::class,
+            ChatSeeder::class,
+            UserChatsSeeder::class,
+            ChatMessageSeeder::class,
+            CategorySeeder::class,
+            ImageSeeder::class,
+            DepartmentSeeder::class,
+            PositionSeeder::class,
+            SchoolSeeder::class,
+            ProgramSeeder::class,
+            ProgramSchoolSeeder::class,
+            ResumeSeeder::class,
+            ResumeProgramSchoolSeeder::class,
+            UserPositionSeeder::class,
+            ResumeUserPositionSeeder::class,
+            SkillSeeder::class,
+            ResumeSkillSeeder::class,
+            PostSeeder::class,
+            CategoryPostSeeder::class,
+            PostImageSeeder::class,
+            VacancySeeder::class,
+            VacancySkillSeeder::class,
+            CommentSeeder::class
+        ]);
     }
 }

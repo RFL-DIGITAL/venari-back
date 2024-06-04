@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\VacanciesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/vacancies', [VacanciesController::class, 'getVacancies'])->name('getVacancies');
+
+// todo: Добавить crypter для шифрования персональных данных
 Route::post('register', [UserController::class, 'register']);
 
 
