@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\VacanciesService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class VacanciesController extends Controller
 {
@@ -32,12 +33,17 @@ class VacanciesController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getVacancies() {
+        if(Cache::has('actual_vacancies')) {
+            return $this->successResponse(Cache::get('actual_vacancies'));
+        }
         $vacancies = array_merge(
             $this->vacanciesService->getOuterVacancies(),
             $this->vacanciesService->getInnerVacancies()
         );
 
         shuffle($vacancies);
+
+        Cache::put('actual_vacancies', $vacancies, now()->addMinutes(15));
 
         return $this->successResponse($vacancies);
     }
