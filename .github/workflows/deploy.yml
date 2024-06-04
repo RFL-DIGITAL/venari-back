@@ -1,12 +1,12 @@
 name: "Deploy Venari Backend"
 on:
   push:
-    branches: ['master', 'feature/ci']
+    branches: ['master']
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/ci'
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Run Deploy
         uses: appleboy/ssh-action@v0.1.10
@@ -18,8 +18,8 @@ jobs:
           script: |
             cd ${{secrets.PROJECT_FOLDER }};
             cd venari-back;
-            git checkout feature/ci;
-            git pull origin feature/ci;
+            git checkout master;
+            git pull origin master;
             php artisan swag:generate;
             cd ..;
             cp -r venari-back/* public_html/;
