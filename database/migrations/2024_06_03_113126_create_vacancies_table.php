@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable();
             $table->foreignId('position_id')->nullable();
             $table->text('description');
-            $table->string('salary');
+            $table->string('salary')->nullable();
             $table->boolean('is_online');
 
             $table->foreign('company_id')->references('id')->on('companies')

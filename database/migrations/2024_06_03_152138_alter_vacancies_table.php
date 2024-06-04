@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('link_to_test_document')->nullable();
             $table->boolean('is_fulltime');
             $table->foreignId('city_id')->nullable();
+            $table->boolean('is_closed')->default(false);
+            $table->boolean('is_outer')->default(false);
 
             $table->foreign('department_id')->references('id')->on('departments')
                 ->onDelete('set null')->onUpdate('cascade');
@@ -45,6 +47,8 @@ return new class extends Migration
             $table->dropColumn('link_to_test_document');
             $table->dropColumn('is_fulltime');
             $table->dropForeign(['city_id']);
+            $table->dropColumn('is_closed');
+            $table->dropColumn('is_outer');
         });
     }
 };
