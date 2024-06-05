@@ -22,12 +22,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/registerUser'
+  /api/posts:
+    get:
+      tags:
+        - PostController
+      summary: 'Метод получения всех постов'
+      operationId: 73071356cdd139f116db7436d9da6497
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPosts'
+  /api/posts/:
+    get:
+      tags:
+        - PostController
+      summary: 'Метод получения поста по его id (подробная страница)'
+      operationId: ca959cc7c6472d1743b8dc2e4e26a224
+      parameters:
+        -
+          name: id
+          in: query
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostByID'
   /api/vacancies:
     get:
       tags:
-        - VacanciesController
+        - VacancyController
       summary: 'Метод получения всех вакансий'
-      operationId: fd766d0407dcea2e1ac725a62898247a
+      operationId: a75f8d08e0e49f2a76fffdbf7a64b395
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
@@ -43,10 +75,27 @@ components:
           type: boolean
           example: 'true'
         user:
-          type: string
-          example: user
+          $ref: '#/components/schemas/user'
         access_token:
           type: string
+      type: object
+    getPosts:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/post'
+      type: object
+    getPostByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        post:
+          $ref: '#/components/schemas/post'
       type: object
     getVacancies:
       properties:
@@ -87,19 +136,52 @@ components:
         is_outer:
           type: boolean
         created_at:
-          type: string
+          format: date
         updated_at:
-          type: string
+          format: date
       type: object
     position:
       properties:
         name:
           type: string
         created_at:
-          type: string
+          format: date
         updated_at:
-          type: string
+          format: date
       type: object
+    sources:
+      type: string
+      enum:
+        - venari
+        - habr
+    post:
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        attributes:
+          $ref: '#/components/schemas/attributes'
+        likes:
+          type: integer
+        description:
+          type: string
+        source:
+          $ref: '#/components/schemas/sources'
+        user_name:
+          type: string
+        source_url:
+          type: string
+          format: url
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    attributes: {  }
+    user: {  }
 externalDocs:
   description: 'Как документировать этот код'
   url: 'https://zircote.github.io/swagger-php/guide/annotations.html'

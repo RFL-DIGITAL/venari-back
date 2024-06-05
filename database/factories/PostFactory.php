@@ -21,13 +21,15 @@ class PostFactory extends Factory
     public function definition(): array
     {
         $users_id = User::pluck('id')->toArray();
+        $user_id = $this->faker->randomElement($users_id);
 
         return [
             'text' => $this->faker->realText(),
             'attributes' => null,
-            'user_id' => $this->faker->randomElement($users_id),
+            'user_id' => $user_id,
             'title' => $this->faker->sentence(),
             'likes' => $this->faker->randomDigit()*100,
+            'user_name' => User::where('id', $user_id)->first()->name,
         ];
     }
 }

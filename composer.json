@@ -15,7 +15,9 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "zircote/swagger-php": "^4.9",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

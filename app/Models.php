@@ -9,6 +9,7 @@ namespace Responses {
     /** @OA\Schema(schema="vacancy") */
     class Vacancy
     {
+        // todo: добавить swagger для сущности depatment
         /**
          * @OA\Property()
          */
@@ -75,14 +76,14 @@ namespace Responses {
         public bool $is_outer;
 
         /**
-         * @OA\Property()
+         * @OA\Property(format="date")
          */
-        public string $created_at;
+        public $created_at;
 
         /**
-         * @OA\Property()
+         * @OA\Property(format="date")
          */
-        public string $updated_at;
+        public $updated_at;
     }
 
     /** @OA\Schema(schema="position") */
@@ -94,14 +95,93 @@ namespace Responses {
         public string $name;
 
         /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+    }
+
+    /** @OA\Schema(schema="sources") */
+    enum Source
+    {
+        case venari;
+        case habr;
+    }
+
+    /** @OA\Schema(schema="post") */
+    class Post
+    {
+        /**
          * @OA\Property()
          */
-        public string $created_at;
+        public string $title;
+
 
         /**
          * @OA\Property()
          */
-        public string $updated_at;
+        public string $text;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/user")
+         */
+        public User $user;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/attributes")
+         */
+        public string $attributes;
+
+        /**
+         * @OA\Property()
+         */
+        public int $likes;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/sources")
+         */
+        public Source $source;
+
+        /**
+         * @OA\Property()
+         */
+        public string $user_name;
+
+        /**
+         * @OA\Property(format="url")
+         */
+        public string $source_url;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="attributes") */
+    class Attributes
+    {
+
+    }
+
+    /** @OA\Schema(schema="user") */
+    class User
+    {
 
     }
 }
