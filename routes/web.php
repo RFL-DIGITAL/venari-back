@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\VacanciesController;
 use Illuminate\Support\Facades\Route;
 

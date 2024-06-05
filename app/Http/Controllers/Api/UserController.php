@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequset;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -21,7 +22,7 @@ class UserController extends Controller
      *
      * @OA\Schema( schema="registerUser",
      *           @OA\Property(property="success",type="boolean",example="true"),
-     *           @OA\Property(property="user",type="string",example="user"),
+     *           @OA\Property(property="user", ref="#/components/schemas/user"),
      *           @OA\Property(property="access_token",type="string"),
      *      )
      *
@@ -36,7 +37,7 @@ class UserController extends Controller
      *  )
      *
      * @param RegisterRequset $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function register(RegisterRequset $request) {
         $data = $this->userService->register($request->get('login'),
