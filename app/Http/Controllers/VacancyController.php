@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\VacanciesService;
-use Illuminate\Http\Request;
+use App\Services\VacancyService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
-class VacanciesController extends Controller
+class VacancyController extends Controller
 {
-    public function __construct(protected VacanciesService $vacanciesService){}
+    public function __construct(protected VacancyService $vacancyService){}
 
     /**
      * Метод получения всех вакансий
@@ -20,7 +21,7 @@ class VacanciesController extends Controller
      *
      * @OA\Get(
      *       path="/api/vacancies",
-     *       tags={"VacanciesController"},
+     *       tags={"VacancyController"},
      *       @OA\Response(
      *       response="200",
      *       description="Ответ при успешном выполнении запроса",
@@ -29,12 +30,22 @@ class VacanciesController extends Controller
      *   )
      *
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function getVacancies() {
+    public function getVacancies(): JsonResponse
+    {
+        $innerVacancies = $this->vacancyService->getInnerVacancies();
+
+        if(Cache::has('outer_vacancies')) {
+            $outerVacancies = Cache::get('outer_vacancies');
+        }
+        else {
+            $outerVacancies = $this->vacancyService->getOuterVacancies();
+            Cache::put('outer_vacancies', $outerVacancies, now()->addMinutes(15));
+        }
         $vacancies = array_merge(
-            $this->vacanciesService->getOuterVacancies(),
-            $this->vacanciesService->getInnerVacancies()
+            $innerVacancies,
+            $outerVacancies
         );
 
         shuffle($vacancies);
