@@ -23,7 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/vacancies', [VacancyController::class, 'getVacancies'])->name('getVacancies');
 
-Route::get('/posts/{post_id}', [PostController::class, 'getPostByID'])->name('getPostByID');
+Route::get('/posts/{id}', [PostController::class, 'getPostByID'])->name('getPostByID');
 Route::get('/posts', [PostController::class, 'getPosts'])->name('getPosts');
 
 // todo: Добавить crypter для шифрования персональных данных

@@ -20,16 +20,16 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
-        $users_id = User::pluck('id')->toArray();
-        $user_id = $this->faker->randomElement($users_id);
+        $usersID = User::pluck('id')->toArray();
+        $userID = $this->faker->randomElement($usersID);
 
         return [
             'text' => $this->faker->realText(),
             'attributes' => null,
-            'user_id' => $user_id,
+            'user_id' => $userID,
             'title' => $this->faker->sentence(),
             'likes' => $this->faker->randomDigit()*100,
-            'user_name' => User::where('id', $user_id)->first()->name,
+            'user_name' => User::where('id', $userID)->first()->name,
         ];
     }
 }
