@@ -4,7 +4,7 @@
 
 namespace Responses {
 
-    use OpenApi\Annotations as OA;
+    use Faker\Core\DateTime;use OpenApi\Annotations as OA;
 
     /** @OA\Schema(schema="vacancy") */
     class Vacancy
@@ -15,9 +15,9 @@ namespace Responses {
         public int $department_id;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/position")
          */
-        public int $position_id;
+        public Position $position;
 
         /**
          * @OA\Property()
@@ -73,5 +73,35 @@ namespace Responses {
          * @OA\Property()
          */
         public bool $is_outer;
+
+        /**
+         * @OA\Property()
+         */
+        public string $created_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $updated_at;
+    }
+
+    /** @OA\Schema(schema="position") */
+    class Position
+    {
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $created_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $updated_at;
+
     }
 }
