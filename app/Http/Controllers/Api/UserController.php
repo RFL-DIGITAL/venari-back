@@ -25,7 +25,7 @@ class UserController extends Controller
      *           @OA\Property(property="access_token",type="string"),
      *      )
      *
-     * @OA\Get(
+     * @OA\Post(
      *      path="/api/register",
      *      tags={"UserController"},
      *      @OA\Response(
