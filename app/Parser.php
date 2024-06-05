@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Http;
+
 class Parser
 {
     /**
@@ -11,15 +13,7 @@ class Parser
      */
     public static function getDocument(string $url): bool|string
     {
-        $ch = curl_init($url);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-
-        $result = curl_exec($ch);
-
-        curl_close($ch);
+        $result = Http::get($url)->body();
 
         return $result;
     }
