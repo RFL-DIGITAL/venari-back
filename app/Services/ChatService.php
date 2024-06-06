@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DTO\ChatPreviewDTO;
-use App\DTO\Type;
+use App\DTO\MessageType;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Image;
@@ -49,7 +49,7 @@ class ChatService
                 $id = $userID;
             }
 
-            // todo нормальная проверка на наличие такого чато
+            // todo нормальная проверка на наличие такого чат
             $recentChats[$key] = [
                 "avatar" => $avatar,
                 "body" => $message->body,
@@ -67,7 +67,7 @@ class ChatService
                 $value['avatar'],
                 $value['body'],
                 $value['updated_at'],
-                type::message,
+                MessageType::message,
                 $value['user_id']
             );
         }
@@ -97,7 +97,7 @@ class ChatService
                 $chat->image->image,
                 $message->body,
                 $message->updated_at->toDateTimeString(),
-                Type::chatMessage,
+                MessageType::chatMessage,
                 $chat->id
             );
         }

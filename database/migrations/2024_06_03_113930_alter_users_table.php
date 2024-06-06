@@ -15,7 +15,7 @@ return new class extends Migration
 
             $table->nullableMorphs('hrable');
             $table->date('date_of_birth')->nullable();
-            $table->boolean('sex');
+            $table->boolean('sex')->default(false);
             $table->foreignId("workingStatus_id")->nullable();
             $table->foreignId("position_id")->nullable();
             $table->foreignId("image_id")->nullable();

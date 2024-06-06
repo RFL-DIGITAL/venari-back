@@ -5,12 +5,6 @@ namespace App\DTO;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
 
-enum Type:string
-{
-    case message = 'message';
-    case chatMessage = 'chatMessage';
-}
-
 class ChatPreviewDTO implements Jsonable, JsonSerializable
 {
     public function __construct(
@@ -18,7 +12,7 @@ class ChatPreviewDTO implements Jsonable, JsonSerializable
         private string $avatar,
         private string $body,
         private string $updated_at,
-        private Type $type,
+        private MessageType $type,
         private int $id,
     ) {}
 
