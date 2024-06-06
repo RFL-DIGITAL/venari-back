@@ -18,8 +18,6 @@ class UserController extends Controller
      *
      * Метод регистрации
      *
-     *
-     *
      * @OA\Schema( schema="registerUser",
      *           @OA\Property(property="success",type="boolean",example="true"),
      *           @OA\Property(property="user", ref="#/components/schemas/user"),

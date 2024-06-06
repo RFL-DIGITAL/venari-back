@@ -19,8 +19,10 @@ class ImageFactory extends Factory
      */
     public function definition(): array
     {
+//        dd($this->faker->image(''));
+
         return [
-            'image' => $this->faker->image(),
+            'image' => $this->faker->imageUrl(),
             'description' => $this->faker->randomElement(
                 [
                     'Аватарка',

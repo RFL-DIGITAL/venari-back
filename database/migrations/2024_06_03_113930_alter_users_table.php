@@ -18,10 +18,10 @@ return new class extends Migration
             $table->boolean('sex');
             $table->foreignId("workingStatus_id")->nullable();
             $table->foreignId("position_id")->nullable();
-            $table->foreignId("images_id")->nullable();
+            $table->foreignId("image_id")->nullable();
 
 
-            $table->foreign("images_id")->references("id")->on("images")
+            $table->foreign("image_id")->references("id")->on("images")
                 ->onDelete("set null")->onUpdate("cascade");
             $table->foreign("workingStatus_id")->references("id")->on("working_statuses")
                 ->onDelete("set null")->onUpdate("cascade");
@@ -40,7 +40,7 @@ return new class extends Migration
             $table->dropColumn('hrable_id');
             $table->dropColumn('date_of_birth');
             $table->dropColumn('sex');
-            $table->dropForeign(['images_id']);
+            $table->dropForeign(['image_id']);
             $table->dropForeign(['workingStatus_id']);
             $table->dropForeign(['position_id']);
         });

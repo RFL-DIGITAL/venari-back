@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\VacancyController;
 use Illuminate\Http\Request;
@@ -23,7 +24,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/vacancies', [VacancyController::class, 'getVacancies'])->name('getVacancies');
 
-Route::get('/posts/{id}', [PostController::class, 'getPostByID'])->name('getPostByID');
+Route::get('/chats/{myID}', [ChatController::class, 'getChats'])->name('getChats');
+
+Route::get('/chats/personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
+    ->name('getMessagesByUserID');
+Route::get('/chats/group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
+    ->name('getChatMessagesByChatID');
+
+Route::get('/posts/{ID}', [PostController::class, 'getPostByID'])->name('getPostByID');
 Route::get('/posts', [PostController::class, 'getPosts'])->name('getPosts');
 
 // todo: Добавить crypter для шифрования персональных данных

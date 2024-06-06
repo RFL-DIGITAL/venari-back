@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\VacanciesController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +21,13 @@ Route::get('/', function () {
 Route::get('swagger', function () {
     return view('swagger');
 });
+
+Route::get('/chats/{myID}', [ChatController::class, 'getChats'])->name('getChats');
+
+Route::get('/chats/personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
+    ->name('getMessagesByUserID');
+Route::get('/chats/group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
+    ->name('getChatMessagesByChatID');
 
 Route::get('swag.json', function () {
     $p = @\OpenApi\Generator::scan([app_path()]);
