@@ -24,6 +24,9 @@
                         <span class="contact-name">
                             {{ makeTextShort(contact.name, 20) }}
                         </span>
+                        <span class="badge rounded-pill text-bg-primary" v-if="contact.type === 'chatMessage'">
+                            chat
+                        </span>
                         <span class="contact-email">
                             {{ makeTextShort(contact.body, 20) }}
                         </span>
@@ -56,9 +59,28 @@ export default {
         }
     },
     methods: {
+        handleIncoming(message) {
+            console.log(message)
+            if (this.selectedContact && message.chat_id === this.selectedContact.id) {
+                this.messages.push(message);
+                return;
+            }
+            //unread messages
+            // this.updateUnreadCount(message.from_contact, false);
+        },
+
+
         selectContact(contact) {
             this.selected = contact;
             this.$emit('selected', contact);
+
+            if (contact.type === 'chatmessage'){
+                Echo.private(`chat-${contact.id}`)
+                    .listen('NewChatMessageEvent', (e) => {
+                        this.handleIncoming(e.message);
+                    })
+            }
+
         },
         makeTextShort(text, length) {
             return text.length > this.max_text_length ? text.substring(0, length) + '...' : text;
@@ -70,7 +92,7 @@ export default {
     computed: {
         sortedContacts() {
             return _.sortBy(this.contacts, [(contact) => {
-                if (contact == this.selected) {
+                if (contact === this.selected) {
                     return Infinity;
                 }
                 return false;

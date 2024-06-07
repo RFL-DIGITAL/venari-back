@@ -28,12 +28,7 @@ import Pusher from 'pusher-js';
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
-    key: import.meta.env.VITE_PUSHER_APP_KEY,
-    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-    encrypted: true,
-    // auth: {
-    //     headers: {
-    //         Authorization: 'Bearer ' + YourTokenLogin
-    //     },
-    // },
+    key: '09627fbd442497554d6f',
+    cluster: 'ap3',
+    forceTLS: true
 });

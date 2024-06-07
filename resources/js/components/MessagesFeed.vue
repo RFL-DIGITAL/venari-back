@@ -1,26 +1,51 @@
 <template>
     <div class="feed" ref="feed">
         <div v-if="contact">
-            <div
-                :class="`message alert ${message.to_id === contact.id ? 'float-end alert-success' : 'float-start alert-warning'} float-right`"
-                v-for="message in messages" :key="message.id" v-if="messages.length > 0">
+            <div v-if="contact.type === 'message'">
+                <div
+                    :class="`message alert ${message.to_id === contact.id ? 'float-end alert-success' : 'float-start alert-warning'} float-right`"
+                    v-for="message in messages" :key="message.id" v-if="messages.length > 0">
 
-                <div class="message-sender mb-2">
+                    <div class="message-sender mb-2">
                     <span class="badge rounded-pill text-bg-primary" v-if="message.to_id === contact.id">
                         You
                     </span>
-                    <span class="badge rounded-pill text-bg-danger" v-else>
+                        <span class="badge rounded-pill text-bg-danger" v-else>
                         {{ contact.name }}
                      </span>
-                </div>
+                    </div>
 
-                <span>{{ message.body }}</span>
-                <span class="message-time">
-                    {{ timeAgo(message.created_at) }}
-                </span>
+                    <span>{{ message.body }}</span>
+                    <span class="message-time">
+                        {{ timeAgo(message.created_at) }}
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center" v-else>
+                    <div class="text alert alert-danger">Select a contact to start chatting</div>
+                </div>
             </div>
-            <div class="d-flex justify-content-center align-items-center" v-else>
-                <div class="text alert alert-danger">Select a contact to start chatting</div>
+            <div v-else>
+                <div
+                    :class="`message alert ${message.owner.id === this.user.id ? 'float-end alert-success' : 'float-start alert-warning'} float-right`"
+                    v-for="message in messages" :key="message.id" v-if="messages.length > 0">
+
+                    <div class="message-sender mb-2">
+                    <span class="badge rounded-pill text-bg-primary" v-if="message.owner.id === user.id">
+                        You
+                    </span>
+                    <span class="badge rounded-pill text-bg-danger" v-else>
+                        {{ message.owner.name }}
+                     </span>
+                    </div>
+
+                    <span>{{ message.body }}</span>
+                    <span class="message-time">
+                        {{ timeAgo(message.created_at) }}
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center" v-else>
+                    <div class="text alert alert-danger">Select a contact to start chatting</div>
+                </div>
             </div>
         </div>
         <div class="h-100 d-flex justify-content-center align-items-center" v-else>
@@ -32,6 +57,10 @@
 <script>
 export default {
     props: {
+        user: {
+            Object,
+            require: true
+        },
         contact: {
             type: Object,
         },
@@ -116,6 +145,7 @@ export default {
                 return this.getFormattedDate(date, false, true); // 10. January at 10:20
             }
 
+            console.log(user);
             return this.getFormattedDate(date); // 10. January 2017. at 10:20
         },
 

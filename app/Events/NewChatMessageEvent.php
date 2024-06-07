@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewChatMessageEvent
+class NewChatMessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -36,5 +36,11 @@ class NewChatMessageEvent
         return [
             new PrivateChannel('chat-'.$this->chatMessage->chat_id),
         ];
+    }
+
+    public function broadcastWith()
+    {
+        $this->chatMessage->load('owner');
+        return ["message" => $this->chatMessage];
     }
 }

@@ -15,27 +15,23 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-//Broadcast::channel('user.{userId}', function ($user, $userId) {
-//    return $user->id === $userId;
-//});
-
-Broadcast::channel('private-messages-{$toID}', function ($user, $toID) {
-//    if (Message::where('from_id', $user->id)->where('to_id', $toID)->exists()) {
+Broadcast::channel('messages-{toID}', function ($user, $toID) {
+    if ($user->id == $toID) {
         return true;
-//    }
-//    else {
-//        return false;
-//    }
+    }
+    else {
+        return false;
+    }
 });
-//
-//Broadcast::channel('private-chat-*', function ($user, $chatID) {
-//    if (User::whereHas('chat', function ($query) use ($chatID){
-//        $query->where('id', $chatID);
-//    })->exists())
-//    {
-//        return true;
-//    }
-//    else {
-//        return false;
-//    }
-//});
+
+Broadcast::channel('chat-{chatID}', function ($user, $chatID) {
+    if (User::whereHas('chats', function ($query) use ($chatID){
+        $query->where('chats.id', $chatID);
+    })->exists())
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
+});

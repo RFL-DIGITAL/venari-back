@@ -23,20 +23,28 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get('/vacancies', [VacancyController::class, 'getVacancies'])->name('getVacancies');
-//
-//Route::get('/chats/{myID}', [ChatController::class, 'getChats'])->name('getChats');
-//
-//Route::get('/chats/personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
-//    ->name('getMessagesByUserID');
-//Route::get('/chats/group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
-//    ->name('getChatMessagesByChatID');
-//
-//Route::post('/messages/send-message', [MessageController::class, 'sendMessage'])
-//    ->name('sendMessage');
-//
-//Route::get('/posts/{ID}', [PostController::class, 'getPostByID'])->name('getPostByID');
-//Route::get('/posts', [PostController::class, 'getPosts'])->name('getPosts');
+Route::prefix('vacancies')->group(function () {
+    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
+});
+
+Route::prefix('chats')->group(function () {
+    Route::get('personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
+        ->name('getMessagesByUserID');
+    Route::get('group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
+        ->name('getChatMessagesByChatID');
+
+    Route::get('', [ChatController::class, 'getChats'])->name('getChats');
+});
+
+Route::prefix('messages')->group(function () {
+    Route::post('send-message', [MessageController::class, 'sendMessage'])->name('sendMessage');
+});
+
+Route::prefix('posts')->group(function () {
+    Route::get('{ID}', [PostController::class, 'getPostByID'])->name('getPostByID');
+    Route::get('', [PostController::class, 'getPosts'])->name('getPosts');
+});
+
 
 // todo: Добавить crypter для шифрования персональных данных
 Route::post('register', [UserController::class, 'register']);

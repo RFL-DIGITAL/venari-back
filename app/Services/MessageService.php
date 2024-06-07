@@ -26,16 +26,18 @@ class MessageService
                 $message->to_id = $toID;
                 $message->body = $body;
                 $message->save();
-                $message->refresh();
 
                 event(new NewMessageEvent($message));
+
+                break;
+
             default:
                 $message = new ChatMessage();
                 $message->owner_id = $ownerID;
                 $message->chat_id = $toID;
                 $message->body = $body;
                 $message->save();
-                $message->refresh();
+                $message->load('owner');
 
                 event(new NewChatMessageEvent($message));
         }

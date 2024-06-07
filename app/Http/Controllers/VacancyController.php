@@ -15,7 +15,7 @@ class VacancyController extends Controller
      *
      * @OA\Schema( schema="getVacancies",
      *             @OA\Property(property="success",type="boolean",example="true"),
-     *             @OA\Property(property="vacancies",type="array",
+     *             @OA\Property(property="response",type="array",
      *                  @OA\Items(ref="#/components/schemas/vacancy")),
      *  )
      *

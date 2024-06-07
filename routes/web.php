@@ -1,8 +1,5 @@
 <?php
 
-use App\Events\MyEvent;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -24,20 +21,6 @@ Route::get('/', function () {
 Route::get('swagger', function () {
     return view('swagger');
 });
-
-//Route::get('/home', function () {
-//    event(new MyEvent('hello world'));
-//});
-
-Route::get('/chats/{myID}', [ChatController::class, 'getChats'])->name('getChats');
-
-Route::get('/chats/personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
-    ->name('getMessagesByUserID');
-Route::get('/chats/group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
-    ->name('getChatMessagesByChatID');
-
-Route::post('/messages/send-message', [MessageController::class, 'sendMessage'])
-    ->name('sendMessage');
 
 Route::get('swag.json', function () {
     $p = @\OpenApi\Generator::scan([app_path()]);

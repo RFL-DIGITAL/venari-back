@@ -105,7 +105,15 @@ class ChatService
         return $recentGroups;
     }
 
-    public function getMessagesByUserID ($myID, $userID) {
+    /**
+     * Метод получения сообщений 1-1 по id пользователей
+     *
+     * @param $myID - id текущего пользователя
+     * @param $userID - id пользователя, с которым нужно найти диалог
+     * @return array
+     */
+    public function getMessagesByUserID ($myID, $userID): array
+    {
         return
             Message::where(function (Builder $query) use ($myID, $userID) {
                 $query->where('from_id', $myID)->where('to_id', $userID);
@@ -114,8 +122,15 @@ class ChatService
             })->orderBy('created_at')->get()->toArray();
     }
 
-    public function getChatMessagesByChatID ($chatID) {
+    /**
+     * Метод получения сообщений из выбранного чата
+     *
+     * @param $chatID - id чата
+     * @return array
+     */
+    public function getChatMessagesByChatID ($chatID): array
+    {
         return
-            ChatMessage::where('chat_id', $chatID)->orderBy('created_at')->get()->toArray();
+            ChatMessage::where('chat_id', $chatID)->orderBy('created_at')->get()->load('owner')->toArray();
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="chat-app">
         <ContactsList :contacts="contacts" @selected="startConversationWith"/>
-        <Conversation :contact="selectedContact" :messages="messages" @new="saveNewMessage"/>
+        <Conversation :contact="selectedContact" :user="user" :messages="messages" @new="saveNewMessage"/>
     </div>
 </template>
 
@@ -26,12 +26,22 @@ export default {
     },
     methods: {
         startConversationWith(contact) {
-            axios.get(`/chats/personal/${contact.id}`)
-                .then(response => {
-                    // console.log(response.data.response);
-                    this.messages = response.data.response;
-                    this.selectedContact = contact;
-                })
+            if (contact.type === 'message') {
+                axios.get(`/chats/personal/${contact.id}`)
+                    .then(response => {
+                        this.messages = response.data.response;
+                        this.selectedContact = contact;
+                    })
+            }
+            else {
+                axios.get(`/chats/group/${contact.id}`)
+                    .then(response => {
+                        console.log(response.data.response);
+                        this.messages = response.data.response;
+                        this.selectedContact = contact;
+                    })
+            }
+
         },
         saveNewMessage(message) {
             this.messages.push(message);
@@ -60,32 +70,10 @@ export default {
         // }
     },
     mounted() {
-        // var channel = Echo.private(`messages-${this.user.id}`);
-        // console.log(channel);
-        // channel.listen('NewMessageEvent', function(e) {
-        //     this.handleIncoming(e.message);
-        // });
-        // Pusher.logToConsole = true;
-
-        // Pusher.logToConsole = true;
-        //
-        // var pusher = new Pusher('09627fbd442497554d6f', {
-        //     cluster: 'ap3'
-        // });
-
-        var channel = Echo.channel(`private-messages-${this.user.id}`);
-        channel.listen('NewMessageEvent', function(data) {
-            alert(JSON.stringify(data));
-        });
-
-        // var channel = pusher.subscribe(`private-messages-${this.user.id}`);
-        // channel.bind('NewMessageEvent', function(data) {
-        //     alert(JSON.stringify(data));
-        // });
-        // Echo.private(`messages-${this.user.id}`)
-        //     .listen('NewMessageEvent', (e) => {
-        //         this.handleIncoming(e.message);
-        //     })
+        Echo.private(`messages-${this.user.id}`)
+            .listen('NewMessageEvent', (e) => {
+                this.handleIncoming(e.message);
+            })
 
         axios.get(`/chats/${this.user.id}`)
             .then(response => {

@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="card-body pb-0">
-                <MessagesFeed :contact="contact" :messages="messages"/>
+                <MessagesFeed :contact="contact" :user="user" :messages="messages"/>
                 <MessageComposer @send="sendMessage"/>
             </div>
         </div>
@@ -30,6 +30,10 @@ export default {
         messages: {
             type: Array,
             default: [],
+        },
+        user: {
+            Object,
+            require: true
         }
     },
     data() {
@@ -40,7 +44,6 @@ export default {
             if (!this.contact) {
                 return;
             }
-            // console.log(text);
             axios.post('/messages/send-message', {
                 toID: this.contact.id,
                 body: text,
@@ -55,7 +58,6 @@ export default {
         MessageComposer
     },
     mounted() {
-        // console.log(this.contact);
         console.log('Component mounted.')
     }
 }

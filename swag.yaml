@@ -22,6 +22,81 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/registerUser'
+  /api/chats:
+    get:
+      tags:
+        - ChatController
+      summary: "Метод получения всех чатов пользователя. Отсортированы в обратном порядке по времени последнего сообщения\n(самый поздний - первый)"
+      operationId: d819b7e183bc1e432868877421b66e93
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChats'
+  '/api/chats/personal/{userID}':
+    get:
+      tags:
+        - ChatController
+      summary: 'Метод получения сообщений 1-1 по id пользователя'
+      operationId: 0de9b4d1d6303bad5628f21455852e95
+      parameters:
+        -
+          name: userID
+          description: 'id пользователя'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMessagesByUserID'
+  '/api/chats/group/{chatID}':
+    get:
+      tags:
+        - ChatController
+      summary: 'Метод получения сообщений чата по id чата'
+      operationId: 1c707390fd2f758bf4928dd979a31940
+      parameters:
+        -
+          name: chatID
+          description: 'id чата'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChatMessagesByChatID'
+  /api/messages/send-message:
+    post:
+      tags:
+        - MessageController
+      summary: 'Метод отправки сообщений'
+      operationId: 4bd87a3a7705f49799ee91b062338872
+      parameters:
+        -
+          name: ownerID
+          description: 'id отправителя. Это id пользователя'
+        -
+          name: toID
+          description: 'id получателя. Это ЛИБО id пользователя ЛИБО id чата'
+        -
+          name: body
+          description: 'текст сообщения'
+        -
+          name: type
+          description: 'Тип сообщения, которое должно быть отправлено. ЛИБО message, для 1-1, ЛИБО chatMessage, если это сообщение в чат'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendMessage'
   /api/posts:
     get:
       tags:
@@ -35,16 +110,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPosts'
-  /api/posts/:
+  '/api/posts/{id}':
     get:
       tags:
         - PostController
       summary: 'Метод получения поста по его id (подробная страница)'
-      operationId: ca959cc7c6472d1743b8dc2e4e26a224
+      operationId: 575616ce88c4119bb7a6c703f83cb6ee
       parameters:
         -
           name: id
-          in: query
           description: 'id поста'
           required: true
       responses:
@@ -69,6 +143,11 @@ paths:
                 $ref: '#/components/schemas/getVacancies'
 components:
   schemas:
+    messageType:
+      type: string
+      enum:
+        - message
+        - chatMessage
     registerUser:
       properties:
         success:
@@ -78,6 +157,46 @@ components:
           $ref: '#/components/schemas/user'
         access_token:
           type: string
+      type: object
+    getChats:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/previewChat'
+      type: object
+    getMessagesByUserID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/message'
+      type: object
+    getChatMessagesByChatID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chatMessage'
+      type: object
+    sendMessage:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/message'
       type: object
     getPosts:
       properties:
@@ -102,17 +221,19 @@ components:
         success:
           type: boolean
           example: 'true'
-        vacancies:
+        response:
           type: array
           items:
             $ref: '#/components/schemas/vacancy'
       type: object
     vacancy:
       properties:
+        id:
+          type: integer
         department_id:
           type: integer
-        position:
-          $ref: '#/components/schemas/position'
+        position_id:
+          type: integer
         description:
           type: string
         salary:
@@ -142,6 +263,8 @@ components:
       type: object
     position:
       properties:
+        id:
+          type: integer
         name:
           type: string
         created_at:
@@ -156,12 +279,14 @@ components:
         - habr
     post:
       properties:
+        id:
+          type: integer
         title:
           type: string
         text:
           type: string
-        user:
-          $ref: '#/components/schemas/user'
+        user_id:
+          type: integer
         attributes:
           $ref: '#/components/schemas/attributes'
         likes:
@@ -182,6 +307,53 @@ components:
       type: object
     attributes: {  }
     user: {  }
+    previewChat:
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
+        body:
+          type: string
+        updated_at:
+          type: string
+          format: date
+        type:
+          $ref: '#/components/schemas/messageType'
+        id:
+          description: "'id может быть как чата, так и пользователя. Смотри type"
+          type: integer
+      type: object
+    message:
+      properties:
+        id:
+          type: integer
+        from_id:
+          type: integer
+        to_id:
+          type: integer
+        body:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    chatMessage:
+      properties:
+        id:
+          type: integer
+        owner_id:
+          type: integer
+        chat_id:
+          type: integer
+        body:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
 externalDocs:
   description: 'Как документировать этот код'
   url: 'https://zircote.github.io/swagger-php/guide/annotations.html'
