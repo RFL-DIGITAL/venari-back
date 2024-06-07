@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-
             $table->nullableMorphs('hrable');
             $table->date('date_of_birth')->nullable();
             $table->boolean('sex')->default(false);

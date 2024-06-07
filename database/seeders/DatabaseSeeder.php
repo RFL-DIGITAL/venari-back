@@ -41,7 +41,12 @@ class DatabaseSeeder extends Seeder
             PostImageSeeder::class,
             VacancySeeder::class,
             VacancySkillSeeder::class,
-            CommentSeeder::class
+            CommentSeeder::class,
+            FileSeeder::class,
+            ImageMessageSeeder::class,
+            FileMessageSeeder::class,
+            LinkMessageSeeder::class,
+
         ]);
     }
 }
