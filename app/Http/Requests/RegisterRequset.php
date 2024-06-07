@@ -3,7 +3,16 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\RequestBody(request="RegisterRequest", @OA\JsonContent(
+ *     @OA\Property(property="email",type="string"),
+ *     @OA\Property(property="password",type="string"),
+ *     @OA\Property(property="login",type="string"),
+ *
+ * ))
+ */
 class RegisterRequset extends FormRequest
 {
     /**
@@ -22,7 +31,7 @@ class RegisterRequset extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'email',
+            'email' => 'email|required',
             'login' => 'required|string|min:8',
             'password' => 'required|string|min:8',
         ];

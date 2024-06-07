@@ -10,11 +10,13 @@ servers:
     description: 'Боевой сервер'
 paths:
   /api/register:
-    get:
+    post:
       tags:
         - UserController
       summary: 'Метод регистрации'
-      operationId: c491d067c8de8d0e0a4cc77bb7d7b363
+      operationId: 482fd8cbb98dc3225fa0e7ac40c1abe6
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterRequest'
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
@@ -22,6 +24,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/registerUser'
+  /api/login:
+    post:
+      tags:
+        - UserController
+      summary: 'метод авторизации пользователя. возвращает токен'
+      operationId: afd167661891a2c4c1b49a04643b9223
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginUser'
   /api/chats:
     get:
       tags:
@@ -156,6 +172,16 @@ components:
         user:
           $ref: '#/components/schemas/user'
         access_token:
+          type: string
+      type: object
+    loginUser:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        user:
+          $ref: '#/components/schemas/user'
+        token:
           type: string
       type: object
     getChats:
@@ -354,6 +380,29 @@ components:
         updated_at:
           format: date
       type: object
+  requestBodies:
+    LoginRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            type: object
+    RegisterRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+              login:
+                type: string
+            type: object
 externalDocs:
   description: 'Как документировать этот код'
   url: 'https://zircote.github.io/swagger-php/guide/annotations.html'
