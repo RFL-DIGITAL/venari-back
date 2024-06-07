@@ -22,12 +22,8 @@ class FileSeeder extends Seeder
                 $junkData .= chr(mt_rand(32, 126));
             }
 
-            $file->file = pack("C", $junkData);;
+            $file->file = pack("C", $junkData);
             $file->save();
         }
-
-//        File::factory()
-//            ->count(10)
-//            ->create();
     }
 }

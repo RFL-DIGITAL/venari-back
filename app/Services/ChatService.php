@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\DTO\AttachmentDTO;
 use App\DTO\ChatPreviewDTO;
+use App\DTO\MessageDTO;
 use App\DTO\MessageType;
 use App\Models\Chat;
 use App\Models\ChatMessage;
@@ -49,7 +51,7 @@ class ChatService
                 $id = $userID;
             }
 
-            // todo нормальная проверка на наличие такого чат
+            // todo нормальная проверка на наличие такого чата
             $recentChats[$key] = [
                 "avatar" => $avatar,
                 "body" => $message->body,
@@ -95,8 +97,8 @@ class ChatService
             $recentGroups[] = new ChatPreviewDTO(
                 $chat->name,
                 $chat->image->image,
-                $message->body,
-                $message->updated_at->toDateTimeString(),
+                $message != null ? $message->body: '',
+                $message != null ? $message->updated_at->toDateTimeString(): '',
                 MessageType::chatMessage,
                 $chat->id
             );
@@ -114,12 +116,27 @@ class ChatService
      */
     public function getMessagesByUserID ($myID, $userID): array
     {
-        return
-            Message::where(function (Builder $query) use ($myID, $userID) {
-                $query->where('from_id', $myID)->where('to_id', $userID);
-            })->orWhere(function (Builder $query) use ($myID, $userID) {
-                $query->where('from_id', $userID)->where('to_id', $myID);
-            })->orderBy('created_at')->get()->toArray();
+        $messages = Message::where(function (Builder $query) use ($myID, $userID) {
+            $query->where('from_id', $myID)->where('to_id', $userID);
+        })
+        ->orWhere(function (Builder $query) use ($myID, $userID) {
+            $query->where('from_id', $userID)->where('to_id', $myID);
+        })
+        ->orderBy('created_at')->get();
+
+        $messageDTOs = array();
+
+        foreach ($messages as $message) {
+            $messageDTOs[] = new MessageDTO(
+                $message->id,
+                $message->from_id,
+                $message->to_id,
+                $message->owner(),
+                $this->createAttachment($message)
+            );
+        }
+
+        return $messageDTOs;
     }
 
     /**
@@ -130,7 +147,30 @@ class ChatService
      */
     public function getChatMessagesByChatID ($chatID): array
     {
-        return
-            ChatMessage::where('chat_id', $chatID)->orderBy('created_at')->get()->load('owner')->toArray();
+        $chatMessages = ChatMessage::where('chat_id', $chatID)->orderBy('created_at')->get();
+
+        $messageDTOs = array();
+
+        foreach ($chatMessages as $chatMessage) {
+            $messageDTOs[] = new MessageDTO(
+                $chatMessage->id,
+                $chatMessage->owner_id,
+                $chatMessage->chat_id,
+                $chatMessage->owner(),
+                $this->createAttachment($chatMessage)
+            );
+        }
+
+        return $messageDTOs;
+    }
+
+    private function createAttachment ($message): AttachmentDTO
+    {
+        return new AttachmentDTO(
+            $message->body,
+            $message->fileMessage()->file(),
+            $message->imageMessage()->image(),
+            $message->linkMessage()->link(),
+        );
     }
 }
