@@ -3,10 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Chat;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Chat>
+ * @extends Factory<Chat>
  */
 class ChatFactory extends Factory
 {
@@ -20,8 +21,11 @@ class ChatFactory extends Factory
 
     public function definition(): array
     {
+        $imagesID = Image::where('description', 'Аватарка')->pluck('id')->toArray();
+
         return [
             'name' => $this->faker->company(),
+            'image_id' => $this->faker->randomElement($imagesID),
         ];
     }
 }

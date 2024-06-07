@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\HR;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,6 +20,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         $hrs_id = HR::pluck('id')->toArray();
+        $imagesID = Image::where('description', 'Аватарка')->get()->pluck('id')->toArray();
 
         return [
             'name' => fake()->name(),
