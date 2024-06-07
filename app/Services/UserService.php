@@ -58,7 +58,7 @@
             $data['data'] = $user;
 
             return [true, $data];
-        } else {
+        }  else {
             return [false, 'error' => 'Unauthorization or user is not found.'];
         }
     }

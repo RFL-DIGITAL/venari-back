@@ -2,18 +2,20 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 
+
 /**
- * @OA\RequestBody(request="RegisterRequest", @OA\JsonContent(
+ * @OA\RequestBody(request="LoginRequest", @OA\JsonContent(
  *     @OA\Property(property="email",type="string"),
  *     @OA\Property(property="password",type="string"),
- *     @OA\Property(property="login",type="string"),
  *
  * ))
  */
-class RegisterRequset extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,10 +32,10 @@ class RegisterRequset extends FormRequest
      */
     public function rules(): array
     {
+        $emails = User::all()->pluck('email');
         return [
-            'email' => 'email|required',
-            'login' => 'required|string|min:8',
-            'password' => 'required|string|min:8',
+            'email' => ['email', Rule::in($emails), 'required'],
+            'password' =>  'required|string',
         ];
     }
 }
