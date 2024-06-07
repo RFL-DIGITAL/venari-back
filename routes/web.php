@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\VacanciesController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,3 +26,7 @@ Route::get('swag.json', function () {
     $p = @\OpenApi\Generator::scan([app_path()]);
     return response()->json($p->toJson());
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

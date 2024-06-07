@@ -63,11 +63,10 @@ class PostController extends Controller
      *    )
      *
      * @OA\Get(
-     *         path="/api/posts/",
+     *         path="/api/posts/{id}",
      *         tags={"PostController"},
      *     @OA\Parameter(
      *          name="id",
-     *          in="query",
      *          description="id поста",
      *          required=true),
      *         @OA\Response(

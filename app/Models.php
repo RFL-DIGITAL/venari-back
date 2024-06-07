@@ -4,11 +4,16 @@
 
 namespace Responses {
 
-    use Faker\Core\DateTime;use OpenApi\Annotations as OA;
+    use App\DTO\MessageType;use Faker\Core\DateTime;use OpenApi\Annotations as OA;
 
     /** @OA\Schema(schema="vacancy") */
     class Vacancy
     {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
         // todo: добавить swagger для сущности depatment
         /**
          * @OA\Property()
@@ -16,9 +21,9 @@ namespace Responses {
         public int $department_id;
 
         /**
-         * @OA\Property(ref="#/components/schemas/position")
+         * @OA\Property()
          */
-        public Position $position;
+        public int $position_id;
 
         /**
          * @OA\Property()
@@ -92,6 +97,11 @@ namespace Responses {
         /**
          * @OA\Property()
          */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
         public string $name;
 
         /**
@@ -119,6 +129,11 @@ namespace Responses {
         /**
          * @OA\Property()
          */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
         public string $title;
 
 
@@ -128,9 +143,9 @@ namespace Responses {
         public string $text;
 
         /**
-         * @OA\Property(ref="#/components/schemas/user")
+         * @OA\Property()
          */
-        public User $user;
+        public int $user_id;
 
         /**
          * @OA\Property(ref="#/components/schemas/attributes")
@@ -183,5 +198,106 @@ namespace Responses {
     class User
     {
 
+    }
+
+    /** @OA\Schema(schema="previewChat") */
+    class PreviewChat {
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $avatar;
+
+        /**
+         * @OA\Property()
+         */
+        public string $body;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public string $updated_at;
+
+        /**
+         * @OA\Property(description="Тип чата. Необходим для определения того, откуда получать данные в ChatController")
+         */
+        public MessageType $type;
+
+        /**
+         * @OA\Property(description="'id может быть как чата, так и пользователя. Смотри type")
+         */
+        public int $id;
+    }
+
+    /** @OA\Schema(schema="message") */
+    class Message
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $from_id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $to_id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $body;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="chatMessage") */
+    class ChatMessage
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $owner_id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $chat_id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $body;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
     }
 }

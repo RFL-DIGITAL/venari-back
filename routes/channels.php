@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Message;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -13,6 +15,23 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+Broadcast::channel('messages-{toID}', function ($user, $toID) {
+    if ($user->id == $toID) {
+        return true;
+    }
+    else {
+        return false;
+    }
+});
+
+Broadcast::channel('chat-{chatID}', function ($user, $chatID) {
+    if (User::whereHas('chats', function ($query) use ($chatID){
+        $query->where('chats.id', $chatID);
+    })->exists())
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
 });
