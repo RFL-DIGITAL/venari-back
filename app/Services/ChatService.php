@@ -34,6 +34,7 @@ class ChatService
             foreach ($messagesWithThatUser as $message) {
                 $owner = $message->owner;
                 $destination = $message->destination;
+                if(!$owner?->id || !$destination?->id) continue;
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
                     $avatar = $destination?->image?->image;
@@ -49,7 +50,6 @@ class ChatService
                     $id = $userID;
                 }
 
-                dd($owner, $destination);
 
                 if ($message->body == null) {
                     if ($message->fileMessage != null) {
