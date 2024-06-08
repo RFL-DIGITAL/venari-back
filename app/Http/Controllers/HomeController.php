@@ -16,13 +16,21 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    public function index(Request $request)
+    {
+        return view('messages_debug.message', [
+            'chatPreviews' => app('App\Http\Controllers\ChatController')->getChats($request),
+            'messages' => app('App\Http\Controllers\ChatController')->getMessagesByUserID($request, 3),
+        ]);
+    }
+
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        return view('home');
-    }
+//    public function index()
+//    {
+//        return view('home');
+//    }
 }

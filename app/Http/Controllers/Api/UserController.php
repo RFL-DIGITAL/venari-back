@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequset;
+use App\Http\Requests\RegisterRequest;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
@@ -37,10 +37,10 @@ class UserController extends Controller
      *    )
      *  )
      *
-     * @param RegisterRequset $request
+     * @param RegisterRequest $request
      * @return JsonResponse
      */
-    public function register(RegisterRequset $request) {
+    public function register(RegisterRequest $request) {
         $data = $this->userService->register($request->get('login'),
             $request->get('email'),
             $request->get('password'));

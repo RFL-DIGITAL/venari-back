@@ -93,19 +93,8 @@ paths:
         - MessageController
       summary: 'Метод отправки сообщений'
       operationId: 4bd87a3a7705f49799ee91b062338872
-      parameters:
-        -
-          name: ownerID
-          description: 'id отправителя. Это id пользователя'
-        -
-          name: toID
-          description: 'id получателя. Это ЛИБО id пользователя ЛИБО id чата'
-        -
-          name: body
-          description: 'текст сообщения'
-        -
-          name: type
-          description: 'Тип сообщения, которое должно быть отправлено. ЛИБО message, для 1-1, ЛИБО chatMessage, если это сообщение в чат'
+      requestBody:
+        $ref: '#/components/requestBodies/SendMessageRequest'
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
@@ -402,6 +391,30 @@ components:
                 type: string
               login:
                 type: string
+            type: object
+    SendMessageRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              toID:
+                type: integer
+              body:
+                type: string
+              type:
+                type: string
+              files:
+                type: array
+                items:
+                  description: 'Массив файлов, без base64'
+                  type: string
+                  format: binary
+              images:
+                type: array
+                items:
+                  description: 'Массив изображений, без base64'
+                  type: string
+                  format: binary
             type: object
 externalDocs:
   description: 'Как документировать этот код'
