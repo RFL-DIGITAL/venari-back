@@ -34,7 +34,7 @@ class ChatService
             foreach ($messagesWithThatUser as $message) {
                 $owner = $message->owner;
                 $destination = $message->destination;
-
+                  dd($message->destination);
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
                     $avatar = $destination?->image?->image;
