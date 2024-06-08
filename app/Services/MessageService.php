@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTO\AttachmentDTO;
+use App\DTO\MessageDTO;
 use App\DTO\MessageType;
 use App\Events\NewChatMessageEvent;
 use App\Events\NewMessageEvent;
@@ -13,6 +15,7 @@ use App\Models\ImageMessage;
 use App\Models\LinkMessage;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use function MongoDB\BSON\toJSON;
 
 class MessageService
 {
@@ -123,7 +126,14 @@ class MessageService
                 }
         }
 
-        return $message->toArray();
+        $return = new MessageDTO(
+            $message->id,
+            $message->from_id,
+            $message->to_id,
+            $message->owner,
+            $this->createAttachment($message)
+        );
+        return $return->jsonSerialize();
     }
 
     private function createFileMessage($message, $file)
@@ -167,5 +177,15 @@ class MessageService
 
         $linkMessage->message()->associate($message);
         $linkMessage->save();
+    }
+
+    private function createAttachment($message): AttachmentDTO
+    {
+        return new AttachmentDTO(
+            $message->body,
+            $message->fileMessage?->file,
+            $message->imageMessage?->image,
+            $message->linkMessage?->link,
+        );
     }
 }
