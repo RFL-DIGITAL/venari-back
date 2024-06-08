@@ -48,5 +48,6 @@ Route::prefix('posts')->group(function () {
 
 // todo: Добавить crypter для шифрования персональных данных
 Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
 
 
