@@ -107,6 +107,7 @@ class ChatService
 
         if ($chats != null)
         {
+            dd($chats);
             foreach ($chats as $chat) {
                 $message = ChatMessage::where('chat_id', $chat->id)->get()->last();
 
