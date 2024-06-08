@@ -49,6 +49,8 @@ class ChatService
                     $id = $userID;
                 }
 
+                dd($owner, $destination);
+
                 if ($message->body == null) {
                     if ($message->fileMessage != null) {
                         $body = 'Файл';
@@ -82,7 +84,6 @@ class ChatService
                     $value['user_id']
                 );
             }
-            dd($chatPreviewDTOs);
             return $chatPreviewDTOs;
         }
         else
