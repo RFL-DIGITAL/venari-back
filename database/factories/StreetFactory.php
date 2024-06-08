@@ -7,13 +7,10 @@ use App\Models\Country;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\City>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Street>
  */
-class CityFactory extends Factory
+class StreetFactory extends Factory
 {
-
-    protected $model = City::class;
-
     /**
      * Define the model's default state.
      *
@@ -21,11 +18,12 @@ class CityFactory extends Factory
      */
     public function definition(): array
     {
-        $countriesID = Country::pluck('id')->toArray();
+        $citiesID = City::pluck('id')->toArray();
+
 
         return [
-            'name' => $this->faker->city(),
-            'country_id' => $this->faker->randomElement($countriesID),
+            'name' => $this->faker->streetName(),
+            'city_id' => $this->faker->randomElement($citiesID),
         ];
     }
 }
