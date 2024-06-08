@@ -33,6 +33,6 @@ class ChatMessage extends Model
 
     public function linkMessage(): MorphOne
     {
-        return $this->morphOne(ImageMessage::class, 'message');
+        return $this->morphOne(LinkMessage::class, 'message');
     }
 }

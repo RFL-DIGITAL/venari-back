@@ -6,8 +6,11 @@ use App\DTO\MessageType;
 use App\Events\NewChatMessageEvent;
 use App\Events\NewMessageEvent;
 use App\Models\ChatMessage;
+use App\Models\File;
 use App\Models\FileMessage;
+use App\Models\Image;
 use App\Models\ImageMessage;
+use App\Models\LinkMessage;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
@@ -15,18 +18,15 @@ class MessageService
 {
     public function sendMessage(Request $request): array
     {
-        $ownerID = $request->user()->id;
+        $ownerID = auth()->id();
+//        $ownerID = $request->ownerID;
         $toID = $request->toID;
         $body = $request->body;
         $type = MessageType::tryFrom($request->type);
-        $images = $request->images;
-        $files = $request->files;
 
-        switch ($type)
-        {
+        switch ($type) {
             case MessageType::message:
-                if ($body != '')
-                {
+                if ($body != '') {
                     $message = new Message(
                         [
                             'from_id' => $ownerID,
@@ -39,35 +39,38 @@ class MessageService
                     event(new NewMessageEvent($message));
                 }
 
-                foreach ($images as $image)
-                {
-                    $message = new Message(
-                        [
-                            'from_id' => $ownerID,
-                            'to_id' => $toID,
-                        ]
-                    );
-                    $message->save();
+                if ($request->hasFile('images')) {
+                    foreach ($request->images as $image) {
 
-                    $this->createImageMessage($message, $image);
+                        $message = new Message(
+                            [
+                                'from_id' => $ownerID,
+                                'to_id' => $toID,
+                            ]
+                        );
+                        $message->save();
 
-                    event(new NewMessageEvent($message));
+                        $this->createImageMessage($message, $image);
+
+                        event(new NewMessageEvent($message));
+                    }
                 }
 
-                foreach ($files as $file){
-                    $message = new Message(
-                        [
-                            'from_id' => $ownerID,
-                            'to_id' => $toID,
-                        ]
-                    );
-                    $message->save();
+                if ($request->hasFile('attachments')) {
+                    foreach ($request->attachments as $file) {
+                        $message = new Message(
+                            [
+                                'from_id' => $ownerID,
+                                'to_id' => $toID,
+                            ]
+                        );
+                        $message->save();
 
-                    $this->createFileMessage($message, $file);
+                        $this->createFileMessage($message, $file);
 
-                    event(new NewMessageEvent($message));
+                        event(new NewMessageEvent($message));
+                    }
                 }
-
                 break;
 
             default:
@@ -85,52 +88,84 @@ class MessageService
                     event(new NewChatMessageEvent($message));
                 }
 
-                foreach ($images as $image)
-                {
-                    $message = new ChatMessage(
-                        [
-                            'owner_id' => $ownerID,
-                            'chat_id' => $toID,
-                        ]
-                    );
-                    $message->save();
-                    $message->load('owner');
+                if ($request->hasFile('images')) {
+                    foreach ($request->images as $image) {
+                        $message = new ChatMessage(
+                            [
+                                'owner_id' => $ownerID,
+                                'chat_id' => $toID,
+                            ]
+                        );
+                        $message->save();
+                        $message->load('owner');
 
-                    $this->createImageMessage($message, $image);
+                        $this->createImageMessage($message, $image);
 
-                    event(new NewChatMessageEvent($message));
+                        event(new NewChatMessageEvent($message));
+                    }
                 }
 
-                foreach ($files as $file){
-                    $message = new ChatMessage(
-                        [
-                            'owner_id' => $ownerID,
-                            'chat_id' => $toID,
-                        ]
-                    );
-                    $message->save();
-                    $message->load('owner');
+                if ($request->hasFile('attachments')) {
+                    foreach ($request->attachments as $file) {
+                        $message = new ChatMessage(
+                            [
+                                'owner_id' => $ownerID,
+                                'chat_id' => $toID,
+                            ]
+                        );
+                        $message->save();
+                        $message->load('owner');
 
-                    $this->createFileMessage($message, $file);
+                        $this->createFileMessage($message, $file);
 
-                    event(new NewChatMessageEvent($message));
+                        event(new NewChatMessageEvent($message));
+                    }
                 }
         }
 
         return $message->toArray();
     }
 
-    private function createFileMessage($message, $file){
+    private function createFileMessage($message, $file)
+    {
         $fileMessage = new FileMessage();
-        $fileMessage->file()->associate($file);
+
+        $fileModel = new File(
+            [
+                'file' => base64_encode(file_get_contents($file))
+            ]
+        );
+
+        $fileModel->save();
+
+        $fileMessage->file()->associate($fileModel);
         $fileMessage->message()->associate($message);
         $fileMessage->save();
     }
 
-    private function createImageMessage($message, $image){
+    private function createImageMessage($message, $image)
+    {
         $imageMessage = new ImageMessage();
-        $imageMessage->image()->associate($image);
+
+        $imageModel = new Image(
+            [
+                'image' => base64_encode(file_get_contents($image)),
+                'description' => 'Картинка в чате'
+            ]
+        );
+        $imageModel->save();
+
+        $imageMessage->image()->associate($imageModel);
         $imageMessage->message()->associate($message);
         $imageMessage->save();
+    }
+
+    // todo: создание сообщений с ссылкой
+    private function createLinkMessage($message, $link)
+    {
+        $linkMessage = new LinkMessage();
+
+        $linkMessage->message()->associate($message);
+        $linkMessage->save();
     }
 }

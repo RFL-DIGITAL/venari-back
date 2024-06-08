@@ -65,8 +65,8 @@ class AttachmentDTO implements Jsonable, JsonSerializable
     {
         return [
             'text' => $this->text,
-            'file' => $this->file->file,
-            'image' => $this->image->image,
+            'file' => $this->file?->file,
+            'image' => $this->image?->image,
             'link' => $this->link
         ];
     }

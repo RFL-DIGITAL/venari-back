@@ -10,6 +10,10 @@ class File extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'file'
+    ];
+
     public function fileMessages(): HasMany
     {
         return $this->hasMany(FileMessage::class);

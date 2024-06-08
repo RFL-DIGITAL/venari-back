@@ -11,6 +11,12 @@ class Message extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'from_id',
+        'to_id',
+        'body',
+    ];
+
     public function owner(): BelongsTo {
         return $this->belongsTo(User::class, 'from_id', 'id');
     }
@@ -31,6 +37,6 @@ class Message extends Model
 
     public function linkMessage(): MorphOne
     {
-        return $this->morphOne(ImageMessage::class, 'message');
+        return $this->morphOne(LinkMessage::class, 'message');
     }
 }

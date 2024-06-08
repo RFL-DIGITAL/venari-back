@@ -20,7 +20,7 @@ class HomeController extends Controller
     {
         return view('messages_debug.message', [
             'chatPreviews' => app('App\Http\Controllers\ChatController')->getChats($request),
-            '$messages' => app('App\Http\Controllers\ChatController')->getMessagesByUserID($request, 2),
+            'messages' => app('App\Http\Controllers\ChatController')->getMessagesByUserID($request, 3),
         ]);
     }
 

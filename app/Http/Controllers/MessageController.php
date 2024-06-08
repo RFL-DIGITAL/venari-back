@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 class MessageController extends Controller
 {
 
-    public function __construct(protected MessageService $messageService) {}
+    public function __construct(protected MessageService $messageService)
+    {
+    }
 
     /**
      * Метод отправки сообщений
@@ -23,27 +25,7 @@ class MessageController extends Controller
      * @OA\Post(
      *          path="/api/messages/send-message",
      *          tags={"MessageController"},
-     *      @OA\Parameter(
-     *            description="id отправителя. Это id пользователя",
-     *            name="ownerID",
-     *            type="int",
-     *       ),
-     *     @OA\Parameter(
-     *             description="id получателя. Это ЛИБО id пользователя ЛИБО id чата",
-     *             name="toID",
-     *             type="int",
-     *        ),
-     *     @OA\Parameter(
-     *              description="текст сообщения",
-     *              name="body",
-     *              type="string",
-     *         ),
-     *     @OA\Parameter (
-     *               description="Тип сообщения, которое должно быть отправлено. ЛИБО message, для 1-1, ЛИБО chatMessage, если это сообщение в чат",
-     *               name="type",
-     *               type="string",
-     *          ),
-     *
+     *          @OA\RequestBody(ref="#/components/requestBodies/SendMessageRequest"),
      *          @OA\Response(
      *          response="200",
      *          description="Ответ при успешном выполнении запроса",

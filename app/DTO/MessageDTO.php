@@ -14,7 +14,9 @@ class MessageDTO implements Jsonable, JsonSerializable
         private string        $to_id,
         private User          $owner,
         private AttachmentDTO $attachmentDTO,
-    ) {}
+    ) {
+        $owner->load('image');
+    }
 
     public function getId(): int
     {
@@ -68,7 +70,7 @@ class MessageDTO implements Jsonable, JsonSerializable
             'owner_id' => $this->owner_id,
             'to_id' => $this->to_id,
             'owner' => $this->owner,
-            'attachments' => $this->attachmentDTO->toJson(),
+            'attachments' => $this->attachmentDTO,
         ];
     }
 
