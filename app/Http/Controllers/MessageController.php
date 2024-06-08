@@ -11,6 +11,7 @@ class MessageController extends Controller
 
     public function __construct(protected MessageService $messageService)
     {
+        $this->middleware('auth:api');
     }
 
     /**
