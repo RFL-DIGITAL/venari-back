@@ -139,7 +139,17 @@ class VacancyService
      */
     public function getInnerVacancies(): array
     {
-        return Vacancy::where('is_closed', false)->where('is_outer', false)->get()->toArray();
+        $vacancy = Vacancy::where('is_closed', false)->where('is_outer', false)->get()
+            ->load('employment')
+            ->load('experience')
+            ->load('city')
+            ->load('position')
+            ->load('image')
+            ->toArray();
+
+        $vacancy->department->load('company');
+
+        return [$vacancy];
     }
 
     /**

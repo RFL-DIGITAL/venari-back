@@ -16,14 +16,14 @@ namespace Responses {
         public int $id;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/department")
          */
-        public ?int $department_id;
+        public Department $department;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/position")
          */
-        public int $position_id;
+        public Position $position;
 
         /**
          * @OA\Property()
@@ -56,9 +56,9 @@ namespace Responses {
         public string $link_to_test_document;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/city")
          */
-        public int $city_id;
+        public City $city;
 
         /**
          * @OA\Property()
@@ -101,14 +101,14 @@ namespace Responses {
         public ?string $additional;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/experience")
          */
-        public ?int $experience_id;
+        public Experience $experience;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/employment")
          */
-        public ?int $employment_id;
+        public Employment $employment;
 
         /**
          * @OA\Property()
@@ -121,9 +121,9 @@ namespace Responses {
         public ?float $higher_salary;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/image")
          */
-        public ?int $image_id;
+        public Image $image;
     }
 
     /** @OA\Schema(schema="detailVacancy") */
@@ -135,9 +135,9 @@ namespace Responses {
         public int $id;
 
         /**
-         * @OA\Property(ref="#/components/schemas/department")
+         * @OA\Property(ref="#/components/schemas/detailDepartment")
          */
-        public Department $department;
+        public DetailDepartment $department;
 
         /**
          * @OA\Property(ref="#/components/schemas/position")
@@ -250,6 +250,35 @@ namespace Responses {
         public $skills;
     }
 
+    /** @OA\Schema(schema="detailDepartment") */
+    class DetailDepartment
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/detailCompany")
+         */
+        public DetailCompany $company;
+    }
+
     /** @OA\Schema(schema="department") */
     class Department
     {
@@ -279,8 +308,8 @@ namespace Responses {
         public Company $company;
     }
 
-    /** @OA\Schema(schema="company") */
-    class Company
+    /** @OA\Schema(schema="detailCompany") */
+    class DetailCompany
     {
         /**
          * @OA\Property()
@@ -326,6 +355,56 @@ namespace Responses {
          * @OA\Property(ref="#/components/schemas/building")
          */
         public Building $building;
+
+    }
+
+    /** @OA\Schema(schema="company") */
+    class Company
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $established_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $nick_name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $image_id;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $building_id;
 
     }
 
@@ -382,9 +461,9 @@ namespace Responses {
         public $updated_at;
 
         /**
-         * @OA\Property(ref="#/components/schemas/city")
+         * @OA\Property(ref="#/components/schemas/detailCity")
          */
-        public City $city;
+        public DetailCity $city;
     }
 
     /** @OA\Schema(schema="skill") */
@@ -413,6 +492,35 @@ namespace Responses {
 
     /** @OA\Schema(schema="city") */
     class City
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $country_id;
+    }
+
+    /** @OA\Schema(schema="detailCity") */
+    class DetailCity
     {
         /**
          * @OA\Property()

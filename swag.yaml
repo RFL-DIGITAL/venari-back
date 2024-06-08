@@ -273,11 +273,10 @@ components:
       properties:
         id:
           type: integer
-        department_id:
-          type: integer
-          nullable: true
-        position_id:
-          type: integer
+        department:
+          $ref: '#/components/schemas/department'
+        position:
+          $ref: '#/components/schemas/position'
         description:
           type: string
         is_online:
@@ -290,8 +289,8 @@ components:
           type: boolean
         link_to_test_document:
           type: string
-        city_id:
-          type: integer
+        city:
+          $ref: '#/components/schemas/city'
         is_closed:
           type: boolean
         is_outer:
@@ -309,12 +308,10 @@ components:
         additional:
           type: string
           nullable: true
-        experience_id:
-          type: integer
-          nullable: true
-        employment_id:
-          type: integer
-          nullable: true
+        experience:
+          $ref: '#/components/schemas/experience'
+        employment:
+          $ref: '#/components/schemas/employment'
         lower_salary:
           type: number
           format: float
@@ -323,16 +320,15 @@ components:
           type: number
           format: float
           nullable: true
-        image_id:
-          type: integer
-          nullable: true
+        image:
+          $ref: '#/components/schemas/image'
       type: object
     detailVacancy:
       properties:
         id:
           type: integer
         department:
-          $ref: '#/components/schemas/department'
+          $ref: '#/components/schemas/detailDepartment'
         position:
           $ref: '#/components/schemas/position'
         description:
@@ -385,6 +381,19 @@ components:
           items:
             $ref: '#/components/schemas/skill'
       type: object
+    detailDepartment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company:
+          $ref: '#/components/schemas/detailCompany'
+      type: object
     department:
       properties:
         id:
@@ -398,7 +407,7 @@ components:
         company:
           $ref: '#/components/schemas/company'
       type: object
-    company:
+    detailCompany:
       properties:
         id:
           type: integer
@@ -418,6 +427,29 @@ components:
           $ref: '#/components/schemas/image'
         building:
           $ref: '#/components/schemas/building'
+      type: object
+    company:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        established_at:
+          format: date
+        nick_name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        image_id:
+          type: integer
+          nullable: true
+        building_id:
+          type: integer
+          nullable: true
       type: object
     building:
       properties:
@@ -443,7 +475,7 @@ components:
         updated_at:
           format: date
         city:
-          $ref: '#/components/schemas/city'
+          $ref: '#/components/schemas/detailCity'
       type: object
     skill:
       properties:
@@ -457,6 +489,20 @@ components:
           format: date
       type: object
     city:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        country_id:
+          type: integer
+          nullable: true
+      type: object
+    detailCity:
       properties:
         id:
           type: integer
