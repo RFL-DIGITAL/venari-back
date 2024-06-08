@@ -23,7 +23,7 @@ class MessageService
     {
         $ownerID = auth()->id();
 //        $ownerID = $request->ownerID;
-        $toID = $request->toID;
+        $toID = $request->to_id;
         $body = $request->body;
         $type = MessageType::tryFrom($request->type);
 
