@@ -15,7 +15,7 @@ class NewMessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public MessageDTO $message;
+    public array $message;
 
     /**
      * Create a new event instance.
