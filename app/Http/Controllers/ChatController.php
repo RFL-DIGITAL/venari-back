@@ -8,7 +8,10 @@ use Illuminate\Http\JsonResponse;
 
 class ChatController extends Controller
 {
-    public function __construct(protected ChatService $chatService) {}
+    public function __construct(protected ChatService $chatService)
+    {
+        $this->middleware('auth:api');
+    }
 
     /**
      * Метод получения всех чатов пользователя. Отсортированы в обратном порядке по времени последнего сообщения
