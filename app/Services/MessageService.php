@@ -48,7 +48,7 @@ class MessageService
                         $this->createAttachment($message)
                     );
 
-                    event(new NewMessageEvent($message));
+                    event(new NewMessageEvent($messageDTO));
                 }
 
                 if ($request->hasFile('images')) {
