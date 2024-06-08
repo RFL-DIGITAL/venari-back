@@ -37,6 +37,7 @@ class ChatService
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
                     $avatar = $destination?->image?->image;
+                    dd($destination, $owner);
                     $id = $destination->id;
                 } else if ($destination->id == $userID and $owner->id != $userID) {
                     $key = $owner->name;
@@ -106,7 +107,6 @@ class ChatService
 
         if ($chats != null)
         {
-            dd($chats);
             foreach ($chats as $chat) {
                 $message = ChatMessage::where('chat_id', $chat->id)->get()->last();
 
