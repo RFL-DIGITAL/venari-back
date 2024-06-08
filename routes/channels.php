@@ -2,6 +2,7 @@
 
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 Broadcast::channel('user.{userId}', function ($user, $userId) {
-    return $user->id === $userId;
+    return Auth::check();
 });
 
 
