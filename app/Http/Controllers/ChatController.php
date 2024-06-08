@@ -39,7 +39,6 @@ class ChatController extends Controller
     public function getChats(Request $request): JsonResponse
     {
         $user_id = $request->user()->id;
-        dd(auth()->user());
         $recentChats = array_merge( $this->chatService->formatOneToOnes($user_id),
             $this->chatService->formatGroups($user_id));
 

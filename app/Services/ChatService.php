@@ -33,6 +33,7 @@ class ChatService
         if ($messagesWithThatUser != null) {
             foreach ($messagesWithThatUser as $message) {
                 $owner = $message->owner;
+                dd($owner);
                 $destination = $message->destination;
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
