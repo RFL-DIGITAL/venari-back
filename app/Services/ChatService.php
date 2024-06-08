@@ -37,7 +37,6 @@ class ChatService
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
                     $avatar = $destination?->image?->image;
-                    dd($destination, $owner);
                     $id = $destination->id;
                 } else if ($destination->id == $userID and $owner->id != $userID) {
                     $key = $owner->name;
@@ -83,6 +82,7 @@ class ChatService
                     $value['user_id']
                 );
             }
+            dd($chatPreviewDTOs);
             return $chatPreviewDTOs;
         }
         else
