@@ -10,8 +10,8 @@ class ChatPreviewDTO implements Jsonable, JsonSerializable
     public function __construct(
         private string $name,
         private string $avatar,
-        private string $body,
-        private string $updated_at,
+        private ?string $body,
+        private ?string $updated_at,
         private MessageType $type,
         private int $id,
     ) {}
@@ -73,12 +73,12 @@ class ChatPreviewDTO implements Jsonable, JsonSerializable
         ];
     }
 
-    public function getType(): Type
+    public function getType(): MessageType
     {
         return $this->type;
     }
 
-    public function setType(Type $type): void
+    public function setType(MessageType $type): void
     {
         $this->type = $type;
     }

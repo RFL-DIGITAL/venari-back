@@ -12,6 +12,11 @@ class Image extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'image',
+        'description'
+    ];
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

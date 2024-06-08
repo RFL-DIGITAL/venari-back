@@ -19,6 +19,7 @@ jobs:
             cd ${{secrets.PROJECT_FOLDER }};
             cd venari-back;
             git checkout master;
+            git reset --hard origin/master;
             git pull origin master;
             php artisan swag:generate;
             cd ..;
