@@ -39,6 +39,15 @@ class MessageService
                     );
                     $message->save();
 
+
+                    $messageDTO = new MessageDTO(
+                        $message->id,
+                        $message->from_id,
+                        $message->to_id,
+                        $message->owner,
+                        $this->createAttachment($message)
+                    );
+
                     event(new NewMessageEvent($message));
                 }
 
