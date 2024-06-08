@@ -31,6 +31,7 @@ class CompanyFactory extends Factory
             'nick_name' => $this->faker->userName(),
             'building_id' => $this->faker->randomElement($buildingsID),
             'preview_id' => $this->faker->randomElement($imagesID),
+            'image_id' => $this->faker->randomElement($imagesID),
         ];
     }
 }

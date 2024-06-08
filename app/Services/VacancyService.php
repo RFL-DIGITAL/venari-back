@@ -142,4 +142,28 @@ class VacancyService
         return Vacancy::where('is_closed', false)->where('is_outer', false)->get()->toArray();
     }
 
+    /**
+     * Метод получения подробной информации о вакансии по id
+     *
+     * @param int $id - id вакансии
+     * @return Vacancy
+     */
+    public function getVacancyByID(int $id): Vacancy {
+        $vacancy = Vacancy::where('id', $id)->get()->first()
+            ->load('department')
+            ->load('skills')
+            ->load('position')
+            ->load('employment')
+            ->load('experience')
+            ->load('image');
+        $vacancy->department->load('company');
+        $vacancy->department->company->load('image');
+        $vacancy->department->company->load('building');
+        $vacancy->department->company->building->load('street');
+        $vacancy->department->company->building->street->load('city');
+        $vacancy->department->company->building->street->city->load('country');
+
+        return $vacancy;
+    }
+
 }

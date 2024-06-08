@@ -29,4 +29,14 @@ class Company extends Model
     {
         return $this->belongsTo(Building::class);
     }
+
+    public function preview(): BelongsTo
+    {
+        return $this->belongsTo(Image::class);
+    }
+
+    public function image(): BelongsTo
+    {
+        return $this->belongsTo(Image::class);
+    }
 }

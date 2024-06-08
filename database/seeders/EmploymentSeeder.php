@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Employment;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class EmploymentSeeder extends Seeder
 {
@@ -13,7 +12,7 @@ class EmploymentSeeder extends Seeder
      */
     public function run(): void
     {
-        new Employment([
+        DB::table('employments')->insert([
             [
                 'name' => 'Без опыта'
             ],

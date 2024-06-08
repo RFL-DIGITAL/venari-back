@@ -41,4 +41,9 @@ class Vacancy extends Model
     {
         return $this->belongsTo(Employment::class);
     }
+
+    public function image(): BelongsTo
+    {
+        return $this->belongsTo(Image::class);
+    }
 }

@@ -15,8 +15,11 @@ return new class extends Migration
             $table->string('nick_name');
             $table->foreignId('building_id')->nullable();
             $table->foreignId('preview_id')->nullable();
+            $table->foreignId('image_id')->nullable();
 
             $table->foreign('preview_id')->references('id')->on('images')
+                ->onUpdate('cascade')->onDelete('set null');
+            $table->foreign('image_id')->references('id')->on('images')
                 ->onUpdate('cascade')->onDelete('set null');
             $table->foreign('building_id')->references('id')->on('buildings')
                 ->onUpdate('cascade')->onDelete('set null');
@@ -33,6 +36,7 @@ return new class extends Migration
             $table->dropColumn('nick_name');
             $table->dropForeign(['building_id']);
             $table->dropForeign(['preview_id']);
+            $table->dropForeign(['image_id']);
         });
     }
 };

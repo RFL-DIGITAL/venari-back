@@ -146,6 +146,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getVacancies'
+  '/api/vacancies/{id}':
+    get:
+      tags:
+        - VacancyController
+      summary: 'Метод получения подробной информации о вакансии по id'
+      operationId: eaa6d5b5a84d934bfc97c0df706eddd2
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
 components:
   schemas:
     messageType:

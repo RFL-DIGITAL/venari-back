@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Experience;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ExperienceSeeder extends Seeder
 {
@@ -12,9 +12,9 @@ class ExperienceSeeder extends Seeder
      */
     public function run(): void
     {
-        new Experience([
+        DB::table('experiences')->insert([
             [
-                'name' => 'Полная занятость'
+                'name' => 'Полная занятость',
             ],
             [
                 'name' => 'Частичная занятость'

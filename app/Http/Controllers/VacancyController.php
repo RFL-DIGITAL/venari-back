@@ -52,4 +52,24 @@ class VacancyController extends Controller
 
         return $this->successResponse($vacancies);
     }
+
+    /**
+     * Метод получения подробной информации о вакансии по id
+     *
+     * @OA\Get(
+     *        path="/api/vacancies/{id}",
+     *        tags={"VacancyController"},
+     *        @OA\Response(
+     *        response="200",
+     *        description="Ответ при успешном выполнении запроса"
+ *          )
+     *    )
+     *
+     * @param int $id - id вакансии
+     * @return JsonResponse
+     */
+    public function getVacancyByID(int $id): JsonResponse
+    {
+        return $this->successResponse($this->vacancyService->getVacancyByID($id));
+    }
 }
