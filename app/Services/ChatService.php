@@ -37,16 +37,16 @@ class ChatService
 
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
-                    $avatar = $destination->image->image;
+                    $avatar = $destination?->image?->image;
                     $id = $destination->id;
                 } else if ($destination->id == $userID and $owner->id != $userID) {
                     $key = $owner->name;
-                    $avatar = $owner->image->image;
+                    $avatar = $owner?->image?->image;
                     $id = $owner->id;
                 } else {
                     $key = 'Избранное';
                     // todo картинка для избранного
-                    $avatar = Image::where('id', $this->SAVED_MESSAGES_IMAGE_ID)->first()->image;
+                    $avatar = Image::where('id', $this->SAVED_MESSAGES_IMAGE_ID)->first()?->image;
                     $id = $userID;
                 }
 
@@ -131,7 +131,7 @@ class ChatService
 
                 $recentGroups[] = new ChatPreviewDTO(
                     $chat->name,
-                    $chat->image->image,
+                    $chat?->image?->image,
                     $body,
                     $message != null ? $message->updated_at->toDateTimeString() : '',
                     MessageType::chatMessage,
