@@ -77,7 +77,7 @@ class ChatService
             foreach ($recentChats as $key => $value) {
                 $chatPreviewDTOs[] = new ChatPreviewDTO(
                     $key,
-                    $value['avatar'],
+                    $value['avatar'] ?? "",
                     $value['body'],
                     $value['updated_at'],
                     MessageType::message,
