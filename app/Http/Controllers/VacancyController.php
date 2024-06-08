@@ -56,12 +56,23 @@ class VacancyController extends Controller
     /**
      * Метод получения подробной информации о вакансии по id
      *
+     * @OA\Schema( schema="getVacancyByID",
+     *              @OA\Property(property="success",type="boolean",example="true"),
+     *              @OA\Property(property="response",type="array",
+     *                   @OA\Items(ref="#/components/schemas/detailVacancy")),
+     *   )
+     *
      * @OA\Get(
      *        path="/api/vacancies/{id}",
      *        tags={"VacancyController"},
+     *     @OA\Parameter(
+     *           name="id",
+     *           description="id вакансии",
+     *           required=true),
      *        @OA\Response(
      *        response="200",
-     *        description="Ответ при успешном выполнении запроса"
+     *        description="Ответ при успешном выполнении запроса",
+     *     @OA\JsonContent(ref="#/components/schemas/getVacancyByID")
  *          )
      *    )
      *

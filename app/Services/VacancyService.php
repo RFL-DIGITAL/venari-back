@@ -146,15 +146,16 @@ class VacancyService
      * Метод получения подробной информации о вакансии по id
      *
      * @param int $id - id вакансии
-     * @return Vacancy
+     * @return array
      */
-    public function getVacancyByID(int $id): Vacancy {
+    public function getVacancyByID(int $id): array {
         $vacancy = Vacancy::where('id', $id)->get()->first()
             ->load('department')
             ->load('skills')
             ->load('position')
             ->load('employment')
             ->load('experience')
+            ->load('city')
             ->load('image');
         $vacancy->department->load('company');
         $vacancy->department->company->load('image');
@@ -163,7 +164,7 @@ class VacancyService
         $vacancy->department->company->building->street->load('city');
         $vacancy->department->company->building->street->city->load('country');
 
-        return $vacancy;
+        return [$vacancy];
     }
 
 }
