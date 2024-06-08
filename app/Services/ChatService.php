@@ -41,7 +41,7 @@ class ChatService
                     $id = $destination->id;
                 } else if ($destination->id == $userID and $owner->id != $userID) {
                     $key = $owner->name;
-                    $avatar = $owner?->image?->image;
+                    $avatar = $owner?->image?->image ?? "";
                     $id = $owner->id;
                 } else {
                     $key = 'Избранное';
