@@ -27,7 +27,7 @@ Route::prefix('vacancies')->group(function () {
     Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
 });
 
-Route::prefix('chats')->group(function () {
+Route::prefix('chats')->middleware('auth:api')->group(function () {
     Route::get('personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
         ->name('getMessagesByUserID');
     Route::get('group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
@@ -48,5 +48,6 @@ Route::prefix('posts')->group(function () {
 
 // todo: Добавить crypter для шифрования персональных данных
 Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
 
 
