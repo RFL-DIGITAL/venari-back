@@ -13,9 +13,12 @@ class Post extends Model
     use HasFactory;
 
     /**
-     * @var int виртуальное поле с количеством комментов
+     * @return int - количество комментариев к этому посту
      */
-    public int $commentCount;
+    public function getCommentCountAttribute(): int
+    {
+        return $this->comments()->count();
+    }
 
     public function comments(): HasMany
     {
