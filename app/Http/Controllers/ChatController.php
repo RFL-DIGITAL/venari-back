@@ -39,19 +39,20 @@ class ChatController extends Controller
     public function getChats(Request $request): JsonResponse
     {
         $user_id = $request->user()->id;
-        $recentChats = array_merge( $this->chatService->formatOneToOnes($user_id),
+        $recentChats = array_merge($this->chatService->formatOneToOnes($user_id),
             $this->chatService->formatGroups($user_id));
 
         // Перемешиваем, дабы групповые чаты не оставались внизу
         shuffle($recentChats);
 
         // Сортируем чаты - последний самый верхний
-        usort($recentChats, function($a, $b)
-        {
+        usort($recentChats, function ($a, $b) {
             return $a->getUpdatedAt() < $b->getUpdatedAt();
         });
 
-        return $this->successResponse($recentChats);
+        return $this->successResponse(
+            $this->paginate($recentChats)
+        );
     }
 
     /**
@@ -84,7 +85,9 @@ class ChatController extends Controller
     public function getMessagesByUserID(Request $request, $userID): JsonResponse
     {
         return $this->successResponse(
-            $this->chatService->getMessagesByUserID($request->user()->id, $userID)
+            $this->paginate(
+                $this->chatService->getMessagesByUserID($request->user()->id, $userID)
+            )
         );
     }
 
@@ -101,7 +104,7 @@ class ChatController extends Controller
      *          path="/api/chats/group/{chatID}",
      *          tags={"ChatController"},
      *       @OA\Parameter(
-         *            name="chatID",
+     *            name="chatID",
      *            description="id чата",
      *            required=true),
      *          @OA\Response(
@@ -117,7 +120,9 @@ class ChatController extends Controller
     public function getChatMessagesByChatID($chatID): JsonResponse
     {
         return $this->successResponse(
-            $this->chatService->getChatMessagesByChatID($chatID)
+            $this->paginate(
+                $this->chatService->getChatMessagesByChatID($chatID)
+            )
         );
     }
 }

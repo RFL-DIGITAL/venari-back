@@ -696,6 +696,11 @@ namespace Responses {
         /**
          * @OA\Property()
          */
+        public int $comment_count;
+
+        /**
+         * @OA\Property()
+         */
         public string $title;
 
 
@@ -757,6 +762,11 @@ namespace Responses {
          * @OA\Property()
          */
         public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $comment_count;
 
         /**
          * @OA\Property()
