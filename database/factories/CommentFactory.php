@@ -6,9 +6,10 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends Factory<Model>
  */
 class CommentFactory extends Factory
 {
@@ -21,13 +22,14 @@ class CommentFactory extends Factory
      */
     public function definition(): array
     {
-        $users_id = User::pluck('id')->toArray();
-        $posts_id = Post::pluck('id')->toArray();
+        $usersID = User::pluck('id')->toArray();
+        $postsID = Post::pluck('id')->toArray();
+
 
         return [
             'text' => $this->faker->realText(),
-            'user_id' => $this->faker->randomElement($users_id),
-            'post_id' => $this->faker->randomElement($posts_id),
+            'user_id' => $this->faker->randomElement($usersID),
+            'post_id' => $this->faker->randomElement($postsID),
         ];
     }
 }

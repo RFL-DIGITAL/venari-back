@@ -59,7 +59,7 @@ class PostController extends Controller
      *
      * @OA\Schema( schema="getPostByID",
      *               @OA\Property(property="success",type="boolean",example="true"),
-     *               @OA\Property(property="post", ref="#/components/schemas/post"),
+     *               @OA\Property(property="post", ref="#/components/schemas/detailPost"),
      *    )
      *
      * @OA\Get(

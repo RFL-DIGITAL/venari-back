@@ -1,5 +1,6 @@
 <?php
 /** @noinspection ALL */
+
 // @formatter:off
 
 namespace Responses {
@@ -706,7 +707,7 @@ namespace Responses {
         /**
          * @OA\Property()
          */
-        public int $user_id;
+        public DetailUser $user;
 
         /**
          * @OA\Property(ref="#/components/schemas/attributes")
@@ -749,6 +750,80 @@ namespace Responses {
         public $updated_at;
     }
 
+    /** @OA\Schema(schema="detailPost") */
+    class DetailPost
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $title;
+
+        /**
+         * @OA\Property()
+         */
+        public string $text;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/detailUser")
+         */
+        public DetailUser $user;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/attributes")
+         */
+        public string $attributes;
+
+        /**
+         * @OA\Property()
+         */
+        public int $likes;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/sources")
+         */
+        public Source $source;
+
+        /**
+         * @OA\Property()
+         */
+        public string $user_name;
+
+        /**
+         * @OA\Property(format="url")
+         */
+        public string $source_url;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"))
+         */
+        public $comments;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/image"))
+         */
+        public $images;
+    }
+
     /** @OA\Schema(schema="attributes") */
     class Attributes
     {
@@ -758,7 +833,65 @@ namespace Responses {
     /** @OA\Schema(schema="user") */
     class User
     {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
 
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $email;
+
+        /**
+         * @OA\Property()
+         */
+        public int $workingStatus_id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $position_id;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $sex;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $date_of_birth;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $hrable_id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $hrable_type;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $image_id;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
     }
 
     /** @OA\Schema(schema="previewChat") */
@@ -850,6 +983,186 @@ namespace Responses {
          * @OA\Property()
          */
         public string $body;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="comment") */
+    class Comment
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $text;
+
+        /**
+         * @OA\Property()
+         */
+        public int $post_id;
+
+        /**
+         * @OA\Property(description="id комментария, на который отвечаем")
+         */
+        public ?int $parent_id;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="detailComment") */
+    class DetailComment
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $text;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $post_id;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/comment"), description="Массив ответов")
+         */
+        public $all_children;
+
+        /**
+         * @OA\Property(description="id комментария, на который отвечаем")
+         */
+        public ?int $parent_id;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="detailUser") */
+    class DetailUser
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $email;
+
+        /**
+         * @OA\Property()
+         */
+        public int $workingStatus_id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $position_id;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $sex;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $date_of_birth;
+
+        /**
+         * @OA\Property()
+         */
+        public HR $hrable;
+
+        /**
+         * @OA\Property()
+         */
+        public Image $image;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="HR") */
+    class HR {
+
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public int $company_id;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+    }
+
+    /** @OA\Schema(schema="detailHR") */
+    class DetailHR {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public Company $company;
 
         /**
          * @OA\Property(format="date")

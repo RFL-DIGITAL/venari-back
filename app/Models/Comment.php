@@ -10,11 +10,30 @@ class Comment extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'text',
+        'post_id',
+        'child_id'
+    ];
+
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 
     public function post(): BelongsTo {
         return $this->belongsTo(Post::class);
+    }
+
+    public function parent(): BelongsTo {
+        return $this->belongsTo(Comment::class);
+    }
+
+    public function child(): BelongsTo {
+        return $this->belongsTo(Comment::class);
+    }
+
+    public function allChildren(): BelongsTo {
+        return $this->child()->with('allChildren');
     }
 }

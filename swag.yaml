@@ -87,6 +87,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getChatMessagesByChatID'
+  /api/comments/send-comment:
+    post:
+      tags:
+        - CommentController
+      summary: 'Метод отправки комментария'
+      operationId: e0fb87a1130be57faf66f1ca0405bdb8
+      requestBody:
+        $ref: '#/components/requestBodies/SendCommentRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendComment'
   /api/messages/send-message:
     post:
       tags:
@@ -221,6 +236,16 @@ components:
           items:
             $ref: '#/components/schemas/chatMessage'
       type: object
+    sendComment:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/comment'
+      type: object
     sendMessage:
       properties:
         success:
@@ -247,7 +272,7 @@ components:
           type: boolean
           example: 'true'
         post:
-          $ref: '#/components/schemas/post'
+          $ref: '#/components/schemas/detailPost'
       type: object
     getVacancies:
       properties:
@@ -585,8 +610,8 @@ components:
           type: string
         text:
           type: string
-        user_id:
-          type: integer
+        user:
+          $ref: '#/components/schemas/detailUser'
         attributes:
           $ref: '#/components/schemas/attributes'
         likes:
@@ -605,8 +630,72 @@ components:
         updated_at:
           format: date
       type: object
+    detailPost:
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/detailUser'
+        attributes:
+          $ref: '#/components/schemas/attributes'
+        likes:
+          type: integer
+        description:
+          type: string
+        source:
+          $ref: '#/components/schemas/sources'
+        user_name:
+          type: string
+        source_url:
+          type: string
+          format: url
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailComment'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      type: object
     attributes: {  }
-    user: {  }
+    user:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        workingStatus_id:
+          type: integer
+        position_id:
+          type: integer
+        sex:
+          type: boolean
+        date_of_birth:
+          format: date
+        hrable_id:
+          type: integer
+          nullable: true
+        hrable_type:
+          type: string
+        image_id:
+          type: integer
+          nullable: true
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
     previewChat:
       properties:
         name:
@@ -654,6 +743,93 @@ components:
         updated_at:
           format: date
       type: object
+    comment:
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        post_id:
+          type: integer
+        parent_id:
+          description: 'id комментария, на который отвечаем'
+          type: integer
+          nullable: true
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    detailComment:
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        post_id:
+          type: integer
+          nullable: true
+        all_children:
+          description: 'Массив ответов'
+          type: array
+          items:
+            $ref: '#/components/schemas/comment'
+        parent_id:
+          description: 'id комментария, на который отвечаем'
+          type: integer
+          nullable: true
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    detailUser:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        workingStatus_id:
+          type: integer
+        position_id:
+          type: integer
+        sex:
+          type: boolean
+        date_of_birth:
+          format: date
+        hrable:
+          $ref: '#/components/schemas/HR'
+        image:
+          $ref: '#/components/schemas/image'
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    HR:
+      properties:
+        id:
+          type: integer
+        company_id:
+          type: integer
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    detailHR:
+      properties:
+        id:
+          type: integer
+        company:
+          $ref: '#/components/schemas/company'
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
   requestBodies:
     LoginRequest:
       content:
@@ -676,6 +852,19 @@ components:
                 type: string
               login:
                 type: string
+            type: object
+    SendCommentRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              text:
+                type: string
+              postID:
+                type: integer
+              parentID:
+                description: "id комментария, на который отвечаем. Необязательный\n * параметр"
+                type: integer
             type: object
     SendMessageRequest:
       content:
