@@ -171,7 +171,8 @@ class ChatService
                     $message->from_id,
                     $message->to_id,
                     $message->owner,
-                    $this->createAttachment($message)
+                    $this->createAttachment($message),
+                    $message->created_at
                 );
             }
         }
@@ -197,7 +198,8 @@ class ChatService
                 $chatMessage->owner_id,
                 $chatMessage->chat_id,
                 $chatMessage->owner,
-                $this->createAttachment($chatMessage)
+                $this->createAttachment($chatMessage),
+                $chatMessage->created_at
             );
         }
 

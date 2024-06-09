@@ -45,7 +45,8 @@ class MessageService
                         $message->from_id,
                         $message->to_id,
                         $message->owner,
-                        $this->createAttachment($message)
+                        $this->createAttachment($message),
+                        $message->created_at
                     );
 
                     event(new NewMessageEvent($messageDTO));
@@ -140,7 +141,8 @@ class MessageService
             $message->from_id,
             $message->to_id,
             $message->owner,
-            $this->createAttachment($message)
+            $this->createAttachment($message),
+            $message->created_at
         );
         return $return->jsonSerialize();
     }
