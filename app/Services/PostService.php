@@ -23,15 +23,15 @@ class PostService
 
     public function getOuterPosts(int $postCount): array
     {
-        $xml = simplexml_load_file($this->HABR_RSS_LINK.'&limit='.$postCount,
+        $xml = simplexml_load_file($this->HABR_RSS_LINK . '&limit=' . $postCount,
             'SimpleXMLElement',
             LIBXML_NOCDATA);
 
         $posts = [];
 
         foreach ($xml->channel->item as $item) {
-            $title = (string) $item->title;
-            $user_name = (string) $item->children('dc', true)
+            $title = (string)$item->title;
+            $user_name = (string)$item->children('dc', true)
                 ->creator;
 
             $foundPost = Post::where('title', $title)
@@ -39,8 +39,7 @@ class PostService
                 ->first();
 
 
-            if ($foundPost != null)
-            {
+            if ($foundPost != null) {
                 $posts[] = $foundPost->toArray();
                 continue;
             }
@@ -48,24 +47,24 @@ class PostService
             $post = new Post();
             $post->title = $title;
             $post->user_name = $user_name;
-            $post->source_url = (string) $item->guid;
+            $post->source_url = (string)$item->guid;
             $post->description =
                 strip_tags(
                     str_replace(
                         '&nbsp;',
                         '',
-                    str_replace(
-                        'Читать далее',
-                        '',
-                    str_replace(
-                    'Читать дальше &rarr;',
-                    '',
-                    trim(
-                        strip_tags(
-                            (string) $item->description)
-                    )))));
+                        str_replace(
+                            'Читать далее',
+                            '',
+                            str_replace(
+                                'Читать дальше &rarr;',
+                                '',
+                                trim(
+                                    strip_tags(
+                                        (string)$item->description)
+                                )))));
 
-            $detailPostPage = Parser::getDocument((string) $item->guid);
+            $detailPostPage = Parser::getDocument((string)$item->guid);
             $pq = phpQuery::newDocument($detailPostPage);
 
             $postText = $pq->find('.tm-article-body')->text();
@@ -83,6 +82,19 @@ class PostService
 
     public function getPostByID($id)
     {
-        return Post::where('id', $id)->first()->toArray();
+        $post = Post::where('id', $id)->first();
+
+        if ($post->user?->hrable != null) {
+            return $post->load([
+                'user.hrable.company',
+                'images',
+                'comments.allChildren'
+            ])->toArray();
+        } else {
+            return $post->load([
+                'images',
+                'comments.allChildren'
+            ])->toArray();
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\VacancyController;
@@ -47,6 +48,9 @@ Route::prefix('posts')->group(function () {
     Route::get('', [PostController::class, 'getPosts'])->name('getPosts');
 });
 
+Route::prefix('comments')->group(function () {
+    Route::post('send-comment', [CommentController::class, 'sendComment'])->name('sendComment');
+});
 
 // todo: Добавить crypter для шифрования персональных данных
 Route::post('register', [UserController::class, 'register']);

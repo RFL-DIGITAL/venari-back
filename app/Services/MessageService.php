@@ -22,8 +22,8 @@ class MessageService
     public function sendMessage(Request $request): array
     {
         $ownerID = auth()->id();
-//        $ownerID = $request->ownerID;
         $toID = $request->to_id;
+        
         $body = $request->body;
         $type = MessageType::tryFrom($request->type);
 
