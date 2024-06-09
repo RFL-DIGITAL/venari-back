@@ -121,9 +121,9 @@ namespace Responses {
         public ?float $higher_salary;
 
         /**
-         * @OA\Property(ref="#/components/schemas/image")
+         * @OA\Property()
          */
-        public Image $image;
+        public ?int $image_id;
     }
 
     /** @OA\Schema(schema="detailVacancy") */
@@ -397,9 +397,9 @@ namespace Responses {
         public $updated_at;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/image")
          */
-        public ?int $image_id;
+        public Image $image;
 
         /**
          * @OA\Property()

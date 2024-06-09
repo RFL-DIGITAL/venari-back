@@ -14,6 +14,7 @@ class MessageDTO implements Jsonable, JsonSerializable
         private string        $to_id,
         private User          $owner,
         private AttachmentDTO $attachmentDTO,
+        private string        $created_at
     ) {
         $owner->load('image');
     }
@@ -71,6 +72,7 @@ class MessageDTO implements Jsonable, JsonSerializable
             'to_id' => $this->to_id,
             'owner' => $this->owner,
             'attachments' => $this->attachmentDTO,
+            'created_at' => $this->created_at
         ];
     }
 

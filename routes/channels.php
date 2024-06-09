@@ -2,6 +2,7 @@
 
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Broadcast;
 | used to check if an authenticated user can listen to the channel.
 |
 */
+Broadcast::channel('user.{userId}', function ($user, $userId) {
+    if ($user->id === $userId) {
+        return array('name' => $user->name);
+    }});
 
 Broadcast::channel('messages-{toID}', function ($user, $toID) {
     if ($user->id == $toID) {

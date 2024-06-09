@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\DTO\MessageDTO;
 use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -14,14 +15,14 @@ class NewMessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Message $message;
+    public array $message;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Message $message)
+    public function __construct(MessageDTO $message)
     {
-        $this->message = $message;
+        $this->message = $message->jsonSerialize();
     }
 
     /**
@@ -32,7 +33,7 @@ class NewMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('messages-'.$this->message->to_id),
+            new PrivateChannel('messages-'.$this->message['to_id']),
         ];
     }
 }

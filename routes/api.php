@@ -29,7 +29,7 @@ Route::prefix('vacancies')->group(function () {
     Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
 });
 
-Route::prefix('chats')->middleware('auth:api')->group(function () {
+Route::middleware('auth:api')->prefix('chats')->group(function () {
     Route::get('personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
         ->name('getMessagesByUserID');
     Route::get('group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])

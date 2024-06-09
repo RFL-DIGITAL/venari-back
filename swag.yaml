@@ -320,8 +320,9 @@ components:
           type: number
           format: float
           nullable: true
-        image:
-          $ref: '#/components/schemas/image'
+        image_id:
+          type: integer
+          nullable: true
       type: object
     detailVacancy:
       properties:
@@ -444,9 +445,8 @@ components:
           format: date
         updated_at:
           format: date
-        image_id:
-          type: integer
-          nullable: true
+        image:
+          $ref: '#/components/schemas/image'
         building_id:
           type: integer
           nullable: true
