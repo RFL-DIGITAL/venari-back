@@ -26,7 +26,7 @@ class CommentSeeder extends Seeder
                 $randComment->save();
                 $comments = $comments->forget($randID);
                 $comments = $comments->forget($key);
-                $comment->child_id = $randComment->id;
+                $comment->parent_id = $randComment->id;
             }
 
             $comment->save();

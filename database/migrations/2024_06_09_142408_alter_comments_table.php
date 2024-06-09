@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->foreignId('child_id')->nullable();
+            $table->dropForeign(['child_id']);
+            $table->dropColumn('child_id');
 
-            $table->foreign('child_id')->references('id')->on('comments')
+            $table->foreignId('parent_id')->nullable();
+
+            $table->foreign('parent_id')->references('id')->on('comments')
                 ->onUpdate('cascade')->onDelete('set null');
         });
-
-
     }
 
     /**
@@ -26,8 +27,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-//        Schema::table('comments', function (Blueprint $table) {
-//            $table->dropForeign(['child_id']);
-//        });
+        Schema::table('comments', function (Blueprint $table) {
+            $table->dropForeign(['parent_id']);
+        });
     }
 };
