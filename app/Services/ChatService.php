@@ -34,21 +34,22 @@ class ChatService
             foreach ($messagesWithThatUser as $message) {
                 $owner = $message->owner;
                 $destination = $message->destination;
-
+                if(!$owner?->id || !$destination?->id) continue;
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
-                    $avatar = $destination->image->image;
+                    $avatar = $destination?->image?->image;
                     $id = $destination->id;
                 } else if ($destination->id == $userID and $owner->id != $userID) {
                     $key = $owner->name;
-                    $avatar = $owner->image->image;
+                    $avatar = $owner?->image?->image ?? "";
                     $id = $owner->id;
                 } else {
                     $key = 'Избранное';
                     // todo картинка для избранного
-                    $avatar = Image::where('id', $this->SAVED_MESSAGES_IMAGE_ID)->first()->image;
+                    $avatar = Image::where('id', $this->SAVED_MESSAGES_IMAGE_ID)->first()?->image;
                     $id = $userID;
                 }
+
 
                 if ($message->body == null) {
                     if ($message->fileMessage != null) {
@@ -76,7 +77,7 @@ class ChatService
             foreach ($recentChats as $key => $value) {
                 $chatPreviewDTOs[] = new ChatPreviewDTO(
                     $key,
-                    $value['avatar'],
+                    $value['avatar'] ?? "",
                     $value['body'],
                     $value['updated_at'],
                     MessageType::message,
@@ -131,7 +132,7 @@ class ChatService
 
                 $recentGroups[] = new ChatPreviewDTO(
                     $chat->name,
-                    $chat->image->image,
+                    $chat?->image?->image,
                     $body,
                     $message != null ? $message->updated_at->toDateTimeString() : '',
                     MessageType::chatMessage,
@@ -170,7 +171,8 @@ class ChatService
                     $message->from_id,
                     $message->to_id,
                     $message->owner,
-                    $this->createAttachment($message)
+                    $this->createAttachment($message),
+                    $message->created_at
                 );
             }
         }
@@ -196,7 +198,8 @@ class ChatService
                 $chatMessage->owner_id,
                 $chatMessage->chat_id,
                 $chatMessage->owner,
-                $this->createAttachment($chatMessage)
+                $this->createAttachment($chatMessage),
+                $chatMessage->created_at
             );
         }
 

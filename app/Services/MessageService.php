@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTO\AttachmentDTO;
+use App\DTO\MessageDTO;
 use App\DTO\MessageType;
 use App\Events\NewChatMessageEvent;
 use App\Events\NewMessageEvent;
@@ -13,13 +15,15 @@ use App\Models\ImageMessage;
 use App\Models\LinkMessage;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use function MongoDB\BSON\toJSON;
 
 class MessageService
 {
     public function sendMessage(Request $request): array
     {
         $ownerID = auth()->id();
-        $toID = $request->toID;
+        $toID = $request->to_id;
+        
         $body = $request->body;
         $type = MessageType::tryFrom($request->type);
 
@@ -35,7 +39,17 @@ class MessageService
                     );
                     $message->save();
 
-                    event(new NewMessageEvent($message));
+
+                    $messageDTO = new MessageDTO(
+                        $message->id,
+                        $message->from_id,
+                        $message->to_id,
+                        $message->owner,
+                        $this->createAttachment($message),
+                        $message->created_at
+                    );
+
+                    event(new NewMessageEvent($messageDTO));
                 }
 
                 if ($request->hasFile('images')) {
@@ -122,7 +136,15 @@ class MessageService
                 }
         }
 
-        return $message->toArray();
+        $return = new MessageDTO(
+            $message->id,
+            $message->from_id,
+            $message->to_id,
+            $message->owner,
+            $this->createAttachment($message),
+            $message->created_at
+        );
+        return $return->jsonSerialize();
     }
 
     private function createFileMessage($message, $file)
@@ -166,5 +188,15 @@ class MessageService
 
         $linkMessage->message()->associate($message);
         $linkMessage->save();
+    }
+
+    private function createAttachment($message): AttachmentDTO
+    {
+        return new AttachmentDTO(
+            $message->body,
+            $message->fileMessage?->file,
+            $message->imageMessage?->image,
+            $message->linkMessage?->link,
+        );
     }
 }

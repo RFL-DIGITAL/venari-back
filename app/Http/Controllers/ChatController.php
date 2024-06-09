@@ -8,7 +8,10 @@ use Illuminate\Http\JsonResponse;
 
 class ChatController extends Controller
 {
-    public function __construct(protected ChatService $chatService) {}
+    public function __construct(protected ChatService $chatService)
+    {
+        $this->middleware('auth:api');
+    }
 
     /**
      * Метод получения всех чатов пользователя. Отсортированы в обратном порядке по времени последнего сообщения
@@ -36,7 +39,6 @@ class ChatController extends Controller
     public function getChats(Request $request): JsonResponse
     {
         $user_id = $request->user()->id;
-
         $recentChats = array_merge( $this->chatService->formatOneToOnes($user_id),
             $this->chatService->formatGroups($user_id));
 
