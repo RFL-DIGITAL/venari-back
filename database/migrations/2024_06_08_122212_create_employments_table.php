@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('images', function (Blueprint $table) {
-            $table->longText('image')->change();
+        Schema::create('employments', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('name');
         });
     }
 
@@ -21,5 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('employments');
     }
 };

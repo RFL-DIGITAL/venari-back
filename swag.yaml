@@ -146,6 +146,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getVacancies'
+  '/api/vacancies/{id}':
+    get:
+      tags:
+        - VacancyController
+      summary: 'Метод получения подробной информации о вакансии по id'
+      operationId: eaa6d5b5a84d934bfc97c0df706eddd2
+      parameters:
+        -
+          name: id
+          description: 'id вакансии'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getVacancyByID'
 components:
   schemas:
     messageType:
@@ -241,17 +259,25 @@ components:
           items:
             $ref: '#/components/schemas/vacancy'
       type: object
+    getVacancyByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailVacancy'
+      type: object
     vacancy:
       properties:
         id:
           type: integer
-        department_id:
-          type: integer
-        position_id:
-          type: integer
+        department:
+          $ref: '#/components/schemas/department'
+        position:
+          $ref: '#/components/schemas/position'
         description:
-          type: string
-        salary:
           type: string
         is_online:
           type: boolean
@@ -263,10 +289,8 @@ components:
           type: boolean
         link_to_test_document:
           type: string
-        is_fulltime:
-          type: boolean
-        city_id:
-          type: integer
+        city:
+          $ref: '#/components/schemas/city'
         is_closed:
           type: boolean
         is_outer:
@@ -275,8 +299,269 @@ components:
           format: date
         updated_at:
           format: date
+        responsibilities:
+          type: string
+        requirements:
+          type: string
+        conditions:
+          type: string
+        additional:
+          type: string
+          nullable: true
+        experience:
+          $ref: '#/components/schemas/experience'
+        employment:
+          $ref: '#/components/schemas/employment'
+        lower_salary:
+          type: number
+          format: float
+          nullable: true
+        higher_salary:
+          type: number
+          format: float
+          nullable: true
+        image:
+          $ref: '#/components/schemas/image'
+      type: object
+    detailVacancy:
+      properties:
+        id:
+          type: integer
+        department:
+          $ref: '#/components/schemas/detailDepartment'
+        position:
+          $ref: '#/components/schemas/position'
+        description:
+          type: string
+        is_online:
+          type: boolean
+        has_social_support:
+          type: boolean
+        schedule:
+          type: string
+        is_flexible:
+          type: boolean
+        link_to_test_document:
+          type: string
+        city:
+          $ref: '#/components/schemas/city'
+        is_closed:
+          type: boolean
+        is_outer:
+          type: boolean
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        responsibilities:
+          type: string
+        requirements:
+          type: string
+        conditions:
+          type: string
+        additional:
+          type: string
+          nullable: true
+        experience:
+          $ref: '#/components/schemas/experience'
+        employment:
+          $ref: '#/components/schemas/employment'
+        lower_salary:
+          type: number
+          format: float
+          nullable: true
+        higher_salary:
+          type: number
+          format: float
+          nullable: true
+        image:
+          $ref: '#/components/schemas/image'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/skill'
+      type: object
+    detailDepartment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company:
+          $ref: '#/components/schemas/detailCompany'
+      type: object
+    department:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company:
+          $ref: '#/components/schemas/company'
+      type: object
+    detailCompany:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        established_at:
+          format: date
+        nick_name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        image:
+          $ref: '#/components/schemas/image'
+        building:
+          $ref: '#/components/schemas/building'
+      type: object
+    company:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        established_at:
+          format: date
+        nick_name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        image_id:
+          type: integer
+          nullable: true
+        building_id:
+          type: integer
+          nullable: true
+      type: object
+    building:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        street:
+          $ref: '#/components/schemas/street'
+      type: object
+    street:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        city:
+          $ref: '#/components/schemas/detailCity'
+      type: object
+    skill:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    city:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        country_id:
+          type: integer
+          nullable: true
+      type: object
+    detailCity:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        country:
+          $ref: '#/components/schemas/country'
+      type: object
+    country:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    image:
+      properties:
+        id:
+          type: integer
+        image:
+          type: string
+        description:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
       type: object
     position:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    employment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    experience:
       properties:
         id:
           type: integer

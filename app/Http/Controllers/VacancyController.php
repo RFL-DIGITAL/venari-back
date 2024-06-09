@@ -43,6 +43,8 @@ class VacancyController extends Controller
             $outerVacancies = $this->vacancyService->getOuterVacancies();
             Cache::put('outer_vacancies', $outerVacancies, now()->addMinutes(15));
         }
+
+
         $vacancies = array_merge(
             $innerVacancies,
             $outerVacancies
@@ -51,5 +53,36 @@ class VacancyController extends Controller
         shuffle($vacancies);
 
         return $this->successResponse($vacancies);
+    }
+
+    /**
+     * Метод получения подробной информации о вакансии по id
+     *
+     * @OA\Schema( schema="getVacancyByID",
+     *              @OA\Property(property="success",type="boolean",example="true"),
+     *              @OA\Property(property="response",type="array",
+     *                   @OA\Items(ref="#/components/schemas/detailVacancy")),
+     *   )
+     *
+     * @OA\Get(
+     *        path="/api/vacancies/{id}",
+     *        tags={"VacancyController"},
+     *     @OA\Parameter(
+     *           name="id",
+     *           description="id вакансии",
+     *           required=true),
+     *        @OA\Response(
+     *        response="200",
+     *        description="Ответ при успешном выполнении запроса",
+     *     @OA\JsonContent(ref="#/components/schemas/getVacancyByID")
+ *          )
+     *    )
+     *
+     * @param int $id - id вакансии
+     * @return JsonResponse
+     */
+    public function getVacancyByID(int $id): JsonResponse
+    {
+        return $this->successResponse($this->vacancyService->getVacancyByID($id));
     }
 }

@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('images', function (Blueprint $table) {
-            $table->longText('image')->change();
+        Schema::table('vacancies', function (Blueprint $table) {
+            $table->text('responsibilities')->nullable()->change();
+            $table->text('conditions')->nullable()->change();
+
         });
     }
 
