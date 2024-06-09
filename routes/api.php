@@ -24,6 +24,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('vacancies')->group(function () {
+    Route::get('/{id}', [VacancyController::class, 'getVacancyByID'])->name('getVacancyByID');
+
     Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
 });
 

@@ -4,7 +4,8 @@
 
 namespace Responses {
 
-    use App\DTO\MessageType;use Faker\Core\DateTime;use OpenApi\Annotations as OA;
+    use App\DTO\MessageType;
+    use OpenApi\Annotations as OA;
 
     /** @OA\Schema(schema="vacancy") */
     class Vacancy
@@ -14,26 +15,20 @@ namespace Responses {
          */
         public int $id;
 
-        // todo: добавить swagger для сущности depatment
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/department")
          */
-        public int $department_id;
+        public Department $department;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/position")
          */
-        public int $position_id;
+        public Position $position;
 
         /**
          * @OA\Property()
          */
         public string $description;
-
-        /**
-         * @OA\Property()
-         */
-        public string $salary;
 
         /**
          * @OA\Property()
@@ -61,14 +56,9 @@ namespace Responses {
         public string $link_to_test_document;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/city")
          */
-        public bool $is_fulltime;
-
-        /**
-         * @OA\Property()
-         */
-        public int $city_id;
+        public City $city;
 
         /**
          * @OA\Property()
@@ -89,10 +79,581 @@ namespace Responses {
          * @OA\Property(format="date")
          */
         public $updated_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $responsibilities;
+
+        /**
+         * @OA\Property()
+         */
+        public string $requirements;
+
+        /**
+         * @OA\Property()
+         */
+        public string $conditions;
+
+        /**
+         * @OA\Property()
+         */
+        public ?string $additional;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/experience")
+         */
+        public Experience $experience;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/employment")
+         */
+        public Employment $employment;
+
+        /**
+         * @OA\Property()
+         */
+        public ?float $lower_salary;
+
+        /**
+         * @OA\Property()
+         */
+        public ?float $higher_salary;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $image;
+    }
+
+    /** @OA\Schema(schema="detailVacancy") */
+    class DetailVacancy
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/detailDepartment")
+         */
+        public DetailDepartment $department;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/position")
+         */
+        public Position $position;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $is_online;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $has_social_support;
+
+        /**
+         * @OA\Property()
+         */
+        public string $schedule;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $is_flexible;
+
+        /**
+         * @OA\Property()
+         */
+        public string $link_to_test_document;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/city")
+         */
+        public City $city;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $is_closed;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $is_outer;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $responsibilities;
+
+        /**
+         * @OA\Property()
+         */
+        public string $requirements;
+
+        /**
+         * @OA\Property()
+         */
+        public string $conditions;
+
+        /**
+         * @OA\Property()
+         */
+        public ?string $additional;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/experience")
+         */
+        public Experience $experience;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/employment")
+         */
+        public Employment $employment;
+
+        /**
+         * @OA\Property()
+         */
+        public ?float $lower_salary;
+
+        /**
+         * @OA\Property()
+         */
+        public ?float $higher_salary;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $image;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/skill"))
+         */
+        public $skills;
+    }
+
+    /** @OA\Schema(schema="detailDepartment") */
+    class DetailDepartment
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/detailCompany")
+         */
+        public DetailCompany $company;
+    }
+
+    /** @OA\Schema(schema="department") */
+    class Department
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/company")
+         */
+        public Company $company;
+    }
+
+    /** @OA\Schema(schema="detailCompany") */
+    class DetailCompany
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $established_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $nick_name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $image;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/building")
+         */
+        public Building $building;
+
+    }
+
+    /** @OA\Schema(schema="company") */
+    class Company
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $established_at;
+
+        /**
+         * @OA\Property()
+         */
+        public string $nick_name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $image_id;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $building_id;
+
+    }
+
+    /** @OA\Schema(schema="building") */
+    class Building
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/street")
+         */
+        public Street $street;
+    }
+
+    /** @OA\Schema(schema="street") */
+    class Street
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/detailCity")
+         */
+        public DetailCity $city;
+    }
+
+    /** @OA\Schema(schema="skill") */
+    class Skill
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="city") */
+    class City
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property()
+         */
+        public ?int $country_id;
+    }
+
+    /** @OA\Schema(schema="detailCity") */
+    class DetailCity
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/country")
+         */
+        public Country $country;
+    }
+
+    /** @OA\Schema(schema="country") */
+    class Country
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="image") */
+    class Image
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $image;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
     }
 
     /** @OA\Schema(schema="position") */
     class Position
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+    }
+
+    /** @OA\Schema(schema="employment") */
+    class Employment
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+    }
+
+    /** @OA\Schema(schema="experience") */
+    class Experience
     {
         /**
          * @OA\Property()

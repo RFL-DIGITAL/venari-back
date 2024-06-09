@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('images', function (Blueprint $table) {
-            $table->longText('image')->change();
+        Schema::table('cities', function (Blueprint $table) {
+            $table->foreignId('country_id')->nullable();
+
+            $table->foreign('country_id')->references('id')->on('countries')
+                ->onUpdate('cascade')->onDelete('set null');
         });
     }
 
@@ -21,5 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
+        //
     }
 };

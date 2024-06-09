@@ -29,4 +29,14 @@ class Image extends Model
     public function chats(): HasMany{
         return $this->hasMany(Chat::class);
     }
+
+    public function companies(): HasMany
+    {
+        return $this->hasMany(Image::class);
+    }
+
+    public function vacancies(): HasMany
+    {
+        return $this->hasMany(Image::class);
+    }
 }

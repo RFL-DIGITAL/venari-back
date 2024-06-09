@@ -31,4 +31,19 @@ class Vacancy extends Model
     public function department(): BelongsTo {
         return $this->belongsTo(Department::class);
     }
+
+    public function experience(): BelongsTo
+    {
+        return $this->belongsTo(Experience::class);
+    }
+
+    public function employment(): BelongsTo
+    {
+        return $this->belongsTo(Employment::class);
+    }
+
+    public function image(): BelongsTo
+    {
+        return $this->belongsTo(Image::class);
+    }
 }

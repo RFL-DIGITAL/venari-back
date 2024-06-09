@@ -15,10 +15,13 @@ class DatabaseSeeder extends Seeder
         // в родительских.
         $this->call([
             WorkingStatusSeeder::class,
+            CountrySeeder::class,
             CitySeeder::class,
+            StreetSeeder::class,
+            BuildingSeeder::class,
+            ImageSeeder::class,
             CompanySeeder::class,
             HRSeeder::class,
-            ImageSeeder::class,
             UserSeeder::class,
             MessageSeeder::class,
             ChatSeeder::class,
@@ -39,6 +42,8 @@ class DatabaseSeeder extends Seeder
             PostSeeder::class,
             CategoryPostSeeder::class,
             PostImageSeeder::class,
+            ExperienceSeeder::class,
+            EmploymentSeeder::class,
             VacancySeeder::class,
             VacancySkillSeeder::class,
             CommentSeeder::class,

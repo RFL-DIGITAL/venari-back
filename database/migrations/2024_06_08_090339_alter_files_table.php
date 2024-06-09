@@ -21,8 +21,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->binary('file')->change();
-        });
     }
 };
