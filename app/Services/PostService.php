@@ -2,16 +2,13 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\PostController;
 use App\Models\Post;
 use App\Parser;
 use phpQuery;
-use SimpleXMLElement;
 
 class PostService
 {
     private string $HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
-    private string $SYMBOLS_TO_ESCAPE = ' \n\r\t\v\x00';
 
 
     public function getInnerPosts(): array
