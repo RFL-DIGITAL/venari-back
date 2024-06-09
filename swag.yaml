@@ -102,6 +102,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/sendComment'
+  '/api/posts/{id}/comments':
+    get:
+      tags:
+        - CommentController
+      summary: 'Метод получения всех комментариев поста'
+      operationId: da850347cec64e7a5d304db8fc79e6ad
+      parameters:
+        -
+          name: id
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getComments'
   /api/messages/send-message:
     post:
       tags:
@@ -246,6 +264,16 @@ components:
           items:
             $ref: '#/components/schemas/comment'
       type: object
+    getComments:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailComment'
+      type: object
     sendMessage:
       properties:
         success:
@@ -272,7 +300,7 @@ components:
           type: boolean
           example: 'true'
         post:
-          $ref: '#/components/schemas/detailPost'
+          $ref: '#/components/schemas/post'
       type: object
     getVacancies:
       properties:
