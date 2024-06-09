@@ -12,6 +12,11 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $appends = [
+        'comment_count'
+    ];
+
+
     /**
      * @return int - количество комментариев к этому посту
      */

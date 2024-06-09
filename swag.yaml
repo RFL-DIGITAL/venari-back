@@ -606,6 +606,8 @@ components:
       properties:
         id:
           type: integer
+        comment_count:
+          type: integer
         title:
           type: string
         text:
@@ -633,6 +635,8 @@ components:
     detailPost:
       properties:
         id:
+          type: integer
+        comment_count:
           type: integer
         title:
           type: string
