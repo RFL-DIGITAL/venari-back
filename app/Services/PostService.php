@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Post;
 use App\Parser;
+use Illuminate\Pagination\LengthAwarePaginator;
 use phpQuery;
 
 class PostService
@@ -13,7 +14,7 @@ class PostService
 
     public function getInnerPosts(): array
     {
-        $posts = Post::all();
+        $posts = Post::where('source', 'venari')->get();
 
         return $posts->toArray();
     }
@@ -85,12 +86,10 @@ class PostService
             return $post->load([
                 'user.hrable.company',
                 'images',
-                'comments.allChildren'
             ])->toArray();
         } else {
             return $post->load([
                 'images',
-                'comments.allChildren'
             ])->toArray();
         }
     }

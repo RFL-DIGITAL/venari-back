@@ -52,7 +52,9 @@ class VacancyController extends Controller
 
         shuffle($vacancies);
 
-        return $this->successResponse($vacancies);
+        return $this->successResponse(
+            $this->paginate($vacancies)
+        );
     }
 
     /**

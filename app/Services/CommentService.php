@@ -46,5 +46,17 @@ class CommentService
 
         return [$comment->toArray()];
     }
+
+    /**
+     * Метод получения всех комментариев поста
+     *
+     * @param $postID - id поста
+     * @return array
+     */
+    public function getComments($postID): array
+    {
+        return Comment::where('post_id', $postID)->get()
+            ->load('allChildren')->toArray();
+    }
 }
 

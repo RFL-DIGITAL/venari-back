@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Services\PostService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     private int $POST_COUNT = 10;
 
     public function __construct(protected PostService $postService) {}
+
 
     /**
      * Метод получения всех постов
@@ -31,9 +33,10 @@ class PostController extends Controller
      *      )
      *    )
      *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function getPosts(): JsonResponse
+    public function getPosts(Request $request): JsonResponse
     {
         $innerPosts = $this->postService->getInnerPosts();
 
@@ -44,6 +47,7 @@ class PostController extends Controller
             $outerPosts = $this->postService->getOuterPosts($this->POST_COUNT);
             Cache::put('outer_posts', $outerPosts, now()->addMinutes(15));
         }
+
         $posts = array_merge(
             $innerPosts,
             $outerPosts
@@ -51,7 +55,9 @@ class PostController extends Controller
 
         shuffle($posts);
 
-        return $this->successResponse($posts);
+        return $this->successResponse(
+            $this->paginate($posts)
+        );
     }
 
     /**
@@ -59,7 +65,7 @@ class PostController extends Controller
      *
      * @OA\Schema( schema="getPostByID",
      *               @OA\Property(property="success",type="boolean",example="true"),
-     *               @OA\Property(property="post", ref="#/components/schemas/detailPost"),
+     *               @OA\Property(property="post", ref="#/components/schemas/post"),
      *    )
      *
      * @OA\Get(

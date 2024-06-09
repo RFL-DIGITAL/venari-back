@@ -44,6 +44,7 @@ Route::prefix('messages')->group(function () {
 });
 
 Route::prefix('posts')->group(function () {
+    Route::get('{ID}/comments', [CommentController::class, 'getComments'])->name('getComments');
     Route::get('{ID}', [PostController::class, 'getPostByID'])->name('getPostByID');
     Route::get('', [PostController::class, 'getPosts'])->name('getPosts');
 });
