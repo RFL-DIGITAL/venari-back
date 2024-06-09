@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\Department;
+use App\Models\Employment;
+use App\Models\Experience;
 use App\Models\Position;
 use App\Models\Skill;
 use App\Models\Vacancy;
 use App\Parser;
+use Exception;
 use phpQuery;
 
 
@@ -35,7 +38,7 @@ class VacancyService
         foreach ($vacancyCards as $vacancy) {
             $link = pq($vacancy)->find('.btn')->attr('href');
             if ($link[0] != 'h') {
-                $link = 'https://www.rntgroup.com'.$link;
+                $link = 'https://www.rntgroup.com' . $link;
             }
             if (!in_array($link, $vacancyLinks)) {
                 $vacancyLinks[] = $link;
@@ -57,47 +60,102 @@ class VacancyService
                 ->where('is_closed', false)->first();
 
 
-            if ($foundVacancy != null)
-            {
-                $vacancies[] = $foundVacancy->toArray();
+            if ($foundVacancy != null) {
+                $vacancies[] = $foundVacancy->load(
+                    [
+                        'employment',
+                        'department.company.image',
+                        'experience',
+                        'city',
+                        'position'
+                    ])
+                    ->toArray();
                 continue;
             }
 
-            $description = trim($pq->find('.block-subtitle')->text());
-            $hasSocialSupport = false;
-            $isFlexible = false;
+            // Парсим блок Задачи - это блок обязаннасти во внутренних вакансиях
+            try {
+                $responsibilities = $this->cleanFromLinebreaks($pq->find('.block-subtitle h3')->next()->html());
+            } catch (Exception $e) {
+                $responsibilities = null;
+            }
+
+            // Парсим требуемый опыт работы
+            $fullPageText = $pq->text();
+
+            try {
+                preg_match_all('/от \d+/', $fullPageText, $matches);
+                $experienceInt = (int)mb_substr($matches[0][0], 3);
+
+                if ($experienceInt < 3) {
+                    $experience = Experience::where('name', 'Опыт от 1 года')->first();
+                }
+                else if ($experienceInt < 5) {
+                    $experience = Experience::where('name', 'Опыт от 3 лет')->first();
+                }
+                else {
+                    $experience = Experience::where('name', 'Опыт от 5 лет')->first();
+                }
+            } catch (Exception $e) {
+                $experience = null;
+            }
+
+
+            // Парсим описание
+            $description = $pq->find('.block-subtitle');
+            try {
+                $description->find('h3')->next()->remove();
+                $description->find('h3')->remove();
+                $description = $this->cleanFromLinebreaks($description->text());
+
+            } catch (Exception $e) {
+                $description = $this->cleanFromLinebreaks($pq->find('.block-subtitle')->text());
+            }
+
+            // Парсим данные из карточек внизу вакансии
+            $hasSocialSupport = false; // Есть ли соц поддержка
+            $isFlexible = false; // Гибкий ли график
             $isOnline = false;
-            $schedule = '';
-            $isFullTime = true;
+            $schedule = ''; // Иногда в этих карточках указан график работы
+            $employment = Employment::where('name', 'Полная занятость')->first();
 
             foreach ($pq->find('.service-container .service-name') as $service) {
-                switch (trim($service->textContent)) {
+                switch (trim(pq($service)->text())) {
                     case 'Социальный пакет':
                         $hasSocialSupport = true;
                         break;
                     case 'Гибкий график работы':
                         $isFlexible = true;
-                        $schedule = trim($service->nextElementSibling->textContent);
+                        $schedule = trim($this->cleanFromLinebreaks(pq($service)->next()->text()));
                         break;
                     case 'Удалённый формат работы':
-                        $isOnline=true;
-                        $schedule = trim($service->nextElementSibling->textContent);
+                        $isOnline = true;
+                        $schedule = trim($this->cleanFromLinebreaks(pq($service)->next()->text()));
                         break;
-                    // todo: добавить проверку на полный/неполный рабочий день
                 }
             }
 
+            // Парсим блок Требуемые навыки и знания - блок Требования во внутренних
+            $requirements = $this->cleanFromLinebreaks($pq->find('.block-desc ul')->eq(0)->html());
+
+            // Парсим блок Будет плюсом - блок Дополнительно во внутренних вакансиях
+            try {
+                $additional = $this->cleanFromLinebreaks($pq->find('.block-desc ul')->eq(1)->html());
+            } catch (Exception $e) {
+                $additional = null;
+            }
+
+            // Парсим скиллы. Если скила нет в нашей базе - добавляем. Сейчас скилы - это все иностранные слова
             $skills = $pq->find('.block-desc ul li');
             $skillNames = [];
 
             foreach ($skills as $skill) {
                 $names = [];
-                preg_match_all ('([a-zA-Z#+]+)', $skill->textContent, $names);
+                preg_match_all('([a-zA-Z#+]+)', pq($skill)->text(), $names);
 
                 // Потому что возвращает двумерный массив
                 if (count($names[0]) != 0) {
-                    foreach ($names[0] as $name)
-                    {
+                    foreach ($names[0] as $name) {
                         $skillNames[] = $name;
                     }
                 }
@@ -111,18 +169,30 @@ class VacancyService
             }
 
             $vacancy->description = $description;
-            $vacancy->salary = null;
             $vacancy->department()->associate(
                 Department::where('id', Vacancy::$DEFAULT_DEPARTMENT_ID)->first());
             $vacancy->has_social_support = $hasSocialSupport;
             $vacancy->is_flexible = $isFlexible;
-            $vacancy->is_fulltime = $isFullTime;
+            $vacancy->experience()->associate($experience);
+            $vacancy->employment()->associate($employment);
             $vacancy->is_online = $isOnline;
             $vacancy->schedule = $schedule;
             $vacancy->is_outer = true;
             $vacancy->is_closed = false;
+            $vacancy->responsibilities = $responsibilities;
+            $vacancy->requirements = $requirements;
+            $vacancy->additional = $additional;
+
             $vacancy->save();
-            $vacancy->refresh();
+
+            $vacancy->load(
+                [
+                    'employment',
+                    'department.company.image',
+                    'experience',
+                    'city',
+                    'position'
+                ]);
 
             $vacancies[] = $vacancy->toArray();
         }
@@ -139,17 +209,17 @@ class VacancyService
      */
     public function getInnerVacancies(): array
     {
-        $vacancy = Vacancy::where('is_closed', false)->where('is_outer', false)->get()
-            ->load('employment')
-            ->load('experience')
-            ->load('city')
-            ->load('position')
-            ->load('image')
-            ->toArray();
+        $vacancies = Vacancy::where('is_closed', false)->where('is_outer', false)->get()
+            ->load(
+                [
+                    'employment',
+                    'department.company.image',
+                    'experience',
+                    'city',
+                    'position'
+                ]);
 
-        $vacancy->department->load('company');
-
-        return [$vacancy];
+        return $vacancies->toArray();
     }
 
     /**
@@ -158,23 +228,34 @@ class VacancyService
      * @param int $id - id вакансии
      * @return array
      */
-    public function getVacancyByID(int $id): array {
+    public function getVacancyByID(int $id): array
+    {
         $vacancy = Vacancy::where('id', $id)->get()->first()
-            ->load('department')
-            ->load('skills')
-            ->load('position')
-            ->load('employment')
-            ->load('experience')
-            ->load('city')
-            ->load('image');
-        $vacancy->department->load('company');
-        $vacancy->department->company->load('image');
-        $vacancy->department->company->load('building');
-        $vacancy->department->company->building->load('street');
-        $vacancy->department->company->building->street->load('city');
-        $vacancy->department->company->building->street->city->load('country');
+            ->load(
+                [
+                    'employment',
+                    'department.company.image',
+                    'department.company.building.street.city.country',
+                    'experience',
+                    'city',
+                    'position',
+                    'skills',
+                    'image',
+                ]);
 
         return [$vacancy];
     }
 
+    /**
+     * Метод удаления перенос \r\n из строки
+     *
+     * @param string $string - строка
+     * @return string - строка без переносов
+     */
+    private function cleanFromLinebreaks(string $string): string
+    {
+        return preg_replace('/[\r\n]+/', '', $string);
+    }
+
 }
+

@@ -43,6 +43,8 @@ class VacancyController extends Controller
             $outerVacancies = $this->vacancyService->getOuterVacancies();
             Cache::put('outer_vacancies', $outerVacancies, now()->addMinutes(15));
         }
+
+
         $vacancies = array_merge(
             $innerVacancies,
             $outerVacancies

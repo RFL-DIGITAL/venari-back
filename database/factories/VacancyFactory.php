@@ -39,7 +39,6 @@ class VacancyFactory extends Factory
             'is_online' => $this->faker->boolean(),
             'has_social_support' => $this->faker->boolean(),
             'is_flexible' => $this->faker->boolean(),
-            'is_fulltime' => $this->faker->boolean(),
             'schedule' => 'Schedule: '.$this->faker->text(),
             'city_id' => $this->faker->randomElement($citiesID),
             'employment_id' => $this->faker->randomElement($employmentsID),

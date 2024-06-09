@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('requirements');
             $table->text('conditions');
             $table->text('additional')->nullable();
-//            $table->dropColumn('is_fulltime');
+            $table->dropColumn('is_fulltime');
             $table->foreignID('experience_id')->nullable();
             $table->foreignID('employment_id')->nullable();
             $table->dropColumn('salary');

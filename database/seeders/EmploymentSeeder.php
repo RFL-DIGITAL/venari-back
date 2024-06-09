@@ -14,16 +14,13 @@ class EmploymentSeeder extends Seeder
     {
         DB::table('employments')->insert([
             [
-                'name' => 'Без опыта'
+                'name' => 'Полная занятость',
             ],
             [
-                'name' => 'Опыт от 1 года'
+                'name' => 'Частичная занятость'
             ],
             [
-                'name' => 'Опыт от 3 лет'
-            ],
-            [
-                'name' => 'Опыт от 5 лет'
+                'name' => 'Стажировка'
             ]
         ]);
     }
