@@ -603,6 +603,31 @@ namespace Responses {
 
     }
 
+    /** @OA\Schema(schema="file") */
+    class File
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $file;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+    }
+
     /** @OA\Schema(schema="position") */
     class Position
     {
@@ -889,9 +914,9 @@ namespace Responses {
         public string $hrable_type;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/image)
          */
-        public ?int $image_id;
+        public Image $image;
 
         /**
          * @OA\Property(format="date")
@@ -1173,6 +1198,79 @@ namespace Responses {
          * @OA\Property()
          */
         public Company $company;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+    /** @OA\Schema(schema="chat") */
+    class Chat
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property()
+         */
+        public int $member_count;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $image;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/tag"))
+         */
+        public $tags;
+    }
+
+    /** @OA\Schema(schema="tag") */
+    class Tag
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property()
+         */
+        public int $member_count;
 
         /**
          * @OA\Property(format="date")

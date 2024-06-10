@@ -30,13 +30,22 @@ Route::prefix('vacancies')->group(function () {
     Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
 });
 
-Route::middleware('auth:api')->prefix('chats')->group(function () {
-    Route::get('personal/{userID}', [ChatController::class, 'getMessagesByUserID'])
+Route::middleware('auth:api')->prefix('messages')->group(function () {
+    Route::get('{userID}', [MessageController::class, 'getMessagesByUserID'])
         ->name('getMessagesByUserID');
-    Route::get('group/{chatID}', [ChatController::class, 'getChatMessagesByChatID'])
-        ->name('getChatMessagesByChatID');
+    Route::post('join-chat', [MessageController::class, 'joinChat'])->name('joinChat');
+    Route::post('quit-chat', [MessageController::class, 'joinChat'])->name('joinChat');
 
-    Route::get('', [ChatController::class, 'getChats'])->name('getChats');
+    Route::get('', [MessageController::class, 'getChats'])->name('getChats');
+});
+
+Route::prefix('networking')->group(function () {
+    Route::get('{chatID}/messages', [ChatController::class, 'getChatMessagesByChatID'])
+        ->name('getChatMessagesByChatID');
+    Route::get('{chatID}', [ChatController::class, 'getChatDetail'])
+        ->name('getChatDetail');
+    Route::get('', [ChatController::class, 'getAllChats'])
+        ->name('getAllChats');
 });
 
 Route::prefix('messages')->group(function () {
