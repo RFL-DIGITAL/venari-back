@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MessageSeeder::class,
             ChatSeeder::class,
+            TagsSeeder::class,
             UserChatsSeeder::class,
             ChatMessageSeeder::class,
             CategorySeeder::class,

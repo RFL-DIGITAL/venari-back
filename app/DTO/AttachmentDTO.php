@@ -7,14 +7,40 @@ use App\Models\Image;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
 
+/** @OA\Schema(schema="attachmentDTO") */
 class AttachmentDTO implements Jsonable, JsonSerializable
 {
+    /**
+     * @OA\Property()
+     */
+    private ?string $text;
+
+    /**
+     * @OA\Property(type="string")
+     */
+    private ?File $file;
+
+    /**
+     * @OA\Property(type="string")
+     */
+    private ?Image $image;
+
+    /**
+     * @OA\Property()
+     */
+    private ?string $link;
+
     public function __construct(
-        private ?string $text,
-        private ?File   $file,
-        private ?Image  $image,
-        private ?string $link,
-    ) {}
+        ?string $text,
+        ?File   $file,
+        ?Image  $image,
+        ?string $link,
+    ) {
+        $this->link = $link;
+        $this->image = $image;
+        $this->file = $file;
+        $this->text = $text;
+    }
 
     public function getText(): ?string
     {

@@ -6,16 +6,51 @@ use App\Models\User;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
 
+/** @OA\Schema(schema="messageDTO") */
 class MessageDTO implements Jsonable, JsonSerializable
 {
+    /**
+     * @OA\Property()
+     */
+    private int $id;
+    /**
+     * @OA\Property()
+     */
+    private int $owner_id;
+    /**
+     * @OA\Property()
+     */
+    private string $to_id;
+
+    /**
+     * @OA\Property(ref="#/components/schemas/user")
+     */
+    private User $owner;
+
+    /**
+     * @OA\Property()
+     */
+    private AttachmentDTO $attachmentDTO;
+
+    /**
+     * @OA\Property(format="date")
+     */
+    private string $created_at;
+
     public function __construct(
-        private int           $id,
-        private int           $owner_id,
-        private string        $to_id,
-        private User          $owner,
-        private AttachmentDTO $attachmentDTO,
-        private string        $created_at
+        int           $id,
+        int           $owner_id,
+        string        $to_id,
+        User          $owner,
+        AttachmentDTO $attachmentDTO,
+        string        $created_at
     ) {
+        $this->created_at = $created_at;
+        $this->attachmentDTO = $attachmentDTO;
+        $this->owner = $owner;
+        $this->to_id = $to_id;
+        $this->owner_id = $owner_id;
+        $this->id = $id;
         $owner->load('image');
     }
 
