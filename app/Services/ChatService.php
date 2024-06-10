@@ -10,6 +10,7 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Image;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class ChatService
@@ -34,7 +35,7 @@ class ChatService
             foreach ($messagesWithThatUser as $message) {
                 $owner = $message->owner;
                 $destination = $message->destination;
-                if(!$owner?->id || !$destination?->id) continue;
+                if (!$owner?->id || !$destination?->id) continue;
                 if ($owner->id == $userID and $destination->id != $userID) {
                     $key = $destination->name;
                     $avatar = $destination?->image?->image;
@@ -49,7 +50,6 @@ class ChatService
                     $avatar = Image::where('id', $this->SAVED_MESSAGES_IMAGE_ID)->first()?->image;
                     $id = $userID;
                 }
-
 
                 if ($message->body == null) {
                     if ($message->fileMessage != null) {
@@ -85,9 +85,7 @@ class ChatService
                 );
             }
             return $chatPreviewDTOs;
-        }
-        else
-        {
+        } else {
             return $recentChats;
         }
     }
@@ -106,13 +104,11 @@ class ChatService
 
         $recentGroups = array();
 
-        if ($chats != null)
-        {
+        if ($chats != null) {
             foreach ($chats as $chat) {
                 $message = ChatMessage::where('chat_id', $chat->id)->get()->last();
 
-                if ($message != null)
-                {
+                if ($message != null) {
                     if ($message->body == null) {
                         if ($message->fileMessage != null) {
                             $body = 'Файл';
@@ -121,12 +117,10 @@ class ChatService
                         } else {
                             $body = 'Действие';
                         }
-                    }
-                    else {
+                    } else {
                         $body = $message->body;
                     }
-                }
-                else {
+                } else {
                     $body = null;
                 }
 
@@ -163,8 +157,7 @@ class ChatService
 
         $messageDTOs = array();
 
-        if ($messages != null)
-        {
+        if ($messages != null) {
             foreach ($messages as $message) {
                 $messageDTOs[] = new MessageDTO(
                     $message->id,
@@ -214,5 +207,62 @@ class ChatService
             $message->imageMessage?->image,
             $message->linkMessage?->link,
         );
+    }
+
+    public function getAllChats(): array
+    {
+        return Chat::all()->load(
+            [
+                'tags',
+                'image'
+            ]
+        )->toArray();
+    }
+
+    /**
+     * Метод получения подробной информации о чате
+     *
+     * @param $id - id чата
+     * @return array - чат в json
+     */
+    public function getChatDetail($id): array
+    {
+        return Chat::where('id', $id)->first()
+            ->load('image')
+            ->toArray();
+    }
+
+    /**
+     * Метод покидания чата
+     *
+     * @param $userID - id пользователя
+     * @param $chatID - id чата
+     * @return array - чат, который покинул в json
+     */
+    public function quitChat($userID, $chatID): array
+    {
+        $user = User::where('id', $userID)->first();
+        $chat = Chat::where('id', $chatID)->first();
+        $user->chats()->detach($chat);
+        $user->save();
+
+        return $chat->load('image')->toArray();
+    }
+
+    /**
+     * Метод вступления в чат
+     *
+     * @param $userID - id пользователя
+     * @param $chatID - id чата
+     * @return array - чат, в который вступил в json
+     */
+    public function joinChat($userID, $chatID): array
+    {
+        $user = User::where('id', $userID)->first();
+        $chat = Chat::where('id', $chatID)->first();
+        $user->chats()->attach($chat);
+        $user->save();
+
+        return $chat->load('image')->toArray();
     }
 }

@@ -18,8 +18,7 @@ class TagsSeeder extends Seeder
             ->create();
 
         foreach (Chat::all() as $chat) {
-//            dd($tags->random(3));
-            $chat->tags()->attach($tags->random(3));
+            $chat->tags()->attach($tags->random(random_int(1, 5)));
         }
     }
 }

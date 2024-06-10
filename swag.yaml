@@ -38,43 +38,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/loginUser'
-  /api/chats:
+  /api/networking/:
     get:
       tags:
-        - ChatController
-      summary: "Метод получения всех чатов пользователя. Отсортированы в обратном порядке по времени последнего сообщения\n(самый поздний - первый)"
-      operationId: d819b7e183bc1e432868877421b66e93
+        - СhatController
+      summary: 'Метод получения всех чатов (страница нетворкинг)'
+      operationId: b8f0e7be13bb3f689586654c9699af0d
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getChats'
-  '/api/chats/personal/{userID}':
+                $ref: '#/components/schemas/getAllChats'
+  '/api/networking/{chatID}/messages':
     get:
       tags:
-        - ChatController
-      summary: 'Метод получения сообщений 1-1 по id пользователя'
-      operationId: 0de9b4d1d6303bad5628f21455852e95
-      parameters:
-        -
-          name: userID
-          description: 'id пользователя'
-          required: true
-      responses:
-        '200':
-          description: 'Ответ при успешном выполнении запроса'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getMessagesByUserID'
-  '/api/chats/group/{chatID}':
-    get:
-      tags:
-        - ChatController
+        - СhatController
       summary: 'Метод получения сообщений чата по id чата'
-      operationId: 1c707390fd2f758bf4928dd979a31940
+      operationId: d123c846950987022fd609c7c08ba6f4
       parameters:
         -
           name: chatID
@@ -87,6 +69,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getChatMessagesByChatID'
+  '/api/networking/{chatID}':
+    get:
+      tags:
+        - СhatController
+      summary: 'Метод получения подробной информации о чате по id'
+      operationId: 35bb6259ee6805e1b46f7be1ecd4f29b
+      parameters:
+        -
+          name: chatID
+          description: 'id чата'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChatDetail'
   /api/comments/send-comment:
     post:
       tags:
@@ -120,6 +120,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getComments'
+  /api/messages:
+    get:
+      tags:
+        - MessageController
+      summary: "Метод получения всех чатов пользователя. Отсортированы в обратном порядке по времени последнего сообщения\n(самый поздний - первый)"
+      operationId: b7712de7ca6db35b0b2202a5b7bdff7a
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChats'
+  '/api/messages/{userID}':
+    get:
+      tags:
+        - MessageController
+      summary: 'Метод получения сообщений 1-1 по id пользователя'
+      operationId: 7bca300728fad88ae782d68733121742
+      parameters:
+        -
+          name: userID
+          description: 'id пользователя'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMessagesByUserID'
   /api/messages/send-message:
     post:
       tags:
@@ -135,6 +166,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/sendMessage'
+  /api/messages/join-chat:
+    post:
+      tags:
+        - MessageController
+      summary: 'Метод вступления в чат'
+      operationId: 6316f6dc3962c016667f2927535a8bdb
+      requestBody:
+        $ref: '#/components/requestBodies/JoinChatRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/joinChat'
+  /api/messages/quit-chat:
+    post:
+      tags:
+        - MessageController
+      summary: 'Метод покидания чата'
+      operationId: 40a2f6ee23b76dd0c224b9c7be580607
+      requestBody:
+        $ref: '#/components/requestBodies/JoinChatRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/joinChat'
   /api/posts:
     get:
       tags:
@@ -199,6 +260,35 @@ paths:
                 $ref: '#/components/schemas/getVacancyByID'
 components:
   schemas:
+    attachmentDTO:
+      properties:
+        text:
+          type: string
+          nullable: true
+        file:
+          type: string
+        image:
+          type: string
+        link:
+          type: string
+          nullable: true
+      type: object
+    messageDTO:
+      properties:
+        id:
+          type: integer
+        owner_id:
+          type: integer
+        to_id:
+          type: string
+        owner:
+          $ref: '#/components/schemas/user'
+        attachmentDTO:
+          $ref: '#/components/schemas/attachmentDTO'
+        created_at:
+          type: string
+          format: date
+      type: object
     messageType:
       type: string
       enum:
@@ -224,7 +314,7 @@ components:
         token:
           type: string
       type: object
-    getChats:
+    getAllChats:
       properties:
         success:
           type: boolean
@@ -232,17 +322,7 @@ components:
         response:
           type: array
           items:
-            $ref: '#/components/schemas/previewChat'
-      type: object
-    getMessagesByUserID:
-      properties:
-        success:
-          type: boolean
-          example: 'true'
-        response:
-          type: array
-          items:
-            $ref: '#/components/schemas/message'
+            $ref: '#/components/schemas/chat'
       type: object
     getChatMessagesByChatID:
       properties:
@@ -252,7 +332,17 @@ components:
         response:
           type: array
           items:
-            $ref: '#/components/schemas/chatMessage'
+            $ref: '#/components/schemas/messageDTO'
+      type: object
+    getChatDetail:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
       type: object
     sendComment:
       properties:
@@ -274,6 +364,26 @@ components:
           items:
             $ref: '#/components/schemas/detailComment'
       type: object
+    getChats:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/previewChat'
+      type: object
+    getMessagesByUserID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/message'
+      type: object
     sendMessage:
       properties:
         success:
@@ -283,6 +393,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/message'
+      type: object
+    joinChat:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
+      type: object
+    quitChat:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
       type: object
     getPosts:
       properties:
@@ -592,6 +722,17 @@ components:
         updated_at:
           format: date
       type: object
+    file:
+      properties:
+        id:
+          type: integer
+        file:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
     position:
       properties:
         id:
@@ -720,9 +861,6 @@ components:
           nullable: true
         hrable_type:
           type: string
-        image_id:
-          type: integer
-          nullable: true
         created_at:
           format: date
         updated_at:
@@ -862,7 +1000,49 @@ components:
         updated_at:
           format: date
       type: object
+    chat:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        member_count:
+          type: integer
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        image:
+          $ref: '#/components/schemas/image'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/tag'
+      type: object
+    tag:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        member_count:
+          type: integer
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
   requestBodies:
+    JoinChatRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              chat_id:
+                type: integer
+            type: object
     LoginRequest:
       content:
         application/json:

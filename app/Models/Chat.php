@@ -12,6 +12,19 @@ class Chat extends Model
 {
     use HasFactory;
 
+    protected $appends = [
+        'member_count'
+    ];
+
+
+    /**
+     * @return int - количество комментариев к этому посту
+     */
+    public function getMemberCountAttribute(): int
+    {
+        return $this->users()->count();
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
@@ -22,11 +35,13 @@ class Chat extends Model
         return $this->hasMany(ChatMessage::class);
     }
 
-    public function image(): BelongsTo {
+    public function image(): BelongsTo
+    {
         return $this->belongsTo(Image::class);
     }
 
-    public function tags(): BelongsToMany {
+    public function tags(): BelongsToMany
+    {
         return $this->belongsToMany(Tag::class, 'chat_tags');
     }
 }
