@@ -26,6 +26,7 @@ class ChatFactory extends Factory
         return [
             'name' => $this->faker->company(),
             'image_id' => $this->faker->randomElement($imagesID),
+            'description' => $this->faker->text(),
         ];
     }
 }

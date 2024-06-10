@@ -25,4 +25,8 @@ class Chat extends Model
     public function image(): BelongsTo {
         return $this->belongsTo(Image::class);
     }
+
+    public function tags(): BelongsToMany {
+        return $this->belongsToMany(Tag::class, 'chat_tags');
+    }
 }
