@@ -15,7 +15,6 @@ use App\Models\ImageMessage;
 use App\Models\LinkMessage;
 use App\Models\Message;
 use Illuminate\Http\Request;
-use function MongoDB\BSON\toJSON;
 
 class MessageService
 {
@@ -23,7 +22,7 @@ class MessageService
     {
         $ownerID = auth()->id();
         $toID = $request->to_id;
-        
+
         $body = $request->body;
         $type = MessageType::tryFrom($request->type);
 
@@ -144,6 +143,7 @@ class MessageService
             $this->createAttachment($message),
             $message->created_at
         );
+
         return $return->jsonSerialize();
     }
 
