@@ -9,6 +9,10 @@ use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
+use App\Models\Post;
+use Illuminate\Http\Request;
+use App\Models\User;
+
 class UserController extends Controller
 {
 
@@ -83,4 +87,15 @@ class UserController extends Controller
         }
         return $this->failureResponse($data);
     }
+
+    public function show(Request $request) {
+        $user = auth()->user()->load([
+            'company',
+            'position',
+            'image',
+            'preview',
+        ]);
+        return $this->successResponse([...$user->toArray(), 'post_count' =>$user->post_count]);
+    }
+
 }

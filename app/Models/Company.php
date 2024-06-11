@@ -32,11 +32,15 @@ class Company extends Model
 
     public function preview(): BelongsTo
     {
-        return $this->belongsTo(Image::class);
+        return $this->belongsTo(Preview::class);
     }
 
     public function image(): BelongsTo
     {
         return $this->belongsTo(Image::class);
+    }
+
+    public function users(): HasMany {
+        return $this->hasMany(User::class);
     }
 }

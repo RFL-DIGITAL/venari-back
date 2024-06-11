@@ -8,6 +8,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\VacancyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CompanyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,9 +21,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::get('user', [UserController::class, 'show'])->name('show');
+    Route::get('user/posts', [PostController::class, 'getPostByUser'])->name('getPostByUser');
 });
+
+Route::get('company/{id}', [CompanyController::class, 'show'])->name('show');
+
 
 Route::prefix('vacancies')->group(function () {
     Route::get('/{id}', [VacancyController::class, 'getVacancyByID'])->name('getVacancyByID');
