@@ -243,7 +243,7 @@ class VacancyService
                     'image',
                 ]);
 
-        return [$vacancy];
+        return $vacancy;
     }
 
     /**
