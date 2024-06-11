@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             PostImageSeeder::class,
             ExperienceSeeder::class,
             EmploymentSeeder::class,
+            FormatSeeder::class,
+            StatusSeeder::class,
             VacancySeeder::class,
             VacancySkillSeeder::class,
             CommentSeeder::class,
