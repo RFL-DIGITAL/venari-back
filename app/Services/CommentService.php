@@ -3,15 +3,6 @@
 namespace App\Services;
 
 use App\Models\Comment;
-use App\Models\Department;
-use App\Models\Employment;
-use App\Models\Experience;
-use App\Models\Position;
-use App\Models\Skill;
-use App\Models\Vacancy;
-use App\Parser;
-use Exception;
-use phpQuery;
 
 
 /**
@@ -40,11 +31,11 @@ class CommentService
         );
         $comment->save();
 
-        $parent = Comment::where('id', $parentID)->first()?->child()->associate($comment);
+        $parent = Comment::where('id', $parentID)->first()?->children()->save($comment);
         $parent?->save();
 
 
-        return [$comment->toArray()];
+        return $comment->toArray();
     }
 
     /**

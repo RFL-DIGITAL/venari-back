@@ -67,10 +67,11 @@ class MessageController extends Controller
      *    )
      *
      * @OA\Get(
-     *         path="/api/messages/{userID}",
+     *         path="/api/messages/{user_id}",
      *         tags={"MessageController"},
      *      @OA\Parameter(
-     *           name="userID",
+     *           name="user_id",
+     *              in="path",
      *           description="id пользователя",
      *           required=true),
      *         @OA\Response(
@@ -81,14 +82,14 @@ class MessageController extends Controller
      *     )
      *
      * @param Request $request - запрос
-     * @param $userID - id пользователя, сообщения с которым нужно получить
+     * @param $user_id - id пользователя, сообщения с которым нужно получить
      * @return JsonResponse
      */
-    public function getMessagesByUserID(Request $request, $userID): JsonResponse
+    public function getMessagesByUserID(Request $request, $user_id): JsonResponse
     {
         return $this->successResponse(
             $this->paginate(
-                $this->chatService->getMessagesByUserID($request->user()->id, $userID)
+                $this->chatService->getMessagesByUserID($request->user()->id, $user_id)
             )
         );
     }
