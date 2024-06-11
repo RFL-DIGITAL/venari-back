@@ -100,7 +100,7 @@ class MessageController extends Controller
      * @OA\Schema( schema="sendMessage",
      *                @OA\Property(property="success",type="boolean",example="true"),
      *                @OA\Property(property="response",type="array",
-     *                     @OA\Items(ref="#/components/schemas/message")),
+     *                     @OA\Items(ref="#/components/schemas/messageDTO")),
      *     )
      *
      * @OA\Post(
