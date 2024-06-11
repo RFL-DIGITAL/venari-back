@@ -23,7 +23,7 @@ class MessageDTO implements Jsonable, JsonSerializable
     private string $to_id;
 
     /**
-     * @OA\Property(ref="#/components/schemas/user")
+     * @OA\Property(ref="#/components/schemas/detailUser")
      */
     private User $owner;
 

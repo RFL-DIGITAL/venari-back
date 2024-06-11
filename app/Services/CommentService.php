@@ -47,7 +47,9 @@ class CommentService
     public function getComments($postID): array
     {
         return Comment::where('post_id', $postID)->get()
-            ->load('allChildren')->toArray();
+            ->load('allChildren')
+            ->load('user.image')
+            ->toArray();
     }
 }
 
