@@ -35,9 +35,9 @@ class NewCompanyMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('messages-'.CompanyChat::where('id', $this->companyMessage['to_id'])
+            new PrivateChannel('messages-'.CompanyChat::where('id', $this->companyMessage['toId'])
             ->first()->user_id),
-            new PrivateChannel('company-chat-'.$this->companyMessage['to_id']),
+            new PrivateChannel('company-chat-'.$this->companyMessage['toId']),
         ];
     }
 }
