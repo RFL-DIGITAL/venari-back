@@ -54,7 +54,6 @@ class PostController extends Controller
         );
 
         shuffle($posts);
-
         return $this->successResponse(
             $this->paginate($posts)
         );

@@ -34,7 +34,7 @@ Route::middleware('auth:api')->prefix('messages')->group(function () {
     Route::get('{userID}', [MessageController::class, 'getMessagesByUserID'])
         ->name('getMessagesByUserID');
     Route::post('join-chat', [MessageController::class, 'joinChat'])->name('joinChat');
-    Route::post('quit-chat', [MessageController::class, 'joinChat'])->name('joinChat');
+    Route::post('quit-chat', [MessageController::class, 'joinChat'])->name('quit-chat');
 
     Route::get('', [MessageController::class, 'getChats'])->name('getChats');
 });
