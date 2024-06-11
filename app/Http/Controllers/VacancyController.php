@@ -71,6 +71,7 @@ class VacancyController extends Controller
      *        tags={"VacancyController"},
      *     @OA\Parameter(
      *           name="id",
+     *          in="path",
      *           description="id вакансии",
      *           required=true),
      *        @OA\Response(

@@ -40,13 +40,13 @@ class CommentController extends Controller
     {
         $userID = auth()->id();
 
-        if ($request->exists('parentID')) {
+        if ($request->exists('parent_id')) {
             return $this->successResponse(
                 $this->commentService->addComment(
                     $userID,
                     $request->text,
-                    $request->postID,
-                    $request->parentID,
+                    $request->post_id,
+                    $request->parent_id,
                 )
             );
         }
@@ -54,7 +54,7 @@ class CommentController extends Controller
             $this->commentService->addComment(
                 $userID,
                 $request->text,
-                $request->postID,
+                $request->post_id,
             )
         );
     }
@@ -73,6 +73,7 @@ class CommentController extends Controller
      *        tags={"CommentController"},
      *     @OA\Parameter(
      *           name="id",
+     *              in="path",
      *           description="id поста",
      *           required=true),
      *        @OA\Response(
@@ -82,14 +83,14 @@ class CommentController extends Controller
      *      )
      *    )
      *
-     * @param int $postID
+     * @param int $id
      * @return JsonResponse
      */
-    public function getComments(int $postID): JsonResponse
+    public function getComments(int $id): JsonResponse
     {
         return $this->successResponse(
             $this->paginate(
-                $this->commentService->getComments($postID)
+                $this->commentService->getComments($id)
             )
         );
     }

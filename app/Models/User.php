@@ -83,4 +83,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Resume::class);
     }
+
+    public function companyChats(): HasMany {
+        return $this->hasMany(CompanyChat::class);
+    }
 }

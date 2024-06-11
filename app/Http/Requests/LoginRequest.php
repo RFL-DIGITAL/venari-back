@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
@@ -12,7 +13,6 @@ use OpenApi\Annotations as OA;
  * @OA\RequestBody(request="LoginRequest", @OA\JsonContent(
  *     @OA\Property(property="email",type="string"),
  *     @OA\Property(property="password",type="string"),
- *
  * ))
  */
 class LoginRequest extends FormRequest
@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
