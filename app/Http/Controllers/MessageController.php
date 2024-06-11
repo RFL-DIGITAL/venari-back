@@ -57,7 +57,7 @@ class MessageController extends Controller
         });
 
         return $this->successResponse(
-            $this->paginate($recentChats)
+            $recentChats
         );
     }
 
@@ -92,9 +92,7 @@ class MessageController extends Controller
     public function getMessagesByUserID(Request $request, $user_id): JsonResponse
     {
         return $this->successResponse(
-            $this->paginate(
                 $this->chatService->getMessagesByUserID($request->user()->id, $user_id)
-            )
         );
     }
 
@@ -128,9 +126,7 @@ class MessageController extends Controller
     public function getCompanyMessagesByCompanyChatID($company_chat_id): JsonResponse
     {
         return $this->successResponse(
-            $this->paginate(
                 $this->chatService->getCompanyMessagesByCompanyChatID($company_chat_id)
-            )
         );
     }
 
