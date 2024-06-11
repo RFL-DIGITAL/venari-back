@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 
 /**
  * @OA\RequestBody(request="SendCommentRequest", @OA\JsonContent(
  *     @OA\Property(property="text",type="string"),
- *     @OA\Property(property="postID",type="int"),
- *     @OA\Property(property="parentID",type="int", description="id комментария, на который отвечаем. Необязательный
+ *     @OA\Property(property="post_id",type="int"),
+ *     @OA\Property(property="parent_id",type="int", description="id комментария, на который отвечаем. Необязательный
  * параметр"),
  * ))
  */
@@ -26,7 +27,7 @@ class SendCommentRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {

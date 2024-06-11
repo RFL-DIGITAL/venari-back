@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\RequestBody(request="SendMessageRequest", @OA\JsonContent(
- *     @OA\Property(property="toID",type="int"),
+ *     @OA\Property(property="to_id",type="int"),
  *     @OA\Property(property="body",type="string"),
  *     @OA\Property(property="type",type="string"),
  *     @OA\Property(property="files", type="array",@OA\Items(type="string", format="binary",
@@ -28,7 +29,7 @@ class SendMessageRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
