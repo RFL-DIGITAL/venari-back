@@ -7,4 +7,5 @@ enum MessageType: string
 {
     case message = 'message';
     case chatMessage = 'chatMessage';
+    case companyMessage = 'companyMessage';
 }

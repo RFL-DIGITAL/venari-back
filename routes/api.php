@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\VacancyController;
@@ -34,6 +36,8 @@ Route::middleware('auth:api')->prefix('messages')->group(function () {
     Route::post('send-message', [MessageController::class, 'sendMessage'])->name('sendMessage');
     Route::get('{user_id}', [MessageController::class, 'getMessagesByUserID'])
         ->name('getMessagesByUserID');
+    Route::get('/companies/{company_chat_id}', [MessageController::class, 'getCompanyMessagesByCompanyChatID'])
+        ->name('getCompanyChatsByCompanyChatID');
     Route::post('join-chat', [MessageController::class, 'joinChat'])->name('joinChat');
     Route::post('quit-chat', [MessageController::class, 'quitChat'])->name('quitChat');
 
@@ -58,6 +62,9 @@ Route::prefix('posts')->group(function () {
 Route::prefix('comments')->group(function () {
     Route::post('send-comment', [CommentController::class, 'sendComment'])->name('sendComment');
 });
+
+Route::get('/images/{id}', [ImageController::class, 'getImageByID'])->name('getImageByID');
+Route::get('/files/{id}', [FileController::class, 'getFileByID'])->name('getFileByID');
 
 // todo: Добавить crypter для шифрования персональных данных
 Route::post('register', [UserController::class, 'register']);
