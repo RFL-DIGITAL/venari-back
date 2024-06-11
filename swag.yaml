@@ -8,6 +8,9 @@ servers:
   -
     url: 'https://venari.backend.rfld.ru'
     description: 'Боевой сервер'
+  -
+    url: 'http://127.0.0.1:8000'
+    description: dev
 paths:
   /api/register:
     post:
@@ -51,15 +54,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getAllChats'
-  '/api/networking/{chatID}/messages':
+  '/api/networking/{chat_id}/messages':
     get:
       tags:
         - СhatController
       summary: 'Метод получения сообщений чата по id чата'
-      operationId: d123c846950987022fd609c7c08ba6f4
+      operationId: 44f858925d585bc9ba9261ad1cf84a3f
       parameters:
         -
-          name: chatID
+          name: chat_id
+          in: path
           description: 'id чата'
           required: true
       responses:
@@ -69,15 +73,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getChatMessagesByChatID'
-  '/api/networking/{chatID}':
+  '/api/networking/{chat_id}':
     get:
       tags:
         - СhatController
       summary: 'Метод получения подробной информации о чате по id'
-      operationId: 35bb6259ee6805e1b46f7be1ecd4f29b
+      operationId: 5a457c7cfd6308a8fc2e82ec59d696a8
       parameters:
         -
-          name: chatID
+          name: chat_id
+          in: path
           description: 'id чата'
           required: true
       responses:
@@ -111,6 +116,7 @@ paths:
       parameters:
         -
           name: id
+          in: path
           description: 'id поста'
           required: true
       responses:
@@ -120,6 +126,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getComments'
+  '/api/files/{id}':
+    get:
+      tags:
+        - FileController
+      summary: 'Метод получения файла по его id'
+      operationId: fdbc4480f2c1bcd3cf1eb5e570955243
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id файла'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+  '/api/images/{id}':
+    get:
+      tags:
+        - ImageController
+      summary: 'Метод получения изображения по его id'
+      operationId: e548787fe1e043626c156a73136a459e
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id изображения'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
   /api/messages:
     get:
       tags:
@@ -133,15 +169,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getChats'
-  '/api/messages/{userID}':
+  '/api/messages/{user_id}':
     get:
       tags:
         - MessageController
       summary: 'Метод получения сообщений 1-1 по id пользователя'
-      operationId: 7bca300728fad88ae782d68733121742
+      operationId: 93692c2c6643a27380a2798c8130dce9
       parameters:
         -
-          name: userID
+          name: user_id
+          in: path
           description: 'id пользователя'
           required: true
       responses:
@@ -151,6 +188,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getMessagesByUserID'
+  '/api/messages/companies/{company_chat_id}':
+    get:
+      tags:
+        - MessageController
+      summary: 'Метод получения всех сообщений с компанией по id компани-чата'
+      operationId: 34b26691d145d076bcd0934a5052ddfc
+      parameters:
+        -
+          name: company_chat_id
+          in: path
+          description: 'id компани-чата'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCompanyMessagesByCompanyChatID'
   /api/messages/send-message:
     post:
       tags:
@@ -218,6 +274,7 @@ paths:
       parameters:
         -
           name: id
+          in: path
           description: 'id поста'
           required: true
       responses:
@@ -249,6 +306,7 @@ paths:
       parameters:
         -
           name: id
+          in: path
           description: 'id вакансии'
           required: true
       responses:
@@ -280,9 +338,10 @@ components:
         owner_id:
           type: integer
         to_id:
+          description: 'либо id пользователя, либо id чата, либо id чата компании'
           type: string
         owner:
-          $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/detailUser'
         attachmentDTO:
           $ref: '#/components/schemas/attachmentDTO'
         created_at:
@@ -294,6 +353,7 @@ components:
       enum:
         - message
         - chatMessage
+        - companyMessage
     registerUser:
       properties:
         success:
@@ -382,7 +442,17 @@ components:
         response:
           type: array
           items:
-            $ref: '#/components/schemas/message'
+            $ref: '#/components/schemas/messageDTO'
+      type: object
+    getCompanyMessagesByCompanyChatID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/messageDTO'
       type: object
     sendMessage:
       properties:
@@ -392,7 +462,7 @@ components:
         response:
           type: array
           items:
-            $ref: '#/components/schemas/message'
+            $ref: '#/components/schemas/messageDTO'
       type: object
     joinChat:
       properties:
@@ -939,6 +1009,8 @@ components:
         post_id:
           type: integer
           nullable: true
+        user:
+          $ref: '#/components/schemas/detailUser'
         all_children:
           description: 'Массив ответов'
           type: array
@@ -1072,9 +1144,9 @@ components:
             properties:
               text:
                 type: string
-              postID:
+              post_id:
                 type: integer
-              parentID:
+              parent_id:
                 description: "id комментария, на который отвечаем. Необязательный\n * параметр"
                 type: integer
             type: object
@@ -1083,7 +1155,7 @@ components:
         application/json:
           schema:
             properties:
-              toID:
+              to_id:
                 type: integer
               body:
                 type: string

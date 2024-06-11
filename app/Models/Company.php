@@ -39,4 +39,8 @@ class Company extends Model
     {
         return $this->belongsTo(Image::class);
     }
+
+    public function companyChats(): HasMany {
+        return $this->hasMany(CompanyChat::class);
+    }
 }

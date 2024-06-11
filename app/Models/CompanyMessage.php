@@ -7,24 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class ChatMessage extends Model
+class CompanyMessage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'owner_id',
-        'chat_id',
+        'companyChat_id',
         'body'
     ];
+
+    public function companyChat(): BelongsTo {
+        return $this->belongsTo(CompanyChat::class);
+    }
 
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function chat(): BelongsTo
-    {
-        return $this->belongsTo(Chat::class);
     }
 
     public function fileMessage(): MorphOne

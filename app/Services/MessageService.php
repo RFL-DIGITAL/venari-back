@@ -6,8 +6,10 @@ use App\DTO\AttachmentDTO;
 use App\DTO\MessageDTO;
 use App\DTO\MessageType;
 use App\Events\NewChatMessageEvent;
+use App\Events\NewCompanyMessageEvent;
 use App\Events\NewMessageEvent;
 use App\Models\ChatMessage;
+use App\Models\CompanyMessage;
 use App\Models\File;
 use App\Models\FileMessage;
 use App\Models\Image;
@@ -26,6 +28,8 @@ class MessageService
         $body = $request->body;
         $type = MessageType::tryFrom($request->type);
 
+        $messageDTO = [];
+
         switch ($type) {
             case MessageType::message:
                 if ($body != '') {
@@ -38,13 +42,12 @@ class MessageService
                     );
                     $message->save();
 
-
                     $messageDTO = new MessageDTO(
                         $message->id,
                         $message->from_id,
                         $message->to_id,
                         $message->owner,
-                        $this->createAttachment($message),
+                        $this->createAttachment($body),
                         $message->created_at
                     );
 
@@ -64,7 +67,17 @@ class MessageService
 
                         $this->createImageMessage($message, $image);
 
-                        event(new NewMessageEvent($message));
+                        $messageDTO = new MessageDTO(
+                            $message->id,
+                            $message->from_id,
+                            $message->to_id,
+                            $message->owner,
+                            $this->createAttachment(
+                                image: $message->imageMessage->image->id),
+                            $message->created_at
+                        );
+
+                        event(new NewMessageEvent($messageDTO));
                     }
                 }
 
@@ -80,12 +93,22 @@ class MessageService
 
                         $this->createFileMessage($message, $file);
 
-                        event(new NewMessageEvent($message));
+                        $messageDTO = new MessageDTO(
+                            $message->id,
+                            $message->from_id,
+                            $message->to_id,
+                            $message->owner,
+                            $this->createAttachment(
+                                file: $message->fileMessage->file->id),
+                            $message->created_at
+                        );
+
+                        event(new NewMessageEvent($messageDTO));
                     }
                 }
                 break;
 
-            default:
+            case MessageType::chatMessage:
                 if ($body != '') {
                     $message = new ChatMessage(
                         [
@@ -94,10 +117,19 @@ class MessageService
                             'body' => $body,
                         ]
                     );
-                    $message->save();
-                    $message->load('owner');
 
-                    event(new NewChatMessageEvent($message));
+                    $message->save();
+
+                    $messageDTO = new MessageDTO(
+                        $message->id,
+                        $message->owner_id,
+                        $message->chat_id,
+                        $message->owner,
+                        $this->createAttachment($body),
+                        $message->created_at
+                    );
+
+                    event(new NewChatMessageEvent($messageDTO));
                 }
 
                 if ($request->hasFile('images')) {
@@ -109,11 +141,20 @@ class MessageService
                             ]
                         );
                         $message->save();
-                        $message->load('owner');
 
                         $this->createImageMessage($message, $image);
 
-                        event(new NewChatMessageEvent($message));
+                        $messageDTO = new MessageDTO(
+                            $message->id,
+                            $message->owner_id,
+                            $message->chat_id,
+                            $message->owner,
+                            $this->createAttachment(
+                                image: $message->imageMessage->image->id),
+                            $message->created_at
+                        );
+
+                        event(new NewChatMessageEvent($messageDTO));
                     }
                 }
 
@@ -126,34 +167,114 @@ class MessageService
                             ]
                         );
                         $message->save();
-                        $message->load('owner');
 
                         $this->createFileMessage($message, $file);
 
-                        event(new NewChatMessageEvent($message));
+                        $messageDTO = new MessageDTO(
+                            $message->id,
+                            $message->owner_id,
+                            $message->chat_id,
+                            $message->owner,
+                            $this->createAttachment(
+                                file: $message->fileMessage->file->id),
+                            $message->created_at
+                        );
+
+                        event(new NewChatMessageEvent($messageDTO));
+                    }
+                }
+
+                break;
+
+            default:
+                if ($body != '') {
+                    $message = new CompanyMessage(
+                        [
+                            'owner_id' => $ownerID,
+                            'companyChat_id' => $toID,
+                            'body' => $body,
+                        ]
+                    );
+
+                    $message->save();
+
+//                    dd($message->companyChat_id);
+                    $messageDTO = new MessageDTO(
+                        $message->id,
+                        $message->owner_id,
+                        $message->companyChat_id,
+                        $message->owner,
+                        $this->createAttachment($body),
+                        $message->created_at
+                    );
+
+                    event(new NewCompanyMessageEvent($messageDTO));
+                }
+
+                if ($request->hasFile('images')) {
+                    foreach ($request->images as $image) {
+                        $message = new CompanyMessage(
+                            [
+                                'owner_id' => $ownerID,
+                                'companyChat_id' => $toID,
+                            ]
+                        );
+                        $message->save();
+
+                        $this->createImageMessage($message, $image);
+
+                        $messageDTO = new MessageDTO(
+                            $message->id,
+                            $message->owner_id,
+                            $message->companyChat_id,
+                            $message->owner,
+                            $this->createAttachment(
+                                image: $message->imageMessage->image->id),
+                            $message->created_at
+                        );
+
+                        event(new NewCompanyMessageEvent($messageDTO));
+                    }
+                }
+
+                if ($request->hasFile('attachments')) {
+                    foreach ($request->attachments as $file) {
+                        $message = new CompanyMessage(
+                            [
+                                'owner_id' => $ownerID,
+                                'companyChat_id' => $toID,
+                            ]
+                        );
+                        $message->save();
+
+                        $this->createFileMessage($message, $file);
+
+                        $messageDTO = new MessageDTO(
+                            $message->id,
+                            $message->owner_id,
+                            $message->companyChat_id,
+                            $message->owner,
+                            $this->createAttachment(
+                                file: $message->fileMessage->file->id),
+                            $message->created_at
+                        );
+
+                        event(new NewCompanyMessageEvent($messageDTO));
                     }
                 }
         }
 
-        $return = new MessageDTO(
-            $message->id,
-            $message->from_id,
-            $message->to_id,
-            $message->owner,
-            $this->createAttachment($message),
-            $message->created_at
-        );
-
-        return $return->jsonSerialize();
+        return $messageDTO->jsonSerialize();
     }
 
-    private function createFileMessage($message, $file)
+    private function createFileMessage($message, $file): void
     {
         $fileMessage = new FileMessage();
 
         $fileModel = new File(
             [
-                'file' => base64_encode(file_get_contents($file))
+                'file' => base64_encode(file_get_contents($file)),
+                'mime' => $file->getClientMimeType()
             ]
         );
 
@@ -164,7 +285,7 @@ class MessageService
         $fileMessage->save();
     }
 
-    private function createImageMessage($message, $image)
+    private function createImageMessage($message, $image): void
     {
         $imageMessage = new ImageMessage();
 
@@ -182,21 +303,25 @@ class MessageService
     }
 
     // todo: создание сообщений с ссылкой
-    private function createLinkMessage($message, $link)
+    private function createLinkMessage($message, $link): void
     {
-        $linkMessage = new LinkMessage();
+        $linkMessage = new LinkMessage(
+            [
+                'link' => $link
+            ]
+        );
 
         $linkMessage->message()->associate($message);
         $linkMessage->save();
     }
 
-    private function createAttachment($message): AttachmentDTO
+    private function createAttachment($body = null, $file = null, $image = null, $link = null): AttachmentDTO
     {
         return new AttachmentDTO(
-            $message->body,
-            $message->fileMessage?->file,
-            $message->imageMessage?->image,
-            $message->linkMessage?->link,
+            $body,
+            $file == null ?: route('getFileByID', ['id' => $file]),
+            $image == null ?: route('getImageByID',  ['id' => $image]),
+            $link,
         );
     }
 }

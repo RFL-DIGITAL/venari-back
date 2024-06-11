@@ -10,6 +10,10 @@ class LinkMessage extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'link'
+    ];
+
     protected $table = 'link_messages';
 
     // $linkMessage->message()->associate(Message::where('id', 1)->first())->save();
