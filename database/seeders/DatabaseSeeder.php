@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
             ImageMessageSeeder::class,
             FileMessageSeeder::class,
             LinkMessageSeeder::class,
+            StageTypeSeeder::class,
 
         ]);
     }

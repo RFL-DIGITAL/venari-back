@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('vacancies', function (Blueprint $table) {
-            $table->string("title");
             $table->string("additional_title")->nullable();
             $table->dateTime("unarchived_at");
 
             $table->foreignId('format_id')->nullable();
             $table->foreignId('accountable_id')->nullable();
             $table->foreignId('status_id')->nullable();
+            $table->foreignId('specialization_id')->nullable();
 
+            $table->foreign('specialization_id')->references('id')->on('specializations')
+                ->onUpdate('cascade')->onDelete('set null');
             $table->foreign('status_id')->references('id')->on('statuses')
                 ->onUpdate('cascade')->onDelete('set null');
             $table->foreign('format_id')->references('id')->on('formats')
@@ -35,11 +37,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('vacancies', function (Blueprint $table) {
-            $table->dropColumn("title");
             $table->dropColumn("additional_title");
             $table->dropColumn("unarchived_at");
+            $table->dropForeign(["specialization_id"]);
             $table->dropForeign(["format_id"]);
             $table->dropForeign(["accountable_id"]);
+            $table->dropForeign(["status_id"]);
         });
     }
 };
