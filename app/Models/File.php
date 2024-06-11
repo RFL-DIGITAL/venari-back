@@ -11,7 +11,8 @@ class File extends Model
     use HasFactory;
 
     protected $fillable = [
-        'file'
+        'file',
+        'mime'
     ];
 
     public function fileMessages(): HasMany

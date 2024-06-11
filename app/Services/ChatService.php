@@ -8,6 +8,8 @@ use App\DTO\MessageDTO;
 use App\DTO\MessageType;
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use App\Models\CompanyChat;
+use App\Models\CompanyMessage;
 use App\Models\Image;
 use App\Models\Message;
 use App\Models\User;
@@ -51,21 +53,10 @@ class ChatService
                     $id = $userID;
                 }
 
-                if ($message->body == null) {
-                    if ($message->fileMessage != null) {
-                        $body = 'Файл';
-                    } else if ($message->imageMessage != null) {
-                        $body = 'Изображение';
-                    } else {
-                        $body = 'Действие';
-                    }
-                } else {
-                    $body = $message->body;
-                }
                 // todo нормальная проверка на наличие такого чата
                 $recentChats[$key] = [
                     "avatar" => $avatar,
-                    "body" => $body,
+                    "body" => $this->formatMessageBody($message),
                     "updated_at" => $message->updated_at->toDateTimeString(),
                     'user_id' => $id
                 ];
@@ -109,33 +100,50 @@ class ChatService
                 $message = ChatMessage::where('chat_id', $chat->id)->get()->last();
 
                 if ($message != null) {
-                    if ($message->body == null) {
-                        if ($message->fileMessage != null) {
-                            $body = 'Файл';
-                        } else if ($message->imageMessage != null) {
-                            $body = 'Изображение';
-                        } else {
-                            $body = 'Действие';
-                        }
-                    } else {
-                        $body = $message->body;
-                    }
-                } else {
-                    $body = null;
-                }
+                    $body = $this->formatMessageBody($message);
 
-                $recentGroups[] = new ChatPreviewDTO(
-                    $chat->name,
-                    $chat?->image?->image,
-                    $body,
-                    $message != null ? $message->updated_at->toDateTimeString() : '',
-                    MessageType::chatMessage,
-                    $chat->id
-                );
+                    $recentGroups[] = new ChatPreviewDTO(
+                        $chat->name,
+                        $chat?->image?->image,
+                        $body,
+                        $message != null ? $message->updated_at->toDateTimeString() : '',
+                        MessageType::chatMessage,
+                        $chat->id
+                    );
+                }
             }
         }
 
         return $recentGroups;
+    }
+
+    public function formatCompanies($userID): array
+    {
+        $companyChats = CompanyChat::where('user_id', $userID)->get();
+
+        $recentCompanies = [];
+
+        if ($companyChats != null) {
+            foreach ($companyChats as $companyChat)
+            {
+                $companyMessage = CompanyMessage::where('companyChat_id', $companyChat->id)->get()->last();
+
+                if ($companyMessage != null) {
+                    $body = $this->formatMessageBody($companyMessage);
+
+                    $recentCompanies[] = new ChatPreviewDTO(
+                        $companyChat->company->name,
+                        $companyChat->company->image->image,
+                        $body,
+                        $companyMessage != null ? $companyMessage->updated_at->toDateTimeString() : '',
+                        MessageType::companyMessage,
+                        $companyChat->id
+                    );
+                }
+            }
+        }
+
+        return $recentCompanies;
     }
 
     /**
@@ -164,7 +172,12 @@ class ChatService
                     $message->from_id,
                     $message->to_id,
                     $message->owner,
-                    $this->createAttachment($message),
+                    $this->createAttachment(
+                        $message?->body,
+                        $message?->fileMessage->file->id,
+                        $message?->imageMessage->image->id,
+                        $message?->linkMessage->link,
+                    ),
                     $message->created_at
                 );
             }
@@ -191,7 +204,12 @@ class ChatService
                 $chatMessage->owner_id,
                 $chatMessage->chat_id,
                 $chatMessage->owner,
-                $this->createAttachment($chatMessage),
+                $this->createAttachment(
+                    $chatMessage?->body,
+                    $chatMessage?->fileMessage->file->id,
+                    $chatMessage?->imageMessage->image->id,
+                    $chatMessage?->linkMessage->link,
+                ),
                 $chatMessage->created_at
             );
         }
@@ -199,14 +217,63 @@ class ChatService
         return $messageDTOs;
     }
 
-    private function createAttachment($message): AttachmentDTO
+    public function getCompanyMessagesByCompanyChatID($companyChatID): array
+    {
+        $companyMessages = CompanyMessage::where('companyChat_id', $companyChatID)->orderBy('created_at')->get();
+
+        $messageDTOs = array();
+
+        foreach ($companyMessages as $companyMessage) {
+            $owner = $companyMessage->owner;
+            // todo: в будущем стоит учесть ситуацию, когда в такой чат заходит hr.
+            if ($owner->hrable->company->id == CompanyChat::where('id', $companyChatID)->first()->company->id) {
+                $owner->name = $owner->hrable->company->name;
+                $owner->image_id = $owner->hrable->company->image_id;
+            }
+
+            $messageDTOs[] = new MessageDTO(
+                $companyMessage->id,
+                $companyMessage->owner_id,
+                $companyMessage->companyChat_id,
+                $owner,
+                $this->createAttachment(
+                    $companyMessage?->body,
+                    $companyMessage?->fileMessage->file->id,
+                    $companyMessage?->imageMessage->image->id,
+                    $companyMessage?->linkMessage->link,
+                ),
+                $companyMessage->created_at
+            );
+        }
+
+        return $messageDTOs;
+    }
+
+    private function createAttachment($body = null, $file = null, $image = null, $link = null): AttachmentDTO
     {
         return new AttachmentDTO(
-            $message->body,
-            $message->fileMessage?->file,
-            $message->imageMessage?->image,
-            $message->linkMessage?->link,
+            $body,
+            $file == null ?: route('getFileByID', ['id' => $file]),
+            $image == null ?: route('getImageByID',  ['id' => $image]),
+            $link,
         );
+    }
+
+    private function formatMessageBody($message): string
+    {
+        if ($message->body == null) {
+            if ($message->fileMessage != null) {
+                $body = 'Файл';
+            } else if ($message->imageMessage != null) {
+                $body = 'Изображение';
+            } else {
+                $body = 'Действие';
+            }
+        } else {
+            $body = $message->body;
+        }
+
+        return $body;
     }
 
     public function getAllChats(): array

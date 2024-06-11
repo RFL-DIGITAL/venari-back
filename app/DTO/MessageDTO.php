@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
@@ -13,12 +14,14 @@ class MessageDTO implements Jsonable, JsonSerializable
      * @OA\Property()
      */
     private int $id;
+
     /**
      * @OA\Property()
      */
     private int $owner_id;
+
     /**
-     * @OA\Property()
+     * @OA\Property(description="либо id пользователя, либо id чата, либо id чата компании")
      */
     private string $to_id;
 
@@ -48,6 +51,7 @@ class MessageDTO implements Jsonable, JsonSerializable
         $this->created_at = $created_at;
         $this->attachmentDTO = $attachmentDTO;
         $this->owner = $owner;
+        $this->owner->load('image');
         $this->to_id = $to_id;
         $this->owner_id = $owner_id;
         $this->id = $id;
@@ -99,7 +103,7 @@ class MessageDTO implements Jsonable, JsonSerializable
         return json_encode($this->jsonSerialize());
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

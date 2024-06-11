@@ -19,6 +19,10 @@ use OpenApi\Annotations as OA;
  *         description="Боевой сервер",
  *         url="https://venari.backend.rfld.ru"
  *     ),
+ *     @OA\Server(
+ *          description="dev",
+ *          url="http://127.0.0.1:8000"
+ *      ),
  *     @OA\ExternalDocumentation(
  *         description="Как документировать этот код",
  *         url="https://zircote.github.io/swagger-php/guide/annotations.html"

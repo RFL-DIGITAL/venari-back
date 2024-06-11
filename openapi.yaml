@@ -5,9 +5,10 @@ info:
     email: kupryashin.stepan@yandex.ru
   version: 3.0.0
 servers:
-  -
-    url: 'https://backend-venari.rfld.ru'
-    description: 'Боевой сервер'
+  - url: 'https://backend-venari.rfld.ru'
+    description: 'Боевой сервер';
+  - url: 'localhost:8000'
+    description: 'dev'
 paths:
   /api/register:
     get:
