@@ -107,11 +107,11 @@ class MessageDTO implements Jsonable, JsonSerializable
     {
         return [
             'id' => $this->id,
-            'owner_id' => $this->owner_id,
-            'to_id' => $this->to_id,
+            'ownerId' => $this->owner_id,
+            'toId' => $this->to_id,
             'owner' => $this->owner,
             'attachments' => $this->attachmentDTO,
-            'created_at' => $this->created_at
+            'createdAt' => $this->created_at
         ];
     }
 
