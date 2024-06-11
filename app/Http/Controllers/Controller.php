@@ -38,7 +38,7 @@ class Controller extends BaseController
      */
     protected function paginate(array $items): LengthAwarePaginator
     {
-        $perPage = request()->perPage ?: 10;
+        $perPage = request()->per_page ?: 10;
         $page = request()->page ?: (LengthAwarePaginator::resolveCurrentPage() ?: 1);
 
         $currentItems = array_slice($items, $perPage * ($page - 1), $perPage);
