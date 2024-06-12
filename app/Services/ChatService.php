@@ -174,9 +174,9 @@ class ChatService
                     $message->owner,
                     $this->createAttachment(
                         $message?->body,
-                        $message?->fileMessage->file->id,
-                        $message?->imageMessage->image->id,
-                        $message?->linkMessage->link,
+                        $message?->fileMessage?->file->id,
+                        $message?->imageMessage?->image->id,
+                        $message?->linkMessage?->link,
                     ),
                     $message->created_at
                 );
@@ -206,9 +206,9 @@ class ChatService
                 $chatMessage->owner,
                 $this->createAttachment(
                     $chatMessage?->body,
-                    $chatMessage?->fileMessage->file->id,
-                    $chatMessage?->imageMessage->image->id,
-                    $chatMessage?->linkMessage->link,
+                    $chatMessage?->fileMessage?->file->id,
+                    $chatMessage?->imageMessage?->image->id,
+                    $chatMessage?->linkMessage?->link,
                 ),
                 $chatMessage->created_at
             );
@@ -238,9 +238,9 @@ class ChatService
                 $owner,
                 $this->createAttachment(
                     $companyMessage?->body,
-                    $companyMessage?->fileMessage->file->id,
-                    $companyMessage?->imageMessage->image->id,
-                    $companyMessage?->linkMessage->link,
+                    $companyMessage?->fileMessage?->file->id,
+                    $companyMessage?->imageMessage?->image->id,
+                    $companyMessage?->linkMessage?->link,
                 ),
                 $companyMessage->created_at
             );

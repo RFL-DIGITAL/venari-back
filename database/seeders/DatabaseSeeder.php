@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             PostImageSeeder::class,
             ExperienceSeeder::class,
             EmploymentSeeder::class,
+            FormatSeeder::class,
+            StatusSeeder::class,
             VacancySeeder::class,
             VacancySkillSeeder::class,
             CommentSeeder::class,
@@ -52,6 +54,7 @@ class DatabaseSeeder extends Seeder
             ImageMessageSeeder::class,
             FileMessageSeeder::class,
             LinkMessageSeeder::class,
+            StageTypeSeeder::class,
 
         ]);
     }

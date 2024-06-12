@@ -71,9 +71,7 @@ class ChatController extends Controller
     public function getChatMessagesByChatID($chat_id): JsonResponse
     {
         return $this->successResponse(
-            $this->paginate(
                 $this->chatService->getChatMessagesByChatID($chat_id)
-            )
         );
     }
 
