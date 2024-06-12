@@ -107,7 +107,8 @@ class User extends Authenticatable
     public function getPostCountAttribute() {
         return Post::where('user_id', auth()->user()->id)->get()->count();
     }
-
-
-
+  
+    public function companyChats(): HasMany {
+        return $this->hasMany(CompanyChat::class);
+    }
 }

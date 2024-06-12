@@ -1083,6 +1083,11 @@ namespace Responses {
         public ?int $post_id;
 
         /**
+         * @OA\Property(ref="#/components/schemas/detailUser")
+         */
+        public DetailUser $user;
+
+        /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/comment"), description="Массив ответов")
          */
         public $all_children;

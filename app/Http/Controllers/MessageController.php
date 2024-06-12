@@ -41,8 +41,12 @@ class MessageController extends Controller
     public function getChats(Request $request): JsonResponse
     {
         $user_id = $request->user()->id;
-        $recentChats = array_merge($this->chatService->formatOneToOnes($user_id),
-            $this->chatService->formatGroups($user_id));
+
+        $recentChats = array_merge(
+            $this->chatService->formatOneToOnes($user_id),
+            $this->chatService->formatGroups($user_id),
+            $this->chatService->formatCompanies($user_id)
+        );
 
         // Перемешиваем, дабы групповые чаты не оставались внизу
         shuffle($recentChats);
@@ -67,10 +71,11 @@ class MessageController extends Controller
      *    )
      *
      * @OA\Get(
-     *         path="/api/messages/{userID}",
+     *         path="/api/messages/{user_id}",
      *         tags={"MessageController"},
      *      @OA\Parameter(
-     *           name="userID",
+     *           name="user_id",
+     *              in="path",
      *           description="id пользователя",
      *           required=true),
      *         @OA\Response(
@@ -81,14 +86,50 @@ class MessageController extends Controller
      *     )
      *
      * @param Request $request - запрос
-     * @param $userID - id пользователя, сообщения с которым нужно получить
+     * @param $user_id - id пользователя, сообщения с которым нужно получить
      * @return JsonResponse
      */
-    public function getMessagesByUserID(Request $request, $userID): JsonResponse
+    public function getMessagesByUserID(Request $request, $user_id): JsonResponse
     {
         return $this->successResponse(
             $this->paginate(
-                $this->chatService->getMessagesByUserID($request->user()->id, $userID)
+                $this->chatService->getMessagesByUserID($request->user()->id, $user_id)
+            )
+        );
+    }
+
+    /**
+     * Метод получения всех сообщений с компанией по id компани-чата
+     *
+     * @OA\Schema( schema="getCompanyMessagesByCompanyChatID",
+     *                @OA\Property(property="success",type="boolean",example="true"),
+     *                @OA\Property(property="response",type="array",
+     *                     @OA\Items(ref="#/components/schemas/messageDTO")),
+     *     )
+     *
+     * @OA\Get(
+     *          path="/api/messages/companies/{company_chat_id}",
+     *          tags={"MessageController"},
+     *       @OA\Parameter(
+     *            name="company_chat_id",
+     *               in="path",
+     *            description="id компани-чата",
+     *            required=true),
+     *          @OA\Response(
+     *          response="200",
+     *          description="Ответ при успешном выполнении запроса",
+     *          @OA\JsonContent(ref="#/components/schemas/getCompanyMessagesByCompanyChatID")
+     *        )
+     *      )
+     *
+     * @param $company_chat_id - id компани-чата
+     * @return JsonResponse
+     */
+    public function getCompanyMessagesByCompanyChatID($company_chat_id): JsonResponse
+    {
+        return $this->successResponse(
+            $this->paginate(
+                $this->chatService->getCompanyMessagesByCompanyChatID($company_chat_id)
             )
         );
     }
@@ -99,7 +140,7 @@ class MessageController extends Controller
      * @OA\Schema( schema="sendMessage",
      *                @OA\Property(property="success",type="boolean",example="true"),
      *                @OA\Property(property="response",type="array",
-     *                     @OA\Items(ref="#/components/schemas/message")),
+     *                     @OA\Items(ref="#/components/schemas/messageDTO")),
      *     )
      *
      * @OA\Post(
@@ -119,7 +160,8 @@ class MessageController extends Controller
     public function sendMessage(Request $request): JsonResponse
     {
         return $this->successResponse(
-            $this->messageService->sendMessage($request));
+            $this->messageService->sendMessage($request)
+        );
     }
 
     /**

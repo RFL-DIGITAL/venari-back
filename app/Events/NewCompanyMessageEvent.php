@@ -3,7 +3,7 @@
 namespace App\Events;
 
 use App\DTO\MessageDTO;
-use App\Models\ChatMessage;
+use App\Models\CompanyChat;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,18 +12,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewChatMessageEvent implements ShouldBroadcast
+class NewCompanyMessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public array $chatMessage;
+    public array $companyMessage;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(MessageDTO $chatMessage)
+    public function __construct(MessageDTO $companyMessage)
     {
-        $this->chatMessage = $chatMessage->jsonSerialize();
+        $this->companyMessage = $companyMessage->jsonSerialize();
 
     }
 
@@ -35,7 +35,9 @@ class NewChatMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat-'.$this->chatMessage['to_id']),
+            new PrivateChannel('messages-'.CompanyChat::where('id', $this->companyMessage['to_id'])
+            ->first()->user_id),
+            new PrivateChannel('company-chat-'.$this->companyMessage['to_id']),
         ];
     }
 }

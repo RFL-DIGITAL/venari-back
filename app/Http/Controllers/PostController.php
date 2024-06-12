@@ -35,10 +35,9 @@ class PostController extends Controller
      *      )
      *    )
      *
-     * @param Request $request
      * @return JsonResponse
      */
-    public function getPosts(Request $request): JsonResponse
+    public function getPosts(): JsonResponse
     {
         $innerPosts = $this->postService->getInnerPosts();
 
@@ -56,7 +55,6 @@ class PostController extends Controller
         );
 
         shuffle($posts);
-
         return $this->successResponse(
             $this->paginate($posts)
         );
@@ -75,6 +73,7 @@ class PostController extends Controller
      *         tags={"PostController"},
      *     @OA\Parameter(
      *          name="id",
+     *     in="path",
      *          description="id поста",
      *          required=true),
      *         @OA\Response(

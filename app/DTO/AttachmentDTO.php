@@ -18,12 +18,12 @@ class AttachmentDTO implements Jsonable, JsonSerializable
     /**
      * @OA\Property(type="string")
      */
-    private ?File $file;
+    private ?string $file;
 
     /**
      * @OA\Property(type="string")
      */
-    private ?Image $image;
+    private ?string $image;
 
     /**
      * @OA\Property()
@@ -32,8 +32,8 @@ class AttachmentDTO implements Jsonable, JsonSerializable
 
     public function __construct(
         ?string $text,
-        ?File   $file,
-        ?Image  $image,
+        ?string   $file,
+        ?string  $image,
         ?string $link,
     ) {
         $this->link = $link;
@@ -52,22 +52,22 @@ class AttachmentDTO implements Jsonable, JsonSerializable
         $this->text = $text;
     }
 
-    public function getFile(): ?File
+    public function getFile(): ?string
     {
         return $this->file;
     }
 
-    public function setFile(?File $file): void
+    public function setFile(?string $file): void
     {
         $this->file = $file;
     }
 
-    public function getImage(): ?Image
+    public function getImage(): ?string
     {
         return $this->image;
     }
 
-    public function setImage(?Image $image): void
+    public function setImage(?string $image): void
     {
         $this->image = $image;
     }
@@ -91,8 +91,8 @@ class AttachmentDTO implements Jsonable, JsonSerializable
     {
         return [
             'text' => $this->text,
-            'file' => $this->file?->file,
-            'image' => $this->image?->image,
+            'file' => $this->file,
+            'image' => $this->image,
             'link' => $this->link
         ];
     }

@@ -14,7 +14,7 @@ class PostService
 
     public function getInnerPosts(): array
     {
-        $posts = Post::where('source', 'venari')->get();
+        $posts = Post::with('user')->with('comments')->where('source', 'venari')->get();
 
         return $posts->toArray();
     }

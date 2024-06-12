@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\ChatService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class ChatController extends Controller
@@ -31,7 +30,6 @@ class ChatController extends Controller
      *        )
      *      )
      *
-     * @param $chatID - id чата
      * @return JsonResponse
      */
     public function getAllChats(): JsonResponse
@@ -53,10 +51,11 @@ class ChatController extends Controller
      *     )
      *
      * @OA\Get(
-     *          path="/api/networking/{chatID}/messages",
+     *          path="/api/networking/{chat_id}/messages",
      *          tags={"СhatController"},
      *       @OA\Parameter(
-     *            name="chatID",
+     *            name="chat_id",
+     *              in="path",
      *            description="id чата",
      *            required=true),
      *          @OA\Response(
@@ -66,14 +65,14 @@ class ChatController extends Controller
      *        )
      *      )
      *
-     * @param $chatID - id чата
+     * @param $chat_id - id чата
      * @return JsonResponse
      */
-    public function getChatMessagesByChatID($chatID): JsonResponse
+    public function getChatMessagesByChatID($chat_id): JsonResponse
     {
         return $this->successResponse(
             $this->paginate(
-                $this->chatService->getChatMessagesByChatID($chatID)
+                $this->chatService->getChatMessagesByChatID($chat_id)
             )
         );
     }
@@ -88,10 +87,11 @@ class ChatController extends Controller
      *     )
      *
      * @OA\Get(
-     *          path="/api/networking/{chatID}",
+     *          path="/api/networking/{chat_id}",
      *          tags={"СhatController"},
      *       @OA\Parameter(
-     *            name="chatID",
+     *            name="chat_id",
+     *              in="path",
      *            description="id чата",
      *            required=true),
      *          @OA\Response(
@@ -101,13 +101,13 @@ class ChatController extends Controller
      *        )
      *      )
      *
-     * @param $chatID - id чата
+     * @param $chat_id - id чата
      * @return JsonResponse
      */
-    public function getChatDetail($chatID): JsonResponse
+    public function getChatDetail($chat_id): JsonResponse
     {
         return $this->successResponse(
-            $this->chatService->getChatDetail($chatID)
+            $this->chatService->getChatDetail($chat_id)
         );
     }
 }

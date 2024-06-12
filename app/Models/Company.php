@@ -43,4 +43,8 @@ class Company extends Model
     public function users(): HasMany {
         return $this->hasMany(User::class);
     }
+
+    public function companyChats(): HasMany {
+        return $this->hasMany(CompanyChat::class);
+    }
 }
