@@ -9,11 +9,17 @@ use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
+use App\Models\Post;
+use Illuminate\Http\Request;
+use App\Models\User;
+
 class UserController extends Controller
 {
 
     // инициализация сервиса в контроллере
-    public function __construct(protected UserService $userService){}
+    public function __construct(protected UserService $userService)
+    {
+    }
 
 
     /**
@@ -40,7 +46,8 @@ class UserController extends Controller
      * @param RegisterRequest $request
      * @return JsonResponse
      */
-    public function register(RegisterRequest $request) {
+    public function register(RegisterRequest $request)
+    {
         $data = $this->userService->register($request->get('login'),
             $request->get('email'),
             $request->get('password'));
@@ -66,6 +73,7 @@ class UserController extends Controller
      *   @OA\RequestBody(ref="#/components/requestBodies/LoginRequest"),
      *   @OA\Response(
      *       response="200",
+     *      description="Ответ при успешном выполнении запроса",
      *       @OA\JsonContent(ref="#/components/schemas/loginUser")
      *   )
      * )
@@ -73,14 +81,54 @@ class UserController extends Controller
      * @param LoginRequest $request
      * @return JsonResponse
      */
-    public function login(LoginRequest $request) {
-        list($success, $data) =$this->userService->login(
+    public function login(LoginRequest $request)
+    {
+        list($success, $data) = $this->userService->login(
             $request->get('email'),
             $request->get('password')
         );
-        if($success) {
+        if ($success) {
             return $this->successResponse($data);
         }
         return $this->failureResponse($data);
     }
+
+    /**
+     * Метод получения информации о пользователи по его id
+     *
+     * @OA\Schema( schema="show",
+     *                @OA\Property(property="success",type="boolean",example="true"),
+     *                @OA\Property(property="response", ref="#/components/schemas/user"),
+     *     )
+     *
+     * @OA\Get(
+     *          path="/api/users/{id}",
+     *          tags={"UserController"},
+     *      @OA\Parameter(
+     *           name="id",
+     *      in="path",
+     *           description="id пользователя",
+     *           required=true),
+     *          @OA\Response(
+     *          response="200",
+     *          description="Ответ при успешном выполнении запроса",
+     *          @OA\JsonContent(ref="#/components/schemas/show")
+     *        )
+     *      )
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function show($id): JsonResponse
+    {
+        $user = User::where('id', $id)->get()->load([
+            'company',
+            'position',
+            'image',
+            'preview',
+        ]);
+
+        return $this->successResponse($user->toArray());
+    }
+
 }

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Services\PostService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     private int $POST_COUNT = 10;
 
-    public function __construct(protected PostService $postService) {}
+    public function __construct(protected PostService $postService)
+    {
+    }
 
 
     /**
@@ -19,7 +21,7 @@ class PostController extends Controller
      *
      * @OA\Schema( schema="getPosts",
      *              @OA\Property(property="success",type="boolean",example="true"),
-     *              @OA\Property(property="posts",type="array",
+     *              @OA\Property(property="response",type="array",
      *                   @OA\Items(ref="#/components/schemas/post")),
      *   )
      *
@@ -39,10 +41,9 @@ class PostController extends Controller
     {
         $innerPosts = $this->postService->getInnerPosts();
 
-        if(Cache::has('outer_posts')) {
+        if (Cache::has('outer_posts')) {
             $outerPosts = Cache::get('outer_posts');
-        }
-        else {
+        } else {
             $outerPosts = $this->postService->getOuterPosts($this->POST_COUNT);
             Cache::put('outer_posts', $outerPosts, now()->addMinutes(15));
         }
@@ -63,7 +64,7 @@ class PostController extends Controller
      *
      * @OA\Schema( schema="getPostByID",
      *               @OA\Property(property="success",type="boolean",example="true"),
-     *               @OA\Property(property="post", ref="#/components/schemas/post"),
+     *               @OA\Property(property="response", ref="#/components/schemas/detailPost"),
      *    )
      *
      * @OA\Get(
@@ -91,4 +92,73 @@ class PostController extends Controller
         );
     }
 
+    /**
+     * Метод получения постов по id пользователя
+     *
+     * @OA\Schema( schema="getPostsByUser",
+     *                @OA\Property(property="success",type="boolean",example="true"),
+     *                @OA\Property(property="response", ref="#/components/schemas/post"),
+     *     )
+     *
+     * @OA\Get(
+     *          path="/api/users/{id}/posts",
+     *          tags={"PostController"},
+     *      @OA\Parameter(
+     *           name="id",
+     *      in="path",
+     *           description="id поста",
+     *           required=true),
+     *          @OA\Response(
+     *          response="200",
+     *          description="Ответ при успешном выполнении запроса",
+     *          @OA\JsonContent(ref="#/components/schemas/getPostsByUser")
+     *        )
+     *      )
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getPostsByUser($id): JsonResponse
+    {
+        return $this->successResponse(
+            $this->paginate(
+                $this->postService->getPostByUserID($id)
+            )
+        );
+    }
+
+    /**
+     * Метод получения постов по id компании
+     *
+     * @OA\Schema( schema="getPostsByCompany",
+     *                @OA\Property(property="success",type="boolean",example="true"),
+     *                @OA\Property(property="response", ref="#/components/schemas/post"),
+     *     )
+     *
+     * @OA\Get(
+     *          path="/api/companies/{id}/posts",
+     *          tags={"PostController"},
+     *      @OA\Parameter(
+     *           name="id",
+     *      in="path",
+     *           description="id компании",
+     *           required=true),
+     *          @OA\Response(
+     *          response="200",
+     *          description="Ответ при успешном выполнении запроса",
+     *          @OA\JsonContent(ref="#/components/schemas/getPostsByCompany")
+     *        )
+     *      )
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getPostsByCompany($id): JsonResponse
+    {
+        return $this->successResponse(
+            $this->paginate(
+                $this->postService->getPostByCompanyID($id)
+            )
+        );
+    }
 }

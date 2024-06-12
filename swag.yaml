@@ -37,10 +37,30 @@ paths:
         $ref: '#/components/requestBodies/LoginRequest'
       responses:
         '200':
+          description: 'Ответ при успешном выполнении запроса'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/loginUser'
+  '/api/users/{id}':
+    get:
+      tags:
+        - UserController
+      summary: 'Метод получения информации о пользователи по его id'
+      operationId: 6f51bd5fa2dddcd25e44cfa53dcbd10a
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id пользователя'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/show'
   /api/networking/:
     get:
       tags:
@@ -126,6 +146,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getComments'
+  '/api/companies/{id}':
+    get:
+      tags:
+        - CompanyController
+      summary: 'Метод получения информации о компании по её id'
+      operationId: 01c261c039e4b27beeb888ef46bd86db
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id компании'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/showCompany'
   '/api/files/{id}':
     get:
       tags:
@@ -297,6 +336,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPostByID'
+  '/api/users/{id}/posts':
+    get:
+      tags:
+        - PostController
+      summary: 'Метод получения постов по id пользователя'
+      operationId: 8b4ca3da355ba0949751c12e732a3497
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostsByUser'
+  '/api/companies/{id}/posts':
+    get:
+      tags:
+        - PostController
+      summary: 'Метод получения постов по id компании'
+      operationId: 480e67b5ae55306ca6053161cdf4c839
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id компании'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostsByCompany'
   /api/vacancies:
     get:
       tags:
@@ -410,6 +487,14 @@ components:
           $ref: '#/components/schemas/user'
         token:
           type: string
+      type: object
+    show:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          $ref: '#/components/schemas/user'
       type: object
     getAllChats:
       properties:
@@ -536,7 +621,7 @@ components:
         success:
           type: boolean
           example: 'true'
-        posts:
+        response:
           type: array
           items:
             $ref: '#/components/schemas/post'
@@ -546,7 +631,23 @@ components:
         success:
           type: boolean
           example: 'true'
-        post:
+        response:
+          $ref: '#/components/schemas/detailPost'
+      type: object
+    getPostsByUser:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          $ref: '#/components/schemas/post'
+      type: object
+    getPostsByCompany:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
           $ref: '#/components/schemas/post'
       type: object
     getVacancies:
@@ -861,6 +962,8 @@ components:
           type: integer
         description:
           type: string
+        is_from_company:
+          type: boolean
         source:
           $ref: '#/components/schemas/sources'
         user_name:
@@ -892,16 +995,12 @@ components:
           type: integer
         name:
           type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
         email:
           type: string
         workingStatus_id:
           type: integer
-        position_id:
-          type: integer
+        position:
+          $ref: '#/components/schemas/position'
         sex:
           type: boolean
         date_of_birth:

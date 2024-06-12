@@ -187,6 +187,11 @@ namespace Responses {
     /** @OA\Schema(schema="detailCompany") */
     class DetailCompany extends Company
     {
+      /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $preview;
+      
         /**
          * @OA\Property(ref="#/components/schemas/building")
          */
@@ -368,6 +373,11 @@ namespace Responses {
          * @OA\Property()
          */
         public string $text;
+      
+         /**
+         * @OA\Property()
+         */
+        public bool $is_from_company;
 
         /**
          * @OA\Property()
@@ -403,6 +413,11 @@ namespace Responses {
          * @OA\Property(format="url")
          */
         public string $source_url;
+      
+       /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/image"))
+         */
+        public $images;
     }
 
     /** @OA\Schema(schema="detailPost") */
@@ -412,11 +427,6 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"))
          */
         public $comments;
-
-        /**
-         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/image"))
-         */
-        public $images;
     }
 
     /** @OA\Schema(schema="attributes") */
@@ -442,6 +452,16 @@ namespace Responses {
          * @OA\Property()
          */
         public int $position_id;
+      
+      /**
+         * @OA\Property()
+         */
+        public string $first_name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $last_name;
 
         /**
          * @OA\Property()
@@ -464,9 +484,19 @@ namespace Responses {
         public string $hrable_type;
 
         /**
-         * @OA\Property(ref="#/components/schemas/image)
+         * @OA\Property(ref="#/components/schemas/image")
          */
         public Image $image;
+      
+      /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $preview;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/company")
+         */
+        public Company $company;
     }
 
     /** @OA\Schema(schema="previewChat") */
@@ -580,7 +610,7 @@ namespace Responses {
         /**
          * @OA\Property()
          */
-        public HR $hrable;
+        public DetailHR $hrable;
     }
 
     /** @OA\Schema(schema="HR") */
