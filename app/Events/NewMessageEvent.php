@@ -33,7 +33,7 @@ class NewMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('messages-'.$this->message['to_id']),
+            new PrivateChannel('messages-'.$this->message['toId']),
         ];
     }
 }
