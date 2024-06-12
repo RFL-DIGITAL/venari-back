@@ -84,6 +84,9 @@ Route::post('login', [UserController::class, 'login']);
 
 Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('vacancies')->group(function () {
+        Route::post('create-vacancy', [VacancyController::class, 'createVacancy'])->name('createVacancy');
+        Route::post('edit-vacancy', [VacancyController::class, 'editVacancy'])->name('editVacancy');
+
        Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
     });
 

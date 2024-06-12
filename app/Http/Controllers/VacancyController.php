@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateVacancyRequest;
+use App\Http\Requests\EditVacancyRequest;
 use App\Services\VacancyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -9,7 +11,9 @@ use Illuminate\Http\Request;
 
 class VacancyController extends Controller
 {
-    public function __construct(protected VacancyService $vacancyService){}
+    public function __construct(protected VacancyService $vacancyService)
+    {
+    }
 
     /**
      * Метод получения всех вакансий
@@ -37,10 +41,9 @@ class VacancyController extends Controller
     {
         $innerVacancies = $this->vacancyService->getInnerVacancies();
 
-        if(Cache::has('outer_vacancies')) {
+        if (Cache::has('outer_vacancies')) {
             $outerVacancies = Cache::get('outer_vacancies');
-        }
-        else {
+        } else {
             $outerVacancies = $this->vacancyService->getOuterVacancies();
             Cache::put('outer_vacancies', $outerVacancies, now()->addMinutes(15));
         }
@@ -79,7 +82,7 @@ class VacancyController extends Controller
      *        response="200",
      *        description="Ответ при успешном выполнении запроса",
      *     @OA\JsonContent(ref="#/components/schemas/getVacancyByID")
- *          )
+     *          )
      *    )
      *
      * @param int $id - id вакансии
@@ -96,7 +99,7 @@ class VacancyController extends Controller
      * @OA\Schema( schema="getVacanciesHR",
      *             @OA\Property(property="success",type="boolean",example="true"),
      *             @OA\Property(property="response",type="array",
-     *                  @OA\Items(ref="#/components/schemas/detailVacancy")),
+     *                  @OA\Items(ref="#/components/schemas/HRPanelVacancy")),
      *  )
      *
      * @OA\Get(
@@ -132,6 +135,108 @@ class VacancyController extends Controller
 
         return $this->successResponse(
             $this->paginate($innerVacancies)
+        );
+    }
+
+    /**
+     * Метод добавления вакансии из формы hr-панели
+     *
+     * @OA\Schema(schema="createVacancy",
+     *                  @OA\Property(property="success",type="boolean",example="true"),
+     *                  @OA\Property(property="response",type="array",
+     *                       @OA\Items(ref="#/components/schemas/vacancy")),
+     *       )
+     *
+     * @OA\Post(
+     *            path="/api/hr-panel/vacancies/create-vacancy",
+     *            tags={"HR-panel"},
+     *            @OA\RequestBody(ref="#/components/requestBodies/CreateVacancyRequest"),
+     *            @OA\Response(
+     *            response="200",
+     *            description="Ответ при успешном выполнении запроса",
+     *            @OA\JsonContent(ref="#/components/schemas/createVacancy")
+     *          )
+     *        )
+     *
+     * @param CreateVacancyRequest $request
+     * @return JsonResponse
+     */
+    public function createVacancy(CreateVacancyRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->vacancyService->createVacancy(
+                $request->position_name,
+                $request->department_id,
+                $request->specialization_id,
+                $request->city_id,
+                $request->lower_salary,
+                $request->upper_salary,
+                $request->responsibilities,
+                $request->requirements,
+                $request->conditions,
+                $request->additional,
+                $request->additional_title,
+                $request->skills,
+                $request->experience_id,
+                $request->employment_id,
+                $request->format_id,
+                $request->test,
+                $request->status_id,
+                $request->user()->id,
+                $request->image,
+            )
+        );
+    }
+
+
+    /**
+     *  Метод изменения вакансии из формы hr-панели
+     *
+     * @OA\Schema(schema="editVacancy",
+     *                   @OA\Property(property="success",type="boolean",example="true"),
+     *                   @OA\Property(property="response",type="array",
+     *                        @OA\Items(ref="#/components/schemas/vacancy")),
+     *        )
+     *
+     * @OA\Post(
+     *             path="/api/hr-panel/vacancies/edit-vacancy",
+     *             tags={"HR-panel"},
+     *             @OA\RequestBody(ref="#/components/requestBodies/EditVacancyRequest"),
+     *             @OA\Response(
+     *             response="200",
+     *             description="Ответ при успешном выполнении запроса",
+     *             @OA\JsonContent(ref="#/components/schemas/editVacancy")
+     *           )
+     *         )
+     *
+     * @param EditVacancyRequest $request
+     * @return JsonResponse
+     */
+    public function editVacancy(EditVacancyRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->vacancyService->editVacancy(
+                $request->id,
+                $request->position_name,
+                $request->department_id,
+                $request->specialization_id,
+                $request->city_id,
+                $request->lower_salary,
+                $request->upper_salary,
+                $request->responsibilities,
+                $request->requirements,
+                $request->conditions,
+                $request->additional,
+                $request->additional_title,
+                $request->skills,
+                $request->experience_id,
+                $request->employment_id,
+                $request->format_id,
+                $request->test,
+                $request->status_id,
+                $request->user()->id,
+                $request->image,
+            )
         );
     }
 }

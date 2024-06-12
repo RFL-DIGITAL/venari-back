@@ -43,10 +43,6 @@ class User extends Authenticatable
         'post_count'
     ];
 
-    protected $attributes = [
-        'post_count',
-    ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
