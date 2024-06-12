@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
@@ -77,4 +78,10 @@ Route::get('/files/{id}', [FileController::class, 'getFileByID'])->name('getFile
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
+Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
+    Route::prefix('vacancies')->group(function () {
+       Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
+    });
 
+    Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');
+});

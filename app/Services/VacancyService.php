@@ -223,6 +223,32 @@ class VacancyService
     }
 
     /**
+     * Метод для получения вакансий изнутри системы для hr-панели
+     *
+     * @return array массив вакансий из нашей системы
+     */
+    public function getInnerVacanciesHR(?int $statusID, ?int $specializationID): array
+    {
+
+        $statusID = $statusID != null ? $statusID : 1;
+        $vacanciesBuilder = Vacancy::where('status_id', $statusID)->where('is_outer', false);
+
+        if ($specializationID != null){
+            $vacanciesBuilder->where('specialization_id', $specializationID);
+        }
+
+        $vacancies = $vacanciesBuilder->get()
+            ->load(
+                [
+                    'accountable.user',
+                    'city',
+                    'position'
+                ]);
+
+        return $vacancies->toArray();
+    }
+
+    /**
      * Метод получения подробной информации о вакансии по id
      *
      * @param int $id - id вакансии
