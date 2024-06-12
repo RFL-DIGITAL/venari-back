@@ -140,6 +140,11 @@ namespace Responses {
          * @OA\Property(ref="#/components/schemas/specialization")
          */
         public Specialization  $specialization;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/skill"))
+         */
+        public $skills;
     }
 
     /** @OA\Schema(schema="HRPanelVacancy") */
@@ -191,7 +196,7 @@ namespace Responses {
          * @OA\Property(ref="#/components/schemas/image")
          */
         public Image $preview;
-      
+
         /**
          * @OA\Property(ref="#/components/schemas/building")
          */
@@ -373,7 +378,7 @@ namespace Responses {
          * @OA\Property()
          */
         public string $text;
-      
+
          /**
          * @OA\Property()
          */
@@ -413,7 +418,7 @@ namespace Responses {
          * @OA\Property(format="url")
          */
         public string $source_url;
-      
+
        /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/image"))
          */
@@ -452,7 +457,7 @@ namespace Responses {
          * @OA\Property()
          */
         public int $position_id;
-      
+
       /**
          * @OA\Property()
          */
@@ -487,7 +492,7 @@ namespace Responses {
          * @OA\Property(ref="#/components/schemas/image")
          */
         public Image $image;
-      
+
       /**
          * @OA\Property(ref="#/components/schemas/image")
          */
@@ -599,7 +604,7 @@ namespace Responses {
         public DetailUser $user;
 
         /**
-         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"), description="Массив ответов")
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"))
          */
         public $all_children;
     }
