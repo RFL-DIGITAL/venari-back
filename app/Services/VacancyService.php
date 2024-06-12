@@ -5,11 +5,14 @@ namespace App\Services;
 use App\Models\Department;
 use App\Models\Employment;
 use App\Models\Experience;
+use App\Models\Image;
 use App\Models\Position;
 use App\Models\Skill;
+use App\Models\User;
 use App\Models\Vacancy;
 use App\Parser;
 use Exception;
+use Illuminate\Http\UploadedFile;
 use phpQuery;
 
 
@@ -164,10 +167,6 @@ class VacancyService
             $vacancy = new Vacancy();
             $vacancy->position()->associate($position);
 
-            foreach ($skillNames as $skillName) {
-                $vacancy->skills()->attach(Skill::firstOrCreate(['name' => $skillName]));
-            }
-
             $vacancy->description = $description;
             $vacancy->department()->associate(
                 Department::where('id', Vacancy::$DEFAULT_DEPARTMENT_ID)->first());
@@ -182,6 +181,12 @@ class VacancyService
             $vacancy->responsibilities = $responsibilities;
             $vacancy->requirements = $requirements;
             $vacancy->additional = $additional;
+
+            $vacancy->save();
+
+            foreach ($skillNames as $skillName) {
+                $vacancy->skills()->attach(Skill::firstOrCreate(['name' => $skillName]));
+            }
 
             $vacancy->save();
 
@@ -268,6 +273,244 @@ class VacancyService
                     'skills',
                     'image',
                 ]);
+
+        return $vacancy->toArray();
+    }
+
+    /**
+     * Метод создания новой вакансии
+     *
+     * @param string $position_name
+     * @param int $department_id
+     * @param int $specialization_id
+     * @param int $city_id
+     * @param float|null $lower_salary
+     * @param float|null $upper_salary
+     * @param string $responsibilities
+     * @param string $requirements
+     * @param string $conditions
+     * @param string|null $additional
+     * @param string|null $additional_title
+     * @param array|null $skills
+     * @param int $experience_id
+     * @param int $employment_id
+     * @param int $format_id
+     * @param string|null $test
+     * @param int $status_id
+     * @param int $accountable_user_id
+     * @param UploadedFile|null $image
+     * @return array
+     */
+    public function createVacancy(
+                string $position_name,
+                int $department_id,
+                int $specialization_id,
+                int $city_id,
+                ?float $lower_salary,
+                ?float $upper_salary,
+                string $responsibilities,
+                string $requirements,
+                string $conditions,
+                ?string $additional,
+                ?string $additional_title,
+                ?array $skills,
+                int $experience_id,
+                int $employment_id,
+                int $format_id,
+                ?string $test,
+                int $status_id,
+                int $accountable_user_id,
+                ?UploadedFile $image,
+    ): array
+    {
+        $position = Position::firstOrCreate(['name' => $position_name]);
+        $hr = User::where('id', $accountable_user_id)->first()->hrable;
+
+        $vacancy = new Vacancy(
+            [
+                'responsibilities' => $responsibilities,
+                'requirements' => $requirements,
+                'conditions' => $conditions,
+                'additional' => $additional,
+                'experience_id' => $experience_id,
+                'employment_id' => $employment_id,
+                'lower_salary' => $lower_salary,
+                'higher_salary' => $upper_salary,
+                'department_id' => $department_id,
+                'has_social_support' => true, // hardcode, лучше так не делать
+                'schedule' => '',
+                'link_to_test_document' => $test,
+                'city_id' => $city_id,
+                'is_outer' => false,
+                'additional_title' => $additional_title,
+                'unarchived_at' => now(),
+                'format_id' => $format_id,
+                'accountable_id' => $hr->id,
+                'status_id' => $status_id,
+                'specialization_id' => $specialization_id,
+                'position_id' => $position->id,
+                'description' => '',
+            ]
+        );
+
+        if ($image != null){
+            $imageModel = new Image(
+                [
+                    'image' => base64_encode(file_get_contents($image)),
+                    'description' => 'Картинка вакансии'
+                ]
+            );
+            $imageModel->save();
+
+            $vacancy->image()->associate($imageModel);
+        }
+
+        $vacancy->save();
+
+        if ($skills != null)
+        {
+            foreach ($skills as $skill) {
+                $vacancy->skills()->attach(Skill::firstOrCreate(['name' => $skill])->id);
+            }
+
+            $vacancy->save();
+        }
+
+        $vacancy->load([
+            'skills',
+            'experience',
+            'employment',
+            'department',
+            'city',
+            'format',
+            'accountable',
+            'status',
+            'specialization',
+            'position',
+        ]);
+
+        return $vacancy->toArray();
+    }
+
+    /**
+     * Метод изменения вакансии по id
+     *
+     * @param int $id
+     * @param string $position_name
+     * @param int $department_id
+     * @param int $specialization_id
+     * @param int $city_id
+     * @param float|null $lower_salary
+     * @param float|null $upper_salary
+     * @param string $responsibilities
+     * @param string $requirements
+     * @param string $conditions
+     * @param string|null $additional
+     * @param string|null $additional_title
+     * @param array|null $skills
+     * @param int $experience_id
+     * @param int $employment_id
+     * @param int $format_id
+     * @param string|null $test
+     * @param int $status_id
+     * @param int $accountable_user_id
+     * @param UploadedFile|null $image
+     * @return array
+     */
+    public function editVacancy(
+        int $id,
+        string $position_name,
+        int $department_id,
+        int $specialization_id,
+        int $city_id,
+        ?float $lower_salary,
+        ?float $upper_salary,
+        string $responsibilities,
+        string $requirements,
+        string $conditions,
+        ?string $additional,
+        ?string $additional_title,
+        ?array $skills,
+        int $experience_id,
+        int $employment_id,
+        int $format_id,
+        ?string $test,
+        int $status_id,
+        int $accountable_user_id,
+        ?UploadedFile $image,
+    ): array
+    {
+        $vacancy = Vacancy::where('id', $id)->first();
+
+        $position = Position::firstOrCreate(['name' => $position_name]);
+        $hr = User::where('id', $accountable_user_id)->first()->hrable;
+
+        $vacancy->update(
+            [
+                'responsibilities' => $responsibilities,
+                'requirements' => $requirements,
+                'conditions' => $conditions,
+                'additional' => $additional,
+                'experience_id' => $experience_id,
+                'employment_id' => $employment_id,
+                'lower_salary' => $lower_salary,
+                'higher_salary' => $upper_salary,
+                'department_id' => $department_id,
+                'has_social_support' => true, // hardcode, лучше так не делать
+                'schedule' => '',
+                'link_to_test_document' => $test,
+                'city_id' => $city_id,
+                'is_outer' => false,
+                'additional_title' => $additional_title,
+                'unarchived_at' => now(),
+                'format_id' => $format_id,
+                'accountable_id' => $hr->id,
+                'status_id' => $status_id,
+                'specialization_id' => $specialization_id,
+                'position_id' => $position->id,
+                'description' => '',
+            ]
+        );
+
+        if ($image != null){
+            $imageModel = new Image(
+                [
+                    'image' => base64_encode(file_get_contents($image)),
+                    'description' => 'Картинка вакансии'
+                ]
+            );
+            $imageModel->save();
+
+            $vacancy->image()->associate($imageModel);
+        }
+
+        $vacancy->save();
+
+        if ($skills != null)
+        {
+            $skillModelIDs = [];
+
+            foreach ($skills as $skill) {
+                $skillModelIDs[] = Skill::firstOrCreate(['name' => $skill])->id;
+            }
+
+            $vacancy->skills()->sync($skillModelIDs);
+
+            $vacancy->save();
+        }
+
+        $vacancy->load([
+            'skills',
+            'experience',
+            'employment',
+            'department',
+            'city',
+            'format',
+            'accountable',
+            'status',
+            'specialization',
+            'position',
+        ]);
 
         return $vacancy->toArray();
     }

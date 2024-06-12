@@ -151,9 +151,9 @@ namespace Responses {
     class HRPanelVacancy extends Vacancy
     {
         /**
-         * @OA\Property(ref="#/components/schemas/user")
+         * @OA\Property(ref="#/components/schemas/HR")
          */
-        public User $accountable;
+        public HR $accountable;
 
         /**
          * @OA\Property(ref="#/components/schemas/image")
