@@ -430,6 +430,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getVacanciesHR'
+  /api/hr-panel/vacancies/create-vacancy:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод добавления вакансии из формы hr-панели'
+      operationId: ab8167a52740335f5c113895d48a6125
+      requestBody:
+        $ref: '#/components/requestBodies/CreateVacancyRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createVacancy'
+  /api/hr-panel/vacancies/edit-vacancy:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод изменения вакансии из формы hr-панели'
+      operationId: aaf814b5030c7e3a54a5e68298090bd6
+      requestBody:
+        $ref: '#/components/requestBodies/EditVacancyRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/editVacancy'
 components:
   schemas:
     attachmentDTO:
@@ -686,7 +716,27 @@ components:
         response:
           type: array
           items:
-            $ref: '#/components/schemas/detailVacancy'
+            $ref: '#/components/schemas/HRPanelVacancy'
+      type: object
+    createVacancy:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/vacancy'
+      type: object
+    editVacancy:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/vacancy'
       type: object
     vacancy:
       properties:
@@ -767,7 +817,7 @@ components:
         -
           properties:
             accountable:
-              $ref: '#/components/schemas/user'
+              $ref: '#/components/schemas/HR'
             image:
               $ref: '#/components/schemas/image'
             skills:
@@ -978,8 +1028,6 @@ components:
           type: integer
         description:
           type: string
-        is_from_company:
-          type: boolean
         source:
           $ref: '#/components/schemas/sources'
         user_name:
@@ -1269,6 +1317,84 @@ components:
           format: date
       type: object
   requestBodies:
+    CreateVacancyRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              position_name: {  }
+              department_id:
+                type: integer
+              specialization_id:
+                type: integer
+              city_id:
+                type: integer
+              lower_salary:
+                type: number
+                format: float
+              upper_salary:
+                type: number
+                format: float
+              responsibilities: {  }
+              requirements: {  }
+              conditions: {  }
+              additional: {  }
+              additional_title: {  }
+              skills:
+                type: array
+                items:
+                  type: string
+              experience_id:
+                type: integer
+              employment_id:
+                type: integer
+              format_id:
+                type: integer
+              test: {  }
+              status_id:
+                type: integer
+              image: {  }
+            type: object
+    EditVacancyRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: integer
+              position_name: {  }
+              department_id:
+                type: integer
+              specialization_id:
+                type: integer
+              city_id:
+                type: integer
+              lower_salary:
+                type: number
+                format: float
+              upper_salary:
+                type: number
+                format: float
+              responsibilities: {  }
+              requirements: {  }
+              conditions: {  }
+              additional: {  }
+              additional_title: {  }
+              skills:
+                type: array
+                items:
+                  type: string
+              experience_id:
+                type: integer
+              employment_id:
+                type: integer
+              format_id:
+                type: integer
+              test: {  }
+              status_id:
+                type: integer
+              image: {  }
+            type: object
     JoinChatRequest:
       content:
         application/json:

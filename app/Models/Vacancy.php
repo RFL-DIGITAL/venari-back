@@ -18,6 +18,32 @@ class Vacancy extends Model
     /** @var string Стаж работы */
     public string $work_record;
 
+    protected $fillable = [
+        'responsibilities',
+        'requirements',
+        'conditions',
+        'additional',
+        'experience_id',
+        'employment_id',
+        'lower_salary',
+        'higher_salary',
+        'image_id',
+        'department_id',
+        'has_social_support',
+        'schedule',
+        'link_to_test_document',
+        'city_id',
+        'is_outer',
+        'additional_title',
+        'unarchived_at',
+        'format_id',
+        'accountable_id',
+        'status_id',
+        'specialization_id',
+        'position_id',
+        'description',
+    ];
+
     protected $appends = [
         'application_count',
         'candidate_count'
@@ -31,11 +57,11 @@ class Vacancy extends Model
     public function getCandidateCountAttribute(): int
     {
         return $this->application_count - $this->applications()
-            ->whereHas('stage', function (Builder $query) {
-                $query->whereHas('stageType', function (Builder $query) {
-                    $query->where('name', 'reject');
-                });
-            })->count();
+                ->whereHas('stage', function (Builder $query) {
+                    $query->whereHas('stageType', function (Builder $query) {
+                        $query->where('name', 'reject');
+                    });
+                })->count();
     }
 
     public function position(): BelongsTo
@@ -43,14 +69,18 @@ class Vacancy extends Model
         return $this->belongsTo(Position::class);
     }
 
-    public function skills(): BelongsToMany {
+    public function skills(): BelongsToMany
+    {
         return $this->belongsToMany(Skill::class, 'skill_vacancies');
     }
 
-    public function city(): BelongsTo {
+    public function city(): BelongsTo
+    {
         return $this->belongsTo(City::class);
     }
-    public function department(): BelongsTo {
+
+    public function department(): BelongsTo
+    {
         return $this->belongsTo(Department::class);
     }
 
