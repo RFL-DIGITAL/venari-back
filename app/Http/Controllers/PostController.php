@@ -7,6 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 
+use App\Models\Post;
+
 class PostController extends Controller
 {
     private int $POST_COUNT = 10;
@@ -89,6 +91,14 @@ class PostController extends Controller
         return $this->successResponse(
             $this->postService->getPostByID($id)
         );
+    }
+
+    public function getPostByUser(): JsonResponse {
+        $post = Post::where('user_id', auth()->user()->id)->with([
+            'user'
+        ])->get();
+        
+        return $this->successResponse($post);
     }
 
 }

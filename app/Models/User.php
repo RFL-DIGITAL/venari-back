@@ -31,7 +31,17 @@ class User extends Authenticatable
         'date_of_birth',
         'workingStatus_id',
         'position_id',
-        'image_id'
+        'image_id',
+        'first_name',
+        'last_name',
+        'user_name',
+        'company_name',
+        'preview_name',       
+    ];
+
+    protected $attributes = [
+        'post_count',
+        'post_comment_count'
     ];
 
     /**
@@ -84,6 +94,20 @@ class User extends Authenticatable
         return $this->hasMany(Resume::class);
     }
 
+    public function preview(): BelongsTo
+    {
+        return $this->belongsTo(Preview::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function getPostCountAttribute() {
+        return Post::where('user_id', auth()->user()->id)->get()->count();
+    }
+  
     public function companyChats(): HasMany {
         return $this->hasMany(CompanyChat::class);
     }
