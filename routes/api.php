@@ -29,6 +29,10 @@ Route::prefix('users')->group(function () {
     Route::get('{id}', [UserController::class, 'show'])->name('user');
 });
 
+Route::middleware('auth:api')->get('/user', function () {
+    return request()->user();
+});
+
 Route::prefix('companies')->group(function () {
     Route::get('{id}/posts', [PostController::class, 'getPostsByCompany'])->name('getPostsByCompany');
     Route::get('{id}', [CompanyController::class, 'show'])->name('company');

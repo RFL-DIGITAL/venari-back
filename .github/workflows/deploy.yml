@@ -27,6 +27,7 @@ jobs:
             cd public_html;
             composer install;
             php artisan migrate;
+            php artisan optimize;
             chmod -R ugo+rw vendor;
             chmod -R ugo+rw database;
             chmod -R ugo+rw storage;
