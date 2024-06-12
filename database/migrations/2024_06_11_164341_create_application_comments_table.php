@@ -17,9 +17,9 @@ return new class extends Migration
             $table->text('text');
 
             $table->foreignId('user_id')->nullable();
-            $table->foreignId('vacancy_id')->nullable();
+            $table->foreignId('application_id')->nullable();
 
-            $table->foreign('vacancy_id')->references('id')->on('vacancies')
+            $table->foreign('application_id')->references('id')->on('applications')
                 ->onUpdate('cascade')->onDelete('set null');
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')->onDelete('set null');
