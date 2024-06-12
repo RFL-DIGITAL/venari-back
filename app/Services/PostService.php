@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Post;
 use App\Parser;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use phpQuery;
 
@@ -14,7 +15,12 @@ class PostService
 
     public function getInnerPosts(): array
     {
-        $posts = Post::with('user')->with('comments')->where('source', 'venari')->get();
+        $posts = Post::where('source', 'venari')->get()
+            ->load([
+                'user.image',
+                'user.hrable.company.image',
+                'images',
+            ]);
 
         return $posts->toArray();
     }
@@ -70,7 +76,11 @@ class PostService
             $post->text = trim($postText);
             $post->source = 'habr';
             $post->save();
-            $post->refresh();
+            $post->load([
+                'user.image',
+                'user.hrable.company.image',
+                'images',
+            ]);
 
             $posts[] = $post->toArray();
         }
@@ -82,15 +92,48 @@ class PostService
     {
         $post = Post::where('id', $id)->first();
 
-        if ($post->user?->hrable != null) {
+        if ($post->is_from_company) {
             return $post->load([
-                'user.hrable.company',
+                'user.hrable.company.image',
                 'images',
             ])->toArray();
         } else {
             return $post->load([
+                'user.image',
                 'images',
             ])->toArray();
         }
+    }
+
+    public function getPostByUserID(int $id)
+    {
+        $post = Post::where('user_id', $id)->where('is_from_company', false)->get()->load(
+            [
+                'user.image',
+                'images',
+            ]
+        );
+
+        return $post->toArray();
+    }
+
+    public function getPostByCompanyID(int $id)
+    {
+        $post = Post::whereHas('user', function (Builder $query) use ($id) {
+            $query->whereHas('hrable', function (Builder $query) use ($id) {
+                $query->whereHas('company', function (Builder $query) use ($id) {
+                    $query->where('id', $id);
+                });
+            });
+        })->where('is_from_company', true)->get();
+
+        $post->load(
+            [
+                'user.hrable.company.image',
+                'images',
+            ]
+        );
+
+        return $post->toArray();
     }
 }
