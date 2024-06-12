@@ -546,6 +546,14 @@ components:
           items:
             $ref: '#/components/schemas/detailComment'
       type: object
+    showCompany:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          $ref: '#/components/schemas/detailCompany'
+      type: object
     getAllFilters:
       properties:
         success:
@@ -746,6 +754,10 @@ components:
           properties:
             specialization:
               $ref: '#/components/schemas/specialization'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/skill'
           type: object
     HRPanelVacancy:
       type: object
@@ -795,6 +807,8 @@ components:
           $ref: '#/components/schemas/company'
         -
           properties:
+            preview:
+              $ref: '#/components/schemas/image'
             building:
               $ref: '#/components/schemas/building'
           type: object
@@ -954,6 +968,8 @@ components:
           type: string
         text:
           type: string
+        is_from_company:
+          type: boolean
         user:
           $ref: '#/components/schemas/detailUser'
         attributes:
@@ -971,6 +987,10 @@ components:
         source_url:
           type: string
           format: url
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
       type: object
     detailPost:
       type: object
@@ -983,10 +1003,6 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/detailComment'
-            images:
-              type: array
-              items:
-                $ref: '#/components/schemas/image'
           type: object
     attributes: {  }
     user:
@@ -995,12 +1011,20 @@ components:
           type: integer
         name:
           type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
         email:
           type: string
         workingStatus_id:
           type: integer
-        position:
-          $ref: '#/components/schemas/position'
+        position_id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
         sex:
           type: boolean
         date_of_birth:
@@ -1010,6 +1034,12 @@ components:
           nullable: true
         hrable_type:
           type: string
+        image:
+          $ref: '#/components/schemas/image'
+        preview:
+          $ref: '#/components/schemas/image'
+        company:
+          $ref: '#/components/schemas/company'
       type: object
     previewChat:
       properties:
@@ -1091,7 +1121,6 @@ components:
             user:
               $ref: '#/components/schemas/detailUser'
             all_children:
-              description: 'Массив ответов'
               type: array
               items:
                 $ref: '#/components/schemas/detailComment'
@@ -1104,7 +1133,7 @@ components:
         -
           properties:
             hrable:
-              $ref: '#/components/schemas/HR'
+              $ref: '#/components/schemas/detailHR'
           type: object
     HR:
       properties:
