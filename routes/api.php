@@ -29,7 +29,7 @@ Route::prefix('users')->group(function () {
     Route::get('{id}', [UserController::class, 'show'])->name('user');
 });
 
-Route::get('/user', function () {
+Route::middleware('auth:api')->get('/user', function () {
     return request()->user();
 });
 
