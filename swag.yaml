@@ -141,6 +141,19 @@ paths:
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
+  /api/hr-panel/filters:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех доступных фильтров'
+      operationId: 1c89f0c3eaf81d35d338d0b4bf9e0ac0
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllFilters'
   '/api/images/{id}':
     get:
       tags:
@@ -316,6 +329,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getVacancyByID'
+  /api/hr-panel/vacancies:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех вакансий для hr-панели'
+      operationId: e24dc7fc37a99169a9fb384c9a0021a0
+      parameters:
+        -
+          name: status_id
+          in: query
+          description: 'id статуса (открыта, черновик, архив)'
+          required: false
+        -
+          name: specialization_id
+          in: query
+          description: 'id специализации'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getVacanciesHR'
 components:
   schemas:
     attachmentDTO:
@@ -424,6 +461,16 @@ components:
           items:
             $ref: '#/components/schemas/detailComment'
       type: object
+    getAllFilters:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/filter'
+      type: object
     getChats:
       properties:
         success:
@@ -522,10 +569,26 @@ components:
           items:
             $ref: '#/components/schemas/detailVacancy'
       type: object
+    getVacanciesHR:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailVacancy'
+      type: object
     vacancy:
       properties:
         id:
           type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
         department:
           $ref: '#/components/schemas/department'
         position:
@@ -548,10 +611,6 @@ components:
           type: boolean
         is_outer:
           type: boolean
-        created_at:
-          format: date
-        updated_at:
-          format: date
         responsibilities:
           type: string
         requirements:
@@ -578,76 +637,33 @@ components:
           nullable: true
       type: object
     detailVacancy:
-      properties:
-        id:
-          type: integer
-        department:
-          $ref: '#/components/schemas/detailDepartment'
-        position:
-          $ref: '#/components/schemas/position'
-        description:
-          type: string
-        is_online:
-          type: boolean
-        has_social_support:
-          type: boolean
-        schedule:
-          type: string
-        is_flexible:
-          type: boolean
-        link_to_test_document:
-          type: string
-        city:
-          $ref: '#/components/schemas/city'
-        is_closed:
-          type: boolean
-        is_outer:
-          type: boolean
-        created_at:
-          format: date
-        updated_at:
-          format: date
-        responsibilities:
-          type: string
-        requirements:
-          type: string
-        conditions:
-          type: string
-        additional:
-          type: string
-          nullable: true
-        experience:
-          $ref: '#/components/schemas/experience'
-        employment:
-          $ref: '#/components/schemas/employment'
-        lower_salary:
-          type: number
-          format: float
-          nullable: true
-        higher_salary:
-          type: number
-          format: float
-          nullable: true
-        image:
-          $ref: '#/components/schemas/image'
-        skills:
-          type: array
-          items:
-            $ref: '#/components/schemas/skill'
       type: object
-    detailDepartment:
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
-        company:
-          $ref: '#/components/schemas/detailCompany'
+      allOf:
+        -
+          $ref: '#/components/schemas/vacancy'
+        -
+          properties:
+            specialization:
+              $ref: '#/components/schemas/specialization'
+          type: object
+    HRPanelVacancy:
       type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/vacancy'
+        -
+          properties:
+            accountable:
+              $ref: '#/components/schemas/user'
+            image:
+              $ref: '#/components/schemas/image'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/skill'
+            specialization:
+              $ref: '#/components/schemas/specialization'
+          type: object
     department:
       properties:
         id:
@@ -661,43 +677,42 @@ components:
         company:
           $ref: '#/components/schemas/company'
       type: object
-    detailCompany:
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        established_at:
-          format: date
-        nick_name:
-          type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
-        image:
-          $ref: '#/components/schemas/image'
-        building:
-          $ref: '#/components/schemas/building'
+    detailDepartment:
       type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/department'
+        -
+          properties:
+            company:
+              $ref: '#/components/schemas/detailCompany'
+          type: object
+    detailCompany:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/company'
+        -
+          properties:
+            building:
+              $ref: '#/components/schemas/building'
+          type: object
     company:
       properties:
         id:
           type: integer
         name:
           type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
         description:
           type: string
         established_at:
           format: date
         nick_name:
           type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
         image:
           $ref: '#/components/schemas/image'
         building_id:
@@ -756,18 +771,15 @@ components:
           nullable: true
       type: object
     detailCity:
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
-        country:
-          $ref: '#/components/schemas/country'
       type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/city'
+        -
+          properties:
+            country:
+              $ref: '#/components/schemas/country'
+          type: object
     country:
       properties:
         id:
@@ -783,27 +795,297 @@ components:
       properties:
         id:
           type: integer
-        image:
-          type: string
-        description:
+        name:
           type: string
         created_at:
           format: date
         updated_at:
           format: date
+        image:
+          type: string
+        description:
+          type: string
       type: object
     file:
       properties:
         id:
           type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
         file:
+          type: string
+        mime:
+          type: string
+      type: object
+    position:
+      properties:
+        id:
+          type: integer
+        name:
           type: string
         created_at:
           format: date
         updated_at:
           format: date
       type: object
-    position:
+    sources:
+      type: string
+      enum:
+        - venari
+        - habr
+    post:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        comment_count:
+          type: integer
+        title:
+          type: string
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/detailUser'
+        attributes:
+          $ref: '#/components/schemas/attributes'
+        likes:
+          type: integer
+        description:
+          type: string
+        source:
+          $ref: '#/components/schemas/sources'
+        user_name:
+          type: string
+        source_url:
+          type: string
+          format: url
+      type: object
+    detailPost:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/post'
+        -
+          properties:
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/detailComment'
+            images:
+              type: array
+              items:
+                $ref: '#/components/schemas/image'
+          type: object
+    attributes: {  }
+    user:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        email:
+          type: string
+        workingStatus_id:
+          type: integer
+        position_id:
+          type: integer
+        sex:
+          type: boolean
+        date_of_birth:
+          format: date
+        hrable_id:
+          type: integer
+          nullable: true
+        hrable_type:
+          type: string
+      type: object
+    previewChat:
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
+        body:
+          type: string
+        updated_at:
+          type: string
+          format: date
+        type:
+          $ref: '#/components/schemas/messageType'
+        id:
+          description: "'id может быть как чата, так и пользователя. Смотри type"
+          type: integer
+      type: object
+    message:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        from_id:
+          type: integer
+        to_id:
+          type: integer
+        body:
+          type: string
+      type: object
+    chatMessage:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        owner_id:
+          type: integer
+        chat_id:
+          type: integer
+        body:
+          type: string
+      type: object
+    comment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        text:
+          type: string
+        post_id:
+          type: integer
+        parent_id:
+          description: 'id комментария, на который отвечаем'
+          type: integer
+          nullable: true
+      type: object
+    detailComment:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/comment'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/detailUser'
+            all_children:
+              description: 'Массив ответов'
+              type: array
+              items:
+                $ref: '#/components/schemas/detailComment'
+          type: object
+    detailUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/user'
+        -
+          properties:
+            hrable:
+              $ref: '#/components/schemas/HR'
+          type: object
+    HR:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company_id:
+          type: integer
+      type: object
+    detailHR:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/HR'
+        -
+          properties:
+            company:
+              $ref: '#/components/schemas/company'
+          type: object
+    chat:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        member_count:
+          type: integer
+        image:
+          $ref: '#/components/schemas/image'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/tag'
+      type: object
+    tag:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    filter:
+      properties:
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/status'
+        employments:
+          type: array
+          items:
+            $ref: '#/components/schemas/employment'
+        experiences:
+          type: array
+          items:
+            $ref: '#/components/schemas/experience'
+        formats:
+          type: array
+          items:
+            $ref: '#/components/schemas/format'
+        specializations:
+          type: array
+          items:
+            $ref: '#/components/schemas/specialization'
+      type: object
+    status:
       properties:
         id:
           type: integer
@@ -836,271 +1118,23 @@ components:
         updated_at:
           format: date
       type: object
-    sources:
-      type: string
-      enum:
-        - venari
-        - habr
-    post:
-      properties:
-        id:
-          type: integer
-        comment_count:
-          type: integer
-        title:
-          type: string
-        text:
-          type: string
-        user:
-          $ref: '#/components/schemas/detailUser'
-        attributes:
-          $ref: '#/components/schemas/attributes'
-        likes:
-          type: integer
-        description:
-          type: string
-        source:
-          $ref: '#/components/schemas/sources'
-        user_name:
-          type: string
-        source_url:
-          type: string
-          format: url
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    detailPost:
-      properties:
-        id:
-          type: integer
-        comment_count:
-          type: integer
-        title:
-          type: string
-        text:
-          type: string
-        user:
-          $ref: '#/components/schemas/detailUser'
-        attributes:
-          $ref: '#/components/schemas/attributes'
-        likes:
-          type: integer
-        description:
-          type: string
-        source:
-          $ref: '#/components/schemas/sources'
-        user_name:
-          type: string
-        source_url:
-          type: string
-          format: url
-        created_at:
-          format: date
-        updated_at:
-          format: date
-        comments:
-          type: array
-          items:
-            $ref: '#/components/schemas/detailComment'
-        images:
-          type: array
-          items:
-            $ref: '#/components/schemas/image'
-      type: object
-    attributes: {  }
-    user:
+    format:
       properties:
         id:
           type: integer
         name:
           type: string
-        email:
-          type: string
-        workingStatus_id:
-          type: integer
-        position_id:
-          type: integer
-        sex:
-          type: boolean
-        date_of_birth:
-          format: date
-        hrable_id:
-          type: integer
-          nullable: true
-        hrable_type:
-          type: string
         created_at:
           format: date
         updated_at:
           format: date
       type: object
-    previewChat:
-      properties:
-        name:
-          type: string
-        avatar:
-          type: string
-        body:
-          type: string
-        updated_at:
-          type: string
-          format: date
-        type:
-          $ref: '#/components/schemas/messageType'
-        id:
-          description: "'id может быть как чата, так и пользователя. Смотри type"
-          type: integer
-      type: object
-    message:
-      properties:
-        id:
-          type: integer
-        from_id:
-          type: integer
-        to_id:
-          type: integer
-        body:
-          type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    chatMessage:
-      properties:
-        id:
-          type: integer
-        owner_id:
-          type: integer
-        chat_id:
-          type: integer
-        body:
-          type: string
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    comment:
-      properties:
-        id:
-          type: integer
-        text:
-          type: string
-        post_id:
-          type: integer
-        parent_id:
-          description: 'id комментария, на который отвечаем'
-          type: integer
-          nullable: true
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    detailComment:
-      properties:
-        id:
-          type: integer
-        text:
-          type: string
-        post_id:
-          type: integer
-          nullable: true
-        user:
-          $ref: '#/components/schemas/detailUser'
-        all_children:
-          description: 'Массив ответов'
-          type: array
-          items:
-            $ref: '#/components/schemas/comment'
-        parent_id:
-          description: 'id комментария, на который отвечаем'
-          type: integer
-          nullable: true
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    detailUser:
+    specialization:
       properties:
         id:
           type: integer
         name:
           type: string
-        email:
-          type: string
-        workingStatus_id:
-          type: integer
-        position_id:
-          type: integer
-        sex:
-          type: boolean
-        date_of_birth:
-          format: date
-        hrable:
-          $ref: '#/components/schemas/HR'
-        image:
-          $ref: '#/components/schemas/image'
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    HR:
-      properties:
-        id:
-          type: integer
-        company_id:
-          type: integer
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    detailHR:
-      properties:
-        id:
-          type: integer
-        company:
-          $ref: '#/components/schemas/company'
-        created_at:
-          format: date
-        updated_at:
-          format: date
-      type: object
-    chat:
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        member_count:
-          type: integer
-        created_at:
-          format: date
-        updated_at:
-          format: date
-        image:
-          $ref: '#/components/schemas/image'
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/tag'
-      type: object
-    tag:
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        member_count:
-          type: integer
         created_at:
           format: date
         updated_at:

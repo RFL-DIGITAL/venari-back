@@ -1,15 +1,11 @@
 <?php
-/** @noinspection ALL */
-
-// @formatter:off
 
 namespace Responses {
 
     use App\DTO\MessageType;
     use OpenApi\Annotations as OA;
 
-    /** @OA\Schema(schema="vacancy") */
-    class Vacancy
+    class BaseClass
     {
         /**
          * @OA\Property()
@@ -17,9 +13,29 @@ namespace Responses {
         public int $id;
 
         /**
+         * @OA\Property()
+         */
+        public string $name;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $created_at;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $updated_at;
+    }
+
+
+    /** @OA\Schema(schema="vacancy") */
+    class Vacancy extends BaseClass
+    {
+        /**
          * @OA\Property(ref="#/components/schemas/department")
          */
-        public Department $department;
+        public $department;
 
         /**
          * @OA\Property(ref="#/components/schemas/position")
@@ -70,16 +86,6 @@ namespace Responses {
          * @OA\Property()
          */
         public bool $is_outer;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
 
         /**
          * @OA\Property()
@@ -128,117 +134,21 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="detailVacancy") */
-    class DetailVacancy
+    class DetailVacancy extends Vacancy
     {
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/specialization")
          */
-        public int $id;
+        public Specialization  $specialization;
+    }
 
+    /** @OA\Schema(schema="HRPanelVacancy") */
+    class HRPanelVacancy extends Vacancy
+    {
         /**
-         * @OA\Property(ref="#/components/schemas/detailDepartment")
+         * @OA\Property(ref="#/components/schemas/user")
          */
-        public DetailDepartment $department;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/position")
-         */
-        public Position $position;
-
-        /**
-         * @OA\Property()
-         */
-        public string $description;
-
-        /**
-         * @OA\Property()
-         */
-        public bool $is_online;
-
-        /**
-         * @OA\Property()
-         */
-        public bool $has_social_support;
-
-        /**
-         * @OA\Property()
-         */
-        public string $schedule;
-
-        /**
-         * @OA\Property()
-         */
-        public bool $is_flexible;
-
-        /**
-         * @OA\Property()
-         */
-        public string $link_to_test_document;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/city")
-         */
-        public City $city;
-
-        /**
-         * @OA\Property()
-         */
-        public bool $is_closed;
-
-        /**
-         * @OA\Property()
-         */
-        public bool $is_outer;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
-        /**
-         * @OA\Property()
-         */
-        public string $responsibilities;
-
-        /**
-         * @OA\Property()
-         */
-        public string $requirements;
-
-        /**
-         * @OA\Property()
-         */
-        public string $conditions;
-
-        /**
-         * @OA\Property()
-         */
-        public ?string $additional;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/experience")
-         */
-        public Experience $experience;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/employment")
-         */
-        public Employment $employment;
-
-        /**
-         * @OA\Property()
-         */
-        public ?float $lower_salary;
-
-        /**
-         * @OA\Property()
-         */
-        public ?float $higher_salary;
+        public User $accountable;
 
         /**
          * @OA\Property(ref="#/components/schemas/image")
@@ -249,109 +159,34 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/skill"))
          */
         public $skills;
-    }
-
-    /** @OA\Schema(schema="detailDepartment") */
-    class DetailDepartment
-    {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/specialization")
          */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/detailCompany")
-         */
-        public DetailCompany $company;
+        public Specialization  $specialization;
     }
 
     /** @OA\Schema(schema="department") */
-    class Department
+    class Department extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
         /**
          * @OA\Property(ref="#/components/schemas/company")
          */
-        public Company $company;
+        public $company;
+    }
+
+    /** @OA\Schema(schema="detailDepartment") */
+    class DetailDepartment extends Department
+    {
+        /**
+         * @OA\Property(ref="#/components/schemas/detailCompany")
+         */
+        public $company;
     }
 
     /** @OA\Schema(schema="detailCompany") */
-    class DetailCompany
+    class DetailCompany extends Company
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property()
-         */
-        public string $description;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $established_at;
-
-        /**
-         * @OA\Property()
-         */
-        public string $nick_name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/image")
-         */
-        public Image $image;
-
         /**
          * @OA\Property(ref="#/components/schemas/building")
          */
@@ -360,18 +195,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="company") */
-    class Company
+    class Company extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
         /**
          * @OA\Property()
          */
@@ -386,16 +211,6 @@ namespace Responses {
          * @OA\Property()
          */
         public string $nick_name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
 
         /**
          * @OA\Property(ref="#/components/schemas/image")
@@ -410,28 +225,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="building") */
-    class Building
+    class Building extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
         /**
          * @OA\Property(ref="#/components/schemas/street")
          */
@@ -439,28 +234,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="street") */
-    class Street
+    class Street extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
         /**
          * @OA\Property(ref="#/components/schemas/detailCity")
          */
@@ -521,28 +296,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="detailCity") */
-    class DetailCity
+    class DetailCity extends City
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
         /**
          * @OA\Property(ref="#/components/schemas/country")
          */
@@ -550,36 +305,13 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="country") */
-    class Country
+    class Country extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="image") */
-    class Image
+    class Image extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
 
         /**
          * @OA\Property()
@@ -590,117 +322,25 @@ namespace Responses {
          * @OA\Property()
          */
         public string $description;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
     }
 
     /** @OA\Schema(schema="file") */
-    class File
+    class File extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
         /**
          * @OA\Property()
          */
         public string $file;
 
         /**
-         * @OA\Property(format="date")
+         * @OA\Property()
          */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
+        public string $mime;
     }
 
     /** @OA\Schema(schema="position") */
-    class Position
+    class Position extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
-    }
-
-    /** @OA\Schema(schema="employment") */
-    class Employment
-    {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
-    }
-
-    /** @OA\Schema(schema="experience") */
-    class Experience
-    {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
     }
 
     /** @OA\Schema(schema="sources") */
@@ -711,13 +351,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="post") */
-    class Post
+    class Post extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
         /**
          * @OA\Property()
          */
@@ -768,86 +403,11 @@ namespace Responses {
          * @OA\Property(format="url")
          */
         public string $source_url;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="detailPost") */
-    class DetailPost
+    class DetailPost extends Post
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public int $comment_count;
-
-        /**
-         * @OA\Property()
-         */
-        public string $title;
-
-        /**
-         * @OA\Property()
-         */
-        public string $text;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/detailUser")
-         */
-        public DetailUser $user;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/attributes")
-         */
-        public string $attributes;
-
-        /**
-         * @OA\Property()
-         */
-        public int $likes;
-
-        /**
-         * @OA\Property()
-         */
-        public string $description;
-
-        /**
-         * @OA\Property(ref="#/components/schemas/sources")
-         */
-        public Source $source;
-
-        /**
-         * @OA\Property()
-         */
-        public string $user_name;
-
-        /**
-         * @OA\Property(format="url")
-         */
-        public string $source_url;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
         /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"))
          */
@@ -866,18 +426,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="user") */
-    class User
+    class User extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
         /**
          * @OA\Property()
          */
@@ -917,20 +467,11 @@ namespace Responses {
          * @OA\Property(ref="#/components/schemas/image)
          */
         public Image $image;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="previewChat") */
-    class PreviewChat {
+    class PreviewChat
+    {
         /**
          * @OA\Property()
          */
@@ -963,13 +504,8 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="message") */
-    class Message
+    class Message extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
         /**
          * @OA\Property()
          */
@@ -984,26 +520,11 @@ namespace Responses {
          * @OA\Property()
          */
         public string $body;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="chatMessage") */
-    class ChatMessage
+    class ChatMessage extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
         /**
          * @OA\Property()
          */
@@ -1018,26 +539,11 @@ namespace Responses {
          * @OA\Property()
          */
         public string $body;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="comment") */
-    class Comment
+    class Comment extends BaseClass
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
         /**
          * @OA\Property()
          */
@@ -1052,182 +558,52 @@ namespace Responses {
          * @OA\Property(description="id комментария, на который отвечаем")
          */
         public ?int $parent_id;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="detailComment") */
-    class DetailComment
+    class DetailComment extends Comment
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $text;
-
-        /**
-         * @OA\Property()
-         */
-        public ?int $post_id;
-
         /**
          * @OA\Property(ref="#/components/schemas/detailUser")
          */
         public DetailUser $user;
 
         /**
-         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/comment"), description="Массив ответов")
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"), description="Массив ответов")
          */
         public $all_children;
-
-        /**
-         * @OA\Property(description="id комментария, на который отвечаем")
-         */
-        public ?int $parent_id;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="detailUser") */
-    class DetailUser
+    class DetailUser extends User
     {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public string $name;
-
-        /**
-         * @OA\Property()
-         */
-        public string $email;
-
-        /**
-         * @OA\Property()
-         */
-        public int $workingStatus_id;
-
-        /**
-         * @OA\Property()
-         */
-        public int $position_id;
-
-        /**
-         * @OA\Property()
-         */
-        public bool $sex;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $date_of_birth;
-
         /**
          * @OA\Property()
          */
         public HR $hrable;
-
-        /**
-         * @OA\Property()
-         */
-        public Image $image;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
     }
 
     /** @OA\Schema(schema="HR") */
-    class HR {
-
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public int $company_id;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-
-    }
-
-    /** @OA\Schema(schema="detailHR") */
-    class DetailHR {
-        /**
-         * @OA\Property()
-         */
-        public int $id;
-
-        /**
-         * @OA\Property()
-         */
-        public Company $company;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
-    }
-
-    /** @OA\Schema(schema="chat") */
-    class Chat
+    class HR extends BaseClass
     {
         /**
          * @OA\Property()
          */
-        public int $id;
+        public int $company_id;
+    }
 
+    /** @OA\Schema(schema="detailHR") */
+    class DetailHR extends HR
+    {
         /**
          * @OA\Property()
          */
-        public string $name;
+        public Company $company;
+    }
 
+    /** @OA\Schema(schema="chat") */
+    class Chat extends BaseClass
+    {
         /**
          * @OA\Property()
          */
@@ -1237,16 +613,6 @@ namespace Responses {
          * @OA\Property()
          */
         public int $member_count;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $created_at;
-
-        /**
-         * @OA\Property(format="date")
-         */
-        public $updated_at;
 
         /**
          * @OA\Property(ref="#/components/schemas/image")
@@ -1260,31 +626,69 @@ namespace Responses {
     }
 
     /** @OA\Schema(schema="tag") */
-    class Tag
+    class Tag extends BaseClass
+    {
+    }
+
+    /** @OA\Schema(schema="filter") */
+    class Filter
     {
         /**
-         * @OA\Property()
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/status"))
          */
-        public int $id;
+        public $statuses;
 
         /**
-         * @OA\Property()
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/employment"))
          */
-        public string $name;
+        public $employments;
 
         /**
-         * @OA\Property()
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/experience"))
          */
-        public int $member_count;
+        public $experiences;
 
         /**
-         * @OA\Property(format="date")
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/format"))
          */
-        public $created_at;
+        public $formats;
 
         /**
-         * @OA\Property(format="date")
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/specialization"))
          */
-        public $updated_at;
+        public $specializations;
     }
+
+
+    /** @OA\Schema(schema="status") */
+    class Status extends BaseClass
+    {
+
+    }
+
+    /** @OA\Schema(schema="employment") */
+    class Employment extends BaseClass
+    {
+
+    }
+
+    /** @OA\Schema(schema="experience") */
+    class Experience extends BaseClass
+    {
+
+    }
+
+    /** @OA\Schema(schema="format") */
+    class Format extends BaseClass
+    {
+
+    }
+
+    /** @OA\Schema(schema="specialization") */
+    class Specialization extends BaseClass
+    {
+
+    }
+
+
 }

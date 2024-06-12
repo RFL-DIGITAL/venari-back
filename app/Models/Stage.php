@@ -21,6 +21,6 @@ class Stage extends Model
     }
 
     public function stageType(): BelongsTo {
-        return $this->belongsTo(StageType::class);
+        return $this->belongsTo(StageType::class, 'stageType_id', 'id');
     }
 }

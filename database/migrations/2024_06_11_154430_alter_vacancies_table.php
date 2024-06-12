@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('vacancies', function (Blueprint $table) {
             $table->string("additional_title")->nullable();
-            $table->dateTime("unarchived_at");
+            $table->dateTime("unarchived_at")->default(now());
 
             $table->foreignId('format_id')->nullable();
             $table->foreignId('accountable_id')->nullable();

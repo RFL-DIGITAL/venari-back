@@ -27,4 +27,8 @@ class Application extends Model
     public function stage(): BelongsTo {
         return $this->belongsTo(Stage::class);
     }
+
+    public function vacancy(): BelongsTo {
+        return $this->belongsTo(Vacancy::class);
+    }
 }
