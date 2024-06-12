@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('preview_id')->nullable();
             $table->foreignId('company_id')->nullable();
 
-            $table->foreign("preview_id")->references("id")->on("preview")
+            $table->foreign("preview_id")->references("id")->on("images")
                 ->onDelete("set null")->onUpdate("cascade");
             $table->foreign("company_id")->references("id")->on("companies")
                 ->onDelete("set null")->onUpdate("cascade");

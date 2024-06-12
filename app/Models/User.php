@@ -25,7 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'htanle_type',
+        'hrable_type',
         'hrable_id',
         'sex',
         'date_of_birth',
@@ -35,13 +35,16 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'user_name',
-        'company_name',
-        'preview_name',       
+        'preview_id',
+        'company_id',
+    ];
+
+    protected $appends = [
+        'post_count'
     ];
 
     protected $attributes = [
         'post_count',
-        'post_comment_count'
     ];
 
     /**
@@ -62,9 +65,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /** @var string Стаж работы */
-    public string $work_record;
 
     public function hrable(): MorphTo
     {
@@ -96,7 +96,7 @@ class User extends Authenticatable
 
     public function preview(): BelongsTo
     {
-        return $this->belongsTo(Preview::class);
+        return $this->belongsTo(Image::class);
     }
 
     public function company(): BelongsTo
@@ -105,9 +105,9 @@ class User extends Authenticatable
     }
 
     public function getPostCountAttribute() {
-        return Post::where('user_id', auth()->user()->id)->get()->count();
+        return Post::where('user_id', $this->id)->where('is_from_company', false)->get()->count();
     }
-  
+
     public function companyChats(): HasMany {
         return $this->hasMany(CompanyChat::class);
     }

@@ -23,13 +23,15 @@ use App\Http\Controllers\CompanyController;
 |
 */
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('user', [UserController::class, 'show'])->name('show');
-    Route::get('user/posts', [PostController::class, 'getPostByUser'])->name('getPostByUser');
+Route::prefix('users')->group(function () {
+    Route::get('{id}/posts', [PostController::class, 'getPostsByUser'])->name('getPostsByUser');
+    Route::get('{id}', [UserController::class, 'show'])->name('user');
 });
 
-Route::get('company/{id}', [CompanyController::class, 'show'])->name('show');
-
+Route::prefix('companies')->group(function () {
+    Route::get('{id}/posts', [PostController::class, 'getPostsByCompany'])->name('getPostsByCompany');
+    Route::get('{id}', [CompanyController::class, 'show'])->name('company');
+});
 
 Route::prefix('vacancies')->group(function () {
     Route::get('/{id}', [VacancyController::class, 'getVacancyByID'])->name('getVacancyByID');

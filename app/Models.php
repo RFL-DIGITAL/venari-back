@@ -353,6 +353,11 @@ namespace Responses {
         public Image $image;
 
         /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $preview;
+
+        /**
          * @OA\Property(ref="#/components/schemas/building")
          */
         public Building $building;
@@ -755,6 +760,11 @@ namespace Responses {
         public string $description;
 
         /**
+         * @OA\Property()
+         */
+        public bool $is_from_company;
+
+        /**
          * @OA\Property(ref="#/components/schemas/sources")
          */
         public Source $source;
@@ -778,6 +788,11 @@ namespace Responses {
          * @OA\Property(format="date")
          */
         public $updated_at;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/image"))
+         */
+        public $images;
     }
 
     /** @OA\Schema(schema="detailPost") */
@@ -824,6 +839,11 @@ namespace Responses {
         public string $description;
 
         /**
+         * @OA\Property()
+         */
+        public bool $is_from_company;
+
+        /**
          * @OA\Property(ref="#/components/schemas/sources")
          */
         public Source $source;
@@ -847,11 +867,6 @@ namespace Responses {
          * @OA\Property(format="date")
          */
         public $updated_at;
-
-        /**
-         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/detailComment"))
-         */
-        public $comments;
 
         /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/image"))
@@ -881,6 +896,16 @@ namespace Responses {
         /**
          * @OA\Property()
          */
+        public string $first_name;
+
+        /**
+         * @OA\Property()
+         */
+        public string $last_name;
+
+        /**
+         * @OA\Property()
+         */
         public string $email;
 
         /**
@@ -889,9 +914,9 @@ namespace Responses {
         public int $workingStatus_id;
 
         /**
-         * @OA\Property()
+         * @OA\Property(ref="#/components/schemas/position")
          */
-        public int $position_id;
+        public Position $position;
 
         /**
          * @OA\Property()
@@ -914,9 +939,19 @@ namespace Responses {
         public string $hrable_type;
 
         /**
-         * @OA\Property(ref="#/components/schemas/image)
+         * @OA\Property(ref="#/components/schemas/image")
          */
         public Image $image;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/image")
+         */
+        public Image $preview;
+
+        /**
+         * @OA\Property(ref="#/components/schemas/company")
+         */
+        public Company $company;
 
         /**
          * @OA\Property(format="date")
@@ -1149,7 +1184,7 @@ namespace Responses {
         /**
          * @OA\Property()
          */
-        public HR $hrable;
+        public DetailHR $hrable;
 
         /**
          * @OA\Property()

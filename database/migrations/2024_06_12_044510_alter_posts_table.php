@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('preview', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->binary('image');
-            $table->text('description');
+        Schema::table('posts', function (Blueprint $table) {
+            $table->boolean("is_from_company")->default(false);
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('preview');
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropColumn("is_from_company");
+        });
     }
 };
