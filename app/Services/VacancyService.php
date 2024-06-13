@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\City;
 use App\Models\Department;
 use App\Models\Employment;
 use App\Models\Experience;
@@ -291,7 +292,7 @@ class VacancyService
      * @param string $position_name
      * @param int $department_id
      * @param int $specialization_id
-     * @param int $city_id
+     * @param int $cityName
      * @param float|null $lower_salary
      * @param float|null $upper_salary
      * @param string $responsibilities
@@ -310,20 +311,20 @@ class VacancyService
      * @return array
      */
     public function createVacancy(
-                string $position_name,
-                int $department_id,
-                int $specialization_id,
-                int $city_id,
-                ?float $lower_salary,
-                ?float $upper_salary,
-                string $responsibilities,
-                string $requirements,
-                string $conditions,
+                string  $position_name,
+                int     $department_id,
+                int     $specialization_id,
+                string  $cityName,
+                ?float  $lower_salary,
+                ?float  $upper_salary,
+                string  $responsibilities,
+                string  $requirements,
+                string  $conditions,
                 ?string $additional,
                 ?string $additional_title,
-                ?array $skills,
-                int $experience_id,
-                int $employment_id,
+                ?array  $skills,
+                int     $experience_id,
+                int     $employment_id,
                 int $format_id,
                 ?string $test,
                 int $status_id,
@@ -333,6 +334,8 @@ class VacancyService
     {
         $position = Position::firstOrCreate(['name' => $position_name]);
         $hr = User::where('id', $accountable_user_id)->first()->hrable;
+
+        $city_id = City::firstOrCreate(['name' => $cityName])->id;
 
         $vacancy = new Vacancy(
             [
@@ -407,7 +410,7 @@ class VacancyService
      * @param string $position_name
      * @param int $department_id
      * @param int $specialization_id
-     * @param int $city_id
+     * @param int $cityName
      * @param float|null $lower_salary
      * @param float|null $upper_salary
      * @param string $responsibilities
@@ -426,21 +429,21 @@ class VacancyService
      * @return array
      */
     public function editVacancy(
-        int $id,
-        string $position_name,
-        int $department_id,
-        int $specialization_id,
-        int $city_id,
-        ?float $lower_salary,
-        ?float $upper_salary,
-        string $responsibilities,
-        string $requirements,
-        string $conditions,
+        int     $id,
+        string  $position_name,
+        int     $department_id,
+        int     $specialization_id,
+        string  $cityName,
+        ?float  $lower_salary,
+        ?float  $upper_salary,
+        string  $responsibilities,
+        string  $requirements,
+        string  $conditions,
         ?string $additional,
         ?string $additional_title,
-        ?array $skills,
-        int $experience_id,
-        int $employment_id,
+        ?array  $skills,
+        int     $experience_id,
+        int     $employment_id,
         int $format_id,
         ?string $test,
         int $status_id,
@@ -452,6 +455,8 @@ class VacancyService
 
         $position = Position::firstOrCreate(['name' => $position_name]);
         $hr = User::where('id', $accountable_user_id)->first()->hrable;
+
+        $city_id = City::firstOrCreate(['name' => $cityName])->id;
 
         $vacancy->update(
             [
@@ -532,6 +537,32 @@ class VacancyService
     private function cleanFromLinebreaks(string $string): string
     {
         return preg_replace('/[\r\n]+/', '', $string);
+    }
+
+    public function changeVacanciesStatus($vacancyIDs, $statusID): array {
+        $vacancies = [];
+
+        foreach ($vacancyIDs as $id) {
+            $vacancy = Vacancy::where('id', $id)->first();
+            $vacancy->status_id = $statusID;
+            $vacancy->save();
+            $vacancy->load([
+                'department.company.image',
+                'accountable.user',
+                'city',
+                'experience',
+                'employment',
+                'position',
+                'skills',
+                'image',
+                'specialization',
+
+            ]);
+
+            $vacancies[] = $vacancy->toArray();
+        }
+
+        return $vacancies;
     }
 
 }

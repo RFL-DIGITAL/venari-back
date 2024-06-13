@@ -87,6 +87,10 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('vacancies')->group(function () {
         Route::post('create-vacancy', [VacancyController::class, 'createVacancy'])->name('createVacancy');
         Route::post('edit-vacancy', [VacancyController::class, 'editVacancy'])->name('editVacancy');
+        Route::post('archive-vacancies', [VacancyController::class, 'archiveVacancies'])
+            ->name('archiveVacancies');
+        Route::post('un-archive-vacancies', [VacancyController::class, 'unArchiveVacancies'])
+            ->name('unArchiveVacancies');
 
        Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
     });
