@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Employment;
 use App\Models\Experience;
 use App\Models\Format;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 
 class FilterController extends Controller
 {
+    public int $REKSOFT_COMPANY_ID = 1;
+
     /**
      * Метод получения всех доступных фильтров
      *
@@ -30,16 +33,17 @@ class FilterController extends Controller
      *      )
      *    )
      *
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllFilters(): array
+    public function getAllFilters(): \Illuminate\Http\JsonResponse
     {
-        return [
+        return $this->successResponse([
             'statuses' => Status::all()->toArray(),
             'employments' => Employment::all()->toArray(),
             'experiences' => Experience::all()->toArray(),
             'formats' => Format::all()->toArray(),
             'specializations' => Specialization::all()->toArray(),
-        ];
+            'departments' => Department::where('company_id', $this->REKSOFT_COMPANY_ID)->get()->toArray(),
+        ]);
     }
 }
