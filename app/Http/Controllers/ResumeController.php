@@ -6,6 +6,7 @@ use App\Http\Requests\CreateResumeRequest;
 use App\Http\Requests\EditResumeRequest;
 use App\Http\Requests\ResumeFileRequest;
 use App\Services\ResumeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ResumeController extends Controller
@@ -15,12 +16,27 @@ class ResumeController extends Controller
     /**
      * Метод создания резюме из загруженного .doc файла
      *
+     * @OA\Schema(schema="createResumeFromDoc",
+     *                    @OA\Property(property="success",type="boolean",example="true"),
+     *                    @OA\Property(property="response",type="array",
+     *                         @OA\Items(ref="#/components/schemas/resume")),
+     *         )
      *
+     * @OA\Post(
+     *              path="/api/hr-panel/resumes/create-from-file",
+     *              tags={"HR-panel"},
+     *              @OA\RequestBody(ref="#/components/requestBodies/ResumeFileRequest"),
+     *              @OA\Response(
+     *              response="200",
+     *              description="Ответ при успешном выполнении запроса",
+     *              @OA\JsonContent(ref="#/components/schemas/createResumeFromDoc")
+     *            )
+     *          )
      *
      * @param ResumeFileRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function getInfoFromDoc(ResumeFileRequest $request)
+    public function createResumeFromDoc(ResumeFileRequest $request)
     {
         if (pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION) != "doc") {
             return $this->failureResponse(
@@ -39,8 +55,29 @@ class ResumeController extends Controller
     /**
      * Метод получения резюме по id
      *
+     * @OA\Schema(schema="getResumeByID",
+     *                     @OA\Property(property="success",type="boolean",example="true"),
+     *                     @OA\Property(property="response",type="array",
+     *                          @OA\Items(ref="#/components/schemas/resume")),
+     *          )
+     *
+     * @OA\Get(
+     *               path="/api/hr-panel/resumes/{id}",
+     *               tags={"HR-panel"},
+     *     @OA\Parameter(
+     *             name="id",
+     *            in="query",
+     *             description="id резюме",
+     *             required=true),
+     *               @OA\Response(
+     *               response="200",
+     *               description="Ответ при успешном выполнении запроса",
+     *               @OA\JsonContent(ref="#/components/schemas/getResumeByID")
+     *             )
+     *           )
+     *
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getResumeByID($id) {
         return $this->successResponse(
@@ -69,12 +106,12 @@ class ResumeController extends Controller
      *         )
      *
      * @param CreateResumeRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function createResume(CreateResumeRequest $request) {
         return $this->successResponse(
             $this->resumeService->createResume(
-                $request->user_id,
+                $request->user()->id,
                 $request->contact_phone,
                 $request->contact_mail,
                 $request->salary,
@@ -94,14 +131,31 @@ class ResumeController extends Controller
     /**
      * Метод обновления данных в резюме
      *
+     * @OA\Schema(schema="editResume",
+     *                    @OA\Property(property="success",type="boolean",example="true"),
+     *                    @OA\Property(property="response",type="array",
+     *                         @OA\Items(ref="#/components/schemas/resume")),
+     *         )
+     *
+     * @OA\Post(
+     *              path="/api/hr-panel/resumes/edit-resume",
+     *              tags={"HR-panel"},
+     *              @OA\RequestBody(ref="#/components/requestBodies/EditResumeRequest"),
+     *              @OA\Response(
+     *              response="200",
+     *              description="Ответ при успешном выполнении запроса",
+     *              @OA\JsonContent(ref="#/components/schemas/editResume")
+     *            )
+     *          )
+     *
      * @param EditResumeRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function editResume(EditResumeRequest $request) {
         return $this->successResponse(
             $this->resumeService->editResume(
                 $request->id,
-                $request->user_id,
+                $request->user()->id,
                 $request->contact_phone,
                 $request->contact_mail,
                 $request->salary,

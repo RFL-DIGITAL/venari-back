@@ -94,7 +94,8 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
         Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
         Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume');
         Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
-        Route::post('get-from-doc', [ResumeController::class, 'getInfoFromDoc'])->name('getInfoFromDoc');
+        Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
+            ->name('createResumeFromDoc');
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');

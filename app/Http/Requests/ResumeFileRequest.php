@@ -5,6 +5,11 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\RequestBody(request="ResumeFileRequest", @OA\JsonContent(
+ *     @OA\Property(property="file"),
+ * ))
+ */
 class ResumeFileRequest extends FormRequest
 {
     /**

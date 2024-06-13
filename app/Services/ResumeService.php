@@ -147,11 +147,12 @@ class ResumeService
         $resume->save();
 
         $resume->load([
-            'userPositions',
+            'userPositions.company',
+            'userPositions.position',
             'languageLevels.language',
             'languageLevels.level',
             'skills',
-            'resumeProgramSchools.programSchool.program',
+            'resumeProgramSchools.programSchool.program.programType',
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
@@ -201,7 +202,7 @@ class ResumeService
                 'programSchool_id' => $programSchoolModel->id,
                 'resume_id' => $resume->id,
                 'start_date' => $programSchool['start_date'],
-                'end_date' => $programSchool['finish_date']
+                'end_date' => $programSchool['end_date']
             ]);
 
             $resumeProgramSchool->save();
@@ -243,11 +244,12 @@ class ResumeService
         $resume->save();
 
         $resume->load([
-            'userPositions',
+            'userPositions.company',
+            'userPositions.position',
             'languageLevels.language',
             'languageLevels.level',
             'skills',
-            'resumeProgramSchools.programSchool.program',
+            'resumeProgramSchools.programSchool.program.programType',
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
@@ -300,7 +302,7 @@ class ResumeService
                 'programSchool_id' => $programSchoolModel->id,
                 'resume_id' => $resume->id,
                 'start_date' => $programSchool['start_date'],
-                'end_date' => $programSchool['finish_date']
+                'end_date' => $programSchool['end_date']
             ]);
 
             $resumeProgramSchool->save();
@@ -314,7 +316,7 @@ class ResumeService
             $skillModelIDs[] = Skill::firstOrCreate(['name' => $skill])->id;
         }
 
-        $resume->skills()->skills()->sync($skillModelIDs);
+        $resume->skills()->sync($skillModelIDs);
 
         $resume->save();
 
@@ -346,11 +348,12 @@ class ResumeService
         $resume->save();
 
         $resume->load([
-            'userPositions',
+            'userPositions.company',
+            'userPositions.position',
             'languageLevels.language',
             'languageLevels.level',
             'skills',
-            'resumeProgramSchools.programSchool.program',
+            'resumeProgramSchools.programSchool.program.programType',
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
@@ -363,7 +366,8 @@ class ResumeService
     {
         $resume = Resume::where('id', $id)->first();
         $resume->load([
-            'userPositions',
+            'userPositions.company',
+            'userPositions.position',
             'languageLevels.language',
             'languageLevels.level',
             'skills',
