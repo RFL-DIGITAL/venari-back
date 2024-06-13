@@ -14,7 +14,10 @@ class ProgramSchool extends Model
 {
     use HasFactory;
 
-    protected $table = 'program_schools';
+    protected $fillable = [
+        'program_id',
+        'school_id'
+    ];
 
     public function program(): BelongsTo
     {
@@ -27,6 +30,6 @@ class ProgramSchool extends Model
     }
 
     public function resumeProgramSchools(): HasMany {
-        return $this->hasMany(ResumeProgramSchool::class);
+        return $this->hasMany(ResumeProgramSchool::class, 'programSchool_id', 'id');
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Experience;
 use App\Models\Format;
 use App\Models\Specialization;
 use App\Models\Status;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FilterController extends Controller
@@ -33,9 +34,9 @@ class FilterController extends Controller
      *      )
      *    )
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function getAllFilters(): \Illuminate\Http\JsonResponse
+    public function getAllFilters(): JsonResponse
     {
         return $this->successResponse([
             'statuses' => Status::all()->toArray(),

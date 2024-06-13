@@ -18,4 +18,8 @@ class Specialization extends Model
     public function vacancies(): hasMany {
         return $this->hasMany(Vacancy::class);
     }
+
+    public function resumes(): hasMany {
+        return $this->hasMany(Resume::class);
+    }
 }

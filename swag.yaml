@@ -374,6 +374,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPostsByCompany'
+  /api/hr-panel/resumes/create-from-file:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод создания резюме из загруженного .doc файла'
+      operationId: 60011d77dc3dca7500f074072ad2dfa4
+      requestBody:
+        $ref: '#/components/requestBodies/ResumeFileRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createResumeFromDoc'
+  '/api/hr-panel/resumes/{id}':
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения резюме по id'
+      operationId: a4b6abfc65340bf718f27002874053c1
+      parameters:
+        -
+          name: id
+          in: query
+          description: 'id резюме'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getResumeByID'
+  /api/hr-panel/resumes/create-resume:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод создания резюме'
+      operationId: 79cee936f8ea7080738bb76e4e95d8f0
+      requestBody:
+        $ref: '#/components/requestBodies/CreateResumeRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createResume'
+  /api/hr-panel/resumes/edit-resume:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод обновления данных в резюме'
+      operationId: 9f7ce4d19b756bad855af8ff5eb79d68
+      requestBody:
+        $ref: '#/components/requestBodies/EditResumeRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/editResume'
   /api/vacancies:
     get:
       tags:
@@ -688,6 +752,46 @@ components:
         response:
           $ref: '#/components/schemas/post'
       type: object
+    createResumeFromDoc:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    getResumeByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    createResume:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    editResume:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
     getVacancies:
       properties:
         success:
@@ -737,6 +841,36 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/vacancy'
+      type: object
+    programSchoolsSchema:
+      properties:
+        program_id:
+          type: integer
+        school_id:
+          type: integer
+        start_date:
+          format: date
+        end_date:
+          format: date
+      type: object
+    userPositionsSchema:
+      properties:
+        company_id:
+          type: integer
+        position_id:
+          type: integer
+        start_date:
+          format: date
+        end_date:
+          format: date
+        description: {  }
+      type: object
+    languageLevelSchema:
+      properties:
+        level_id:
+          type: integer
+        language_id:
+          type: integer
       type: object
     vacancy:
       properties:
@@ -1320,7 +1454,215 @@ components:
         updated_at:
           format: date
       type: object
+    resume:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        user_id:
+          type: integer
+        contact_phone:
+          type: string
+        contact_mail:
+          type: string
+        salary:
+          type: string
+        resumeProgramSchools:
+          type: array
+          items:
+            $ref: '#/components/schemas/resumeProgramSchool'
+        userPositions:
+          type: array
+          items:
+            $ref: '#/components/schemas/userPosition'
+        employment:
+          $ref: '#/components/schemas/employment'
+        specialization:
+          $ref: '#/components/schemas/specialization'
+        position:
+          $ref: '#/components/schemas/position'
+        languageLevel:
+          type: array
+          items:
+            $ref: '#/components/schemas/languageLevel'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/skill'
+        format:
+          $ref: '#/components/schemas/format'
+      type: object
+    languageLevel:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        language:
+          $ref: '#/components/schemas/language'
+        level:
+          $ref: '#/components/schemas/level'
+      type: object
+    resumeProgramSchool:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        programSchool:
+          $ref: '#/components/schemas/programSchool'
+        start_date:
+          format: date
+        end_date:
+          format: date
+      type: object
+    userPosition:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company:
+          $ref: '#/components/schemas/company'
+        position:
+          $ref: '#/components/schemas/position'
+        start_date:
+          format: date
+        end_date:
+          format: date
+        description:
+          type: string
+      type: object
+    programSchool:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        program:
+          $ref: '#/components/schemas/program'
+        school:
+          $ref: '#/components/schemas/school'
+      type: object
+    program:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        programType:
+          $ref: '#/components/schemas/programType'
+      type: object
+    programType:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    school:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    language:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    level:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
   requestBodies:
+    CreateResumeRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              contact_phone:
+                type: string
+              contact_mail:
+                type: string
+              salary:
+                type: string
+              description:
+                type: string
+              programSchools:
+                type: array
+                items:
+                  $ref: '#/components/schemas/programSchoolsSchema'
+              userPositions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/userPositionsSchema'
+              employment_id:
+                type: integer
+              specialization_id:
+                type: integer
+              format_id:
+                type: integer
+              position:
+                type: string
+              languageLevels:
+                type: array
+                items:
+                  $ref: '#/components/schemas/languageLevelSchema'
+              skills:
+                type: array
+                items:
+                  type: string
+            type: object
     CreateVacancyRequest:
       content:
         application/json:
@@ -1358,6 +1700,46 @@ components:
               status_id:
                 type: integer
               image: {  }
+            type: object
+    EditResumeRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: integer
+              contact_phone:
+                type: string
+              contact_mail:
+                type: string
+              salary:
+                type: string
+              description:
+                type: string
+              programSchools:
+                type: array
+                items:
+                  $ref: '#/components/schemas/programSchoolsSchema'
+              userPositions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/userPositionsSchema'
+              employment_id:
+                type: integer
+              specialization_id:
+                type: integer
+              format_id:
+                type: integer
+              position:
+                type: string
+              languageLevels:
+                type: array
+                items:
+                  $ref: '#/components/schemas/languageLevelSchema'
+              skills:
+                type: array
+                items:
+                  type: string
             type: object
     EditVacancyRequest:
       content:
@@ -1428,6 +1810,14 @@ components:
                 type: string
               login:
                 type: string
+            type: object
+    ResumeFileRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              file:
+                format: file
             type: object
     SendCommentRequest:
       content:
