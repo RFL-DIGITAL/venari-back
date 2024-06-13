@@ -234,6 +234,7 @@ class VacancyService
      */
     public function getInnerVacanciesHR(?int $statusID, ?int $specializationID): array
     {
+//        dd('hi');
 
         $statusID = $statusID != null ? $statusID : 1;
         $vacanciesBuilder = Vacancy::where('status_id', $statusID)->where('is_outer', false);
@@ -245,9 +246,16 @@ class VacancyService
         $vacancies = $vacanciesBuilder->get()
             ->load(
                 [
+                    'department.company.image',
                     'accountable.user',
                     'city',
-                    'position'
+                    'experience',
+                    'employment',
+                    'position',
+                    'skills',
+                    'image',
+                    'specialization',
+
                 ]);
 
         return $vacancies->toArray();
