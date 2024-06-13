@@ -156,6 +156,7 @@ class ResumeService
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
+            'employment'
         ]);
 
         return $resume->toArray();
@@ -253,6 +254,7 @@ class ResumeService
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
+            'employment'
         ]);
 
         return $resume->toArray();
@@ -357,6 +359,7 @@ class ResumeService
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
+            'employment'
         ]);
 
         return $resume->toArray();
@@ -375,6 +378,7 @@ class ResumeService
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
+            'employment'
         ]);
 
         return $resume->toArray();

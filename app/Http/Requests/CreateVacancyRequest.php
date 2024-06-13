@@ -12,7 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *     @OA\Property(property="specialization_id", type="int"),
  *     @OA\Property(property="city_id", type="int"),
  *     @OA\Property(property="lower_salary", type="float"),
- *     @OA\Property(property="upper_salary", type="float"),
+ *     @OA\Property(property="higher_salary", type="float"),
  *     @OA\Property(property="responsibilities"),
  *     @OA\Property(property="requirements"),
  *     @OA\Property(property="conditions"),
