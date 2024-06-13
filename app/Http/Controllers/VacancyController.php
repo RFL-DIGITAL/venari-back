@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateVacancyRequest;
 use App\Http\Requests\EditVacancyRequest;
+use App\Http\Requests\MassVacanciesRequest;
+use App\Models\Vacancy;
 use App\Services\VacancyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +13,9 @@ use Illuminate\Http\Request;
 
 class VacancyController extends Controller
 {
+    public int $ARCHIVE_STATUS_ID = 3;
+    public int $OPEN_STATUS_ID = 1;
+
     public function __construct(protected VacancyService $vacancyService)
     {
     }
@@ -18,7 +23,7 @@ class VacancyController extends Controller
     /**
      * Метод получения всех вакансий
      *
-     * @OA\Schema( schema="getVacancies",
+     * @OA\Schema( schema="vacanciesResponse",
      *             @OA\Property(property="success",type="boolean",example="true"),
      *             @OA\Property(property="response",type="array",
      *                  @OA\Items(ref="#/components/schemas/vacancy")),
@@ -30,7 +35,7 @@ class VacancyController extends Controller
      *       @OA\Response(
      *       response="200",
      *       description="Ответ при успешном выполнении запроса",
-     *       @OA\JsonContent(ref="#/components/schemas/getVacancies")
+     *       @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
      *     )
      *   )
      *
@@ -141,12 +146,6 @@ class VacancyController extends Controller
     /**
      * Метод добавления вакансии из формы hr-панели
      *
-     * @OA\Schema(schema="createVacancy",
-     *                  @OA\Property(property="success",type="boolean",example="true"),
-     *                  @OA\Property(property="response",type="array",
-     *                       @OA\Items(ref="#/components/schemas/vacancy")),
-     *       )
-     *
      * @OA\Post(
      *            path="/api/hr-panel/vacancies/create-vacancy",
      *            tags={"HR-panel"},
@@ -154,7 +153,7 @@ class VacancyController extends Controller
      *            @OA\Response(
      *            response="200",
      *            description="Ответ при успешном выполнении запроса",
-     *            @OA\JsonContent(ref="#/components/schemas/createVacancy")
+     *            @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
      *          )
      *        )
      *
@@ -192,12 +191,6 @@ class VacancyController extends Controller
     /**
      *  Метод изменения вакансии из формы hr-панели
      *
-     * @OA\Schema(schema="editVacancy",
-     *                   @OA\Property(property="success",type="boolean",example="true"),
-     *                   @OA\Property(property="response",type="array",
-     *                        @OA\Items(ref="#/components/schemas/vacancy")),
-     *        )
-     *
      * @OA\Post(
      *             path="/api/hr-panel/vacancies/edit-vacancy",
      *             tags={"HR-panel"},
@@ -205,7 +198,7 @@ class VacancyController extends Controller
      *             @OA\Response(
      *             response="200",
      *             description="Ответ при успешном выполнении запроса",
-     *             @OA\JsonContent(ref="#/components/schemas/editVacancy")
+     *             @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
      *           )
      *         )
      *
@@ -237,6 +230,54 @@ class VacancyController extends Controller
                 $request->user()->id,
                 $request->image,
             )
+        );
+    }
+
+    /**
+     * Метод архивации вакансий по их id
+     *
+     * @OA\Post(
+     *              path="/api/hr-panel/vacancies/archive-vacancies",
+     *              tags={"HR-panel"},
+     *              @OA\RequestBody(ref="#/components/requestBodies/MassVacanciesRequest"),
+     *              @OA\Response(
+     *              response="200",
+     *              description="Ответ при успешном выполнении запроса",
+     *              @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
+     *            )
+     *          )
+     *
+     * @param MassVacanciesRequest $request
+     * @return JsonResponse
+     */
+    public function archiveVacancies(MassVacanciesRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->vacancyService->changeVacanciesStatus($request->vacancy_ids, $this->ARCHIVE_STATUS_ID)
+        );
+    }
+
+    /**
+     * Метод разархивации вакансий по их id
+     *
+     * @OA\Post(
+     *              path="/api/hr-panel/vacancies/un-archive-vacancies",
+     *              tags={"HR-panel"},
+     *              @OA\RequestBody(ref="#/components/requestBodies/MassVacanciesRequest"),
+     *              @OA\Response(
+     *              response="200",
+     *              description="Ответ при успешном выполнении запроса",
+     *              @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
+     *            )
+     *          )
+     *
+     * @param MassVacanciesRequest $request
+     * @return JsonResponse
+     */
+    public function unArchiveVacancies(MassVacanciesRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->vacancyService->changeVacanciesStatus($request->vacancy_ids, $this->OPEN_STATUS_ID)
         );
     }
 }

@@ -450,7 +450,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getVacancies'
+                $ref: '#/components/schemas/vacanciesResponse'
   '/api/vacancies/{id}':
     get:
       tags:
@@ -508,7 +508,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/createVacancy'
+                $ref: '#/components/schemas/vacanciesResponse'
   /api/hr-panel/vacancies/edit-vacancy:
     post:
       tags:
@@ -523,7 +523,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/editVacancy'
+                $ref: '#/components/schemas/vacanciesResponse'
+  /api/hr-panel/vacancies/archive-vacancies:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод архивации вакансий по их id'
+      operationId: 09c7b2514b64b24d48f23f94a5e07dd9
+      requestBody:
+        $ref: '#/components/requestBodies/MassVacanciesRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vacanciesResponse'
+  /api/hr-panel/vacancies/un-archive-vacancies:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод разархивации вакансий по их id'
+      operationId: 2774a8692f501bf3d9b56cd96ef2e075
+      requestBody:
+        $ref: '#/components/requestBodies/MassVacanciesRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vacanciesResponse'
 components:
   schemas:
     attachmentDTO:
@@ -792,7 +822,7 @@ components:
           items:
             $ref: '#/components/schemas/resume'
       type: object
-    getVacancies:
+    vacanciesResponse:
       properties:
         success:
           type: boolean
@@ -821,26 +851,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HRPanelVacancy'
-      type: object
-    createVacancy:
-      properties:
-        success:
-          type: boolean
-          example: 'true'
-        response:
-          type: array
-          items:
-            $ref: '#/components/schemas/vacancy'
-      type: object
-    editVacancy:
-      properties:
-        success:
-          type: boolean
-          example: 'true'
-        response:
-          type: array
-          items:
-            $ref: '#/components/schemas/vacancy'
       type: object
     programSchoolsSchema:
       properties:
@@ -1678,7 +1688,7 @@ components:
               lower_salary:
                 type: number
                 format: float
-              upper_salary:
+              higher_salary:
                 type: number
                 format: float
               responsibilities: {  }
@@ -1758,7 +1768,7 @@ components:
               lower_salary:
                 type: number
                 format: float
-              upper_salary:
+              higher_salary:
                 type: number
                 format: float
               responsibilities: {  }
@@ -1799,6 +1809,15 @@ components:
               password:
                 type: string
             type: object
+    MassVacanciesRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              vacancy_ids:
+                type: array
+                items: {  }
+            type: object
     RegisterRequest:
       content:
         application/json:
@@ -1816,8 +1835,7 @@ components:
         application/json:
           schema:
             properties:
-              file:
-                format: file
+              file: {  }
             type: object
     SendCommentRequest:
       content:
