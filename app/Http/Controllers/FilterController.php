@@ -33,17 +33,17 @@ class FilterController extends Controller
      *      )
      *    )
      *
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllFilters(): array
+    public function getAllFilters(): \Illuminate\Http\JsonResponse
     {
-        return [
+        return $this->successResponse([
             'statuses' => Status::all()->toArray(),
             'employments' => Employment::all()->toArray(),
             'experiences' => Experience::all()->toArray(),
             'formats' => Format::all()->toArray(),
             'specializations' => Specialization::all()->toArray(),
             'departments' => Department::where('company_id', $this->REKSOFT_COMPANY_ID)->get()->toArray(),
-        ];
+        ]);
     }
 }
