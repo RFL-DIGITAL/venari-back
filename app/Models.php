@@ -692,6 +692,11 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/specialization"))
          */
         public $specializations;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/department"))
+         */
+        public $departments;
     }
 
 
@@ -724,6 +729,180 @@ namespace Responses {
     {
 
     }
+
+    /** @OA\Schema(schema="resume") */
+    class Resume extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property()
+         */
+        public int $user_id;
+
+        /**
+         * @OA\Property()
+         */
+        public string $contact_phone;
+
+        /**
+         * @OA\Property()
+         */
+        public string $contact_mail;
+
+        /**
+         * @OA\Property()
+         */
+        public string $salary;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/resumeProgramSchool"))
+         */
+        public $resumeProgramSchools;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/userPosition"))
+         */
+        public $userPositions;
+
+        /**
+         * @OA\Property()
+         */
+        public Employment $employment;
+
+
+        /**
+         * @OA\Property()
+         */
+        public Specialization $specialization;
+
+        /**
+         * @OA\Property()
+         */
+        public Position $position;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/languageLevel"))
+         */
+        public $languageLevel;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/skill"))
+         */
+        public $skills;
+
+        /**
+         * @OA\Property()
+         */
+        public Format $format;
+
+    }
+
+    /** @OA\Schema(schema="languageLevel") */
+    class LanguageLevel extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public Language $language;
+
+        /**
+         * @OA\Property()
+         */
+        public Level $level;
+
+    }
+
+    /** @OA\Schema(schema="resumeProgramSchool") */
+    class ResumeProgramSchool extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public ProgramSchool $programSchool;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $start_date;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $end_date;
+
+
+    }
+
+    /** @OA\Schema(schema="userPosition") */
+    class UserPosition extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public Company $company;
+
+        /**
+         * @OA\Property()
+         */
+        public Position $position;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $start_date;
+
+        /**
+         * @OA\Property(format="date")
+         */
+        public $end_date;
+
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+    }
+
+    /** @OA\Schema(schema="programSchool") */
+    class ProgramSchool extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public Program $program;
+
+        /**
+         * @OA\Property()
+         */
+        public School $school;
+
+    }
+
+    /** @OA\Schema(schema="program") */
+    class Program extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public ProgramType $programType;
+
+    }
+
+    /** @OA\Schema(schema="programType") */
+    class ProgramType extends BaseClass {}
+
+    /** @OA\Schema(schema="school") */
+    class School extends BaseClass {}
+
+    /** @OA\Schema(schema="language") */
+    class Language extends BaseClass {}
+
+    /** @OA\Schema(schema="level") */
+    class Level extends BaseClass {}
 
 
 }

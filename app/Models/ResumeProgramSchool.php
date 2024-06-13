@@ -15,12 +15,19 @@ class ResumeProgramSchool extends Model
 
     protected $table = 'program_school_resumes';
 
+    protected $fillable = [
+        'programSchool_id',
+        'resume_id',
+        'start_date',
+        'end_date',
+    ];
+
     public function resume(): BelongsTo
     {
         return $this->belongsTo(Resume::class);
     }
 
     public function programSchool(): BelongsTo {
-        return $this->belongsTo(ProgramSchool::class);
+        return $this->belongsTo(ProgramSchool::class, 'programSchool_id', 'id');
     }
 }

@@ -26,4 +26,8 @@ class Position extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function resumes(): hasMany {
+        return $this->hasMany(Resume::class);
+    }
 }

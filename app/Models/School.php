@@ -11,6 +11,10 @@ class School extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name'
+    ];
+
     public function programs(): BelongsToMany {
         return $this->belongsToMany(Program::class);
     }
