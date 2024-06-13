@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Employment;
 use App\Models\Experience;
 use App\Models\Format;
+use App\Models\HR;
 use App\Models\Specialization;
 use App\Models\Status;
 use Illuminate\Http\JsonResponse;
@@ -44,7 +45,14 @@ class FilterController extends Controller
             'experiences' => Experience::all()->toArray(),
             'formats' => Format::all()->toArray(),
             'specializations' => Specialization::all()->toArray(),
-            'departments' => Department::where('company_id', $this->REKSOFT_COMPANY_ID)->get()->toArray(),
+            'departments' => Department::where('company_id', $this->REKSOFT_COMPANY_ID)->get()
+                ->load('company.image')->toArray(),
+            'accountables' => HR::where('company_id', $this->REKSOFT_COMPANY_ID)->get()
+                ->load([
+                    'user.image',
+                    'user.preview',
+                    'user.company.image',
+                ])->toArray()
         ]);
     }
 }

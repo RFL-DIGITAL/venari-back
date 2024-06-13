@@ -120,6 +120,21 @@ class VacancyController extends Controller
      *            in="query",
      *             description="id специализации",
      *             required=false),
+     *     @OA\Parameter(
+     *              name="city",
+     *             in="query",
+     *              description="регион поиска (город, строка)",
+     *              required=false),
+     *     @OA\Parameter(
+     *               name="name",
+     *              in="query",
+     *               description="название вакансии",
+     *               required=false),
+     *     @OA\Parameter(
+     *                name="$accountable_id",
+     *               in="query",
+     *                description="id ответственного (сущность hr)",
+     *                required=false),
      *       @OA\Response(
      *       response="200",
      *       description="Ответ при успешном выполнении запроса",
@@ -135,8 +150,17 @@ class VacancyController extends Controller
     {
         $statusID = $request->query('status_id');
         $specializationID = $request->query('specialization_id');
+        $city = $request->query('city');
+        $name = $request->query('name');
+        $accountable_id = $request->query('$accountable_id');
 
-        $innerVacancies = $this->vacancyService->getInnerVacanciesHR($statusID, $specializationID);
+        $innerVacancies = $this->vacancyService->getInnerVacanciesHR(
+            $statusID,
+            $specializationID,
+            $city,
+            $name,
+            $accountable_id
+        );
 
         return $this->successResponse(
             $this->paginate($innerVacancies)
