@@ -1260,6 +1260,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/specialization'
+        departments:
+          type: array
+          items:
+            $ref: '#/components/schemas/department'
       type: object
     status:
       properties:

@@ -692,6 +692,11 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/specialization"))
          */
         public $specializations;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/department"))
+         */
+        public $departments;
     }
 
 
