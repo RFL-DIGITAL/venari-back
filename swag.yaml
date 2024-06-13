@@ -487,6 +487,21 @@ paths:
           in: query
           description: 'id специализации'
           required: false
+        -
+          name: city
+          in: query
+          description: 'регион поиска (город, строка)'
+          required: false
+        -
+          name: name
+          in: query
+          description: 'название вакансии'
+          required: false
+        -
+          name: $accountable_id
+          in: query
+          description: 'id ответственного (сущность hr)'
+          required: false
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
@@ -1350,6 +1365,16 @@ components:
             company:
               $ref: '#/components/schemas/company'
           type: object
+    hrWithUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/HR'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/user'
+          type: object
     chat:
       properties:
         id:
@@ -1408,6 +1433,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/department'
+        accountables:
+          type: array
+          items:
+            $ref: '#/components/schemas/hrWithUser'
       type: object
     status:
       properties:

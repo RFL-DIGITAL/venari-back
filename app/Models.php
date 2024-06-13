@@ -636,6 +636,15 @@ namespace Responses {
         public Company $company;
     }
 
+    /** @OA\Schema(schema="hrWithUser") */
+    class HRWithUser extends HR
+    {
+        /**
+         * @OA\Property()
+         */
+        public User $user;
+    }
+
     /** @OA\Schema(schema="chat") */
     class Chat extends BaseClass
     {
@@ -697,6 +706,11 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/department"))
          */
         public $departments;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/hrWithUser"))
+         */
+        public $accountables;
     }
 
 

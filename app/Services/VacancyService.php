@@ -93,11 +93,9 @@ class VacancyService
 
                 if ($experienceInt < 3) {
                     $experience = Experience::where('name', 'Опыт от 1 года')->first();
-                }
-                else if ($experienceInt < 5) {
+                } else if ($experienceInt < 5) {
                     $experience = Experience::where('name', 'Опыт от 3 лет')->first();
-                }
-                else {
+                } else {
                     $experience = Experience::where('name', 'Опыт от 5 лет')->first();
                 }
             } catch (Exception $e) {
@@ -233,15 +231,31 @@ class VacancyService
      *
      * @return array массив вакансий из нашей системы
      */
-    public function getInnerVacanciesHR(?int $statusID, ?int $specializationID): array
+    public function getInnerVacanciesHR(
+        ?int    $statusID,
+        ?int    $specializationID,
+        ?string $city,
+        ?string $name,
+        ?int    $accountable_id
+    ): array
     {
-//        dd('hi');
-
         $statusID = $statusID != null ? $statusID : 1;
         $vacanciesBuilder = Vacancy::where('status_id', $statusID)->where('is_outer', false);
 
-        if ($specializationID != null){
+        if ($specializationID != null) {
             $vacanciesBuilder->where('specialization_id', $specializationID);
+        }
+
+        if ($city != null) {
+            $vacanciesBuilder->where('city_id', City::firstOrCreate(['name' => $city])->id);
+        }
+
+        if ($name != null) {
+            $vacanciesBuilder->where('position_id', Position::firstOrCreate(['name' => $name])->id);
+        }
+
+        if ($accountable_id != null) {
+            $vacanciesBuilder->where('accountable_id', $accountable_id);
         }
 
         $vacancies = $vacanciesBuilder->get()
@@ -311,25 +325,25 @@ class VacancyService
      * @return array
      */
     public function createVacancy(
-                string  $position_name,
-                int     $department_id,
-                int     $specialization_id,
-                string  $cityName,
-                ?float  $lower_salary,
-                ?float  $upper_salary,
-                string  $responsibilities,
-                string  $requirements,
-                string  $conditions,
-                ?string $additional,
-                ?string $additional_title,
-                ?array  $skills,
-                int     $experience_id,
-                int     $employment_id,
-                int $format_id,
-                ?string $test,
-                int $status_id,
-                int $accountable_user_id,
-                ?UploadedFile $image,
+        string        $position_name,
+        int           $department_id,
+        int           $specialization_id,
+        string        $cityName,
+        ?float        $lower_salary,
+        ?float        $upper_salary,
+        string        $responsibilities,
+        string        $requirements,
+        string        $conditions,
+        ?string       $additional,
+        ?string       $additional_title,
+        ?array        $skills,
+        int           $experience_id,
+        int           $employment_id,
+        int           $format_id,
+        ?string       $test,
+        int           $status_id,
+        int           $accountable_user_id,
+        ?UploadedFile $image,
     ): array
     {
         $position = Position::firstOrCreate(['name' => $position_name]);
@@ -364,7 +378,7 @@ class VacancyService
             ]
         );
 
-        if ($image != null){
+        if ($image != null) {
             $imageModel = new Image(
                 [
                     'image' => base64_encode(file_get_contents($image)),
@@ -378,8 +392,7 @@ class VacancyService
 
         $vacancy->save();
 
-        if ($skills != null)
-        {
+        if ($skills != null) {
             foreach ($skills as $skill) {
                 $vacancy->skills()->attach(Skill::firstOrCreate(['name' => $skill])->id);
             }
@@ -429,25 +442,25 @@ class VacancyService
      * @return array
      */
     public function editVacancy(
-        int     $id,
-        string  $position_name,
-        int     $department_id,
-        int     $specialization_id,
-        string  $cityName,
-        ?float  $lower_salary,
-        ?float  $upper_salary,
-        string  $responsibilities,
-        string  $requirements,
-        string  $conditions,
-        ?string $additional,
-        ?string $additional_title,
-        ?array  $skills,
-        int     $experience_id,
-        int     $employment_id,
-        int $format_id,
-        ?string $test,
-        int $status_id,
-        int $accountable_user_id,
+        int           $id,
+        string        $position_name,
+        int           $department_id,
+        int           $specialization_id,
+        string        $cityName,
+        ?float        $lower_salary,
+        ?float        $upper_salary,
+        string        $responsibilities,
+        string        $requirements,
+        string        $conditions,
+        ?string       $additional,
+        ?string       $additional_title,
+        ?array        $skills,
+        int           $experience_id,
+        int           $employment_id,
+        int           $format_id,
+        ?string       $test,
+        int           $status_id,
+        int           $accountable_user_id,
         ?UploadedFile $image,
     ): array
     {
@@ -485,7 +498,7 @@ class VacancyService
             ]
         );
 
-        if ($image != null){
+        if ($image != null) {
             $imageModel = new Image(
                 [
                     'image' => base64_encode(file_get_contents($image)),
@@ -499,8 +512,7 @@ class VacancyService
 
         $vacancy->save();
 
-        if ($skills != null)
-        {
+        if ($skills != null) {
             $skillModelIDs = [];
 
             foreach ($skills as $skill) {
@@ -539,7 +551,8 @@ class VacancyService
         return preg_replace('/[\r\n]+/', '', $string);
     }
 
-    public function changeVacanciesStatus($vacancyIDs, $statusID): array {
+    public function changeVacanciesStatus($vacancyIDs, $statusID): array
+    {
         $vacancies = [];
 
         foreach ($vacancyIDs as $id) {
