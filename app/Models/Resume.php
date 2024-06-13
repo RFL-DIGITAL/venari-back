@@ -12,6 +12,13 @@ class Resume extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'contact_phone',
+        'contact_email',
+        'salary',
+        'description'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -30,5 +37,29 @@ class Resume extends Model
     public function resumeProgramSchools(): HasMany
     {
         return $this->hasMany(ResumeProgramSchool::class);
+    }
+
+    public function languageLevels(): BelongsToMany{
+        return $this->belongsToMany(LanguageLevel::class, 'language_level_resumes');
+    }
+
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    public function specialization(): BelongsTo
+    {
+        return $this->belongsTo(Specialization::class);
+    }
+
+    public function employment(): BelongsTo
+    {
+        return $this->belongsTo(Employment::class);
+    }
+
+    public function format(): BelongsTo
+    {
+        return $this->belongsTo(Format::class);
     }
 }

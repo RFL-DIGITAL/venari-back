@@ -8,6 +8,7 @@ use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\VacancyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +89,12 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
         Route::post('edit-vacancy', [VacancyController::class, 'editVacancy'])->name('editVacancy');
 
        Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
+    });
+    Route::prefix('resumes')->group(function () {
+        Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
+        Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume');
+        Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
+        Route::post('get-from-doc', [ResumeController::class, 'getInfoFromDoc'])->name('getInfoFromDoc');
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');

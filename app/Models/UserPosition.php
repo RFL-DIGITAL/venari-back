@@ -11,6 +11,15 @@ class UserPosition extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'company_id',
+        'position_id',
+        'start_date',
+        'end_date',
+        'description',
+    ];
+
     /** @var string Стаж работы */
     public string $work_record;
 
