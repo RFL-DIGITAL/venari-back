@@ -137,7 +137,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createImageMessage($message, $image);
+                        $this->createImageMessage($message, $request->get('image'));
 
                         $messageDTO = new MessageDTO(
                             $message->id,
@@ -161,7 +161,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createFileMessage($message, $file);
+                        $this->createFileMessage($message, $request->get('attachment'));
 
                         $messageDTO = new MessageDTO(
                             $message->id,
