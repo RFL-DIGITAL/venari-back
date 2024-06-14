@@ -89,19 +89,17 @@ class ChatService
      */
     public function formatGroups($userID): array
     {
-        $chats = Chat::whereHas('users', function (Builder $query) use ($userID) {
-            $query->where('user_id', $userID);
-        })->get();
+        $chats = Chat::whereRelation('users', 'user_id', $userID)->get();
 
         $recentGroups = array();
 
         if ($chats != null) {
             foreach ($chats as $chat) {
                 $message = ChatMessage::where('chat_id', $chat->id)->get()->last();
-
-                if ($message != null) {
+                $body = null;
+                if($message) {
                     $body = $this->formatMessageBody($message);
-
+                }
                     $recentGroups[] = new ChatPreviewDTO(
                         $chat->name,
                         $chat?->image?->image,
@@ -110,10 +108,8 @@ class ChatService
                         MessageType::chatMessage,
                         $chat->id
                     );
-                }
             }
         }
-
         return $recentGroups;
     }
 
@@ -282,8 +278,7 @@ class ChatService
             [
                 'tags',
                 'image'
-            ]
-        )->toArray();
+            ])->toArray();
     }
 
     /**

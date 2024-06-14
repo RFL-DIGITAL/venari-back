@@ -13,7 +13,8 @@ class Chat extends Model
     use HasFactory;
 
     protected $appends = [
-        'member_count'
+        'member_count',
+        'is_joined'
     ];
 
 
@@ -23,6 +24,11 @@ class Chat extends Model
     public function getMemberCountAttribute(): int
     {
         return $this->users()->count();
+    }
+
+    public function getisJoinedAttribute(): bool
+    {
+        return $this->users()->get()->pluck('id')->contains(auth()->id());
     }
 
     public function users(): BelongsToMany
