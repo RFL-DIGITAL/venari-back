@@ -22,6 +22,7 @@ class UserFactory extends Factory
         $hrs_id = HR::pluck('id')->toArray();
         $imagesID = Image::where('description', 'Аватарка')->get()->pluck('id')->toArray();
 
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -30,8 +31,7 @@ class UserFactory extends Factory
             'date_of_birth' => fake()->date(),
             'sex' => fake()->boolean(),
             'hrable_type' => 'App\Models\HR',
-            'hrable_id' => $this->faker->randomElement($hrs_id),
-
+            'hrable_id' => $this->faker->randomElement($hrs_id)
         ];
     }
 

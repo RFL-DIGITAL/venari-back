@@ -9,10 +9,12 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResumeController;
+use App\Http\Controllers\StageController;
 use App\Http\Controllers\VacancyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,8 +93,7 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
             ->name('archiveVacancies');
         Route::post('un-archive-vacancies', [VacancyController::class, 'unArchiveVacancies'])
             ->name('unArchiveVacancies');
-
-       Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
+        Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
     });
     Route::prefix('resumes')->group(function () {
         Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
@@ -103,4 +104,11 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');
+
+    Route::prefix('candidates')->group(function () {
+        Route::get('stages', [StageController::class, 'getStages']);
+        Route::get('applications', [ApplicationController::class, 'getApplication']);
+        Route::get('applications/{id}', [ApplicationController::class, 'getApplicationByID']);
+        Route::get('', [ApplicationController::class, 'getUsers']);
+    });
 });

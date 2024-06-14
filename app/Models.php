@@ -504,6 +504,24 @@ namespace Responses {
         public Company $company;
     }
 
+    /** @OA\Schema(schema="evenMoreDetailUser") */
+    class EvenMoreDetailUser extends User
+    {
+        /**
+         * @OA\Property()
+         */
+        public DetailCity $city;
+    }
+
+    /** @OA\Schema(schema="userWithResume") */
+    class UserWithResume extends EvenMoreDetailUser
+    {
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/resume"))
+         */
+        public $resumes;
+    }
+
     /** @OA\Schema(schema="previewChat") */
     class PreviewChat
     {
@@ -787,7 +805,6 @@ namespace Responses {
          */
         public Employment $employment;
 
-
         /**
          * @OA\Property()
          */
@@ -812,6 +829,47 @@ namespace Responses {
          * @OA\Property()
          */
         public Format $format;
+
+    }
+
+    /** @OA\Schema(schema="evenMoreDetailResume") */
+    class EvenMoreDetailResume extends Resume
+    {
+
+        /**
+         * @OA\Property()
+         */
+        public EvenMoreDetailUser $user;
+
+    }
+
+    /** @OA\Schema(schema="notSoDetatilResume") */
+    class NotSoDetatilResume extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public string $description;
+
+        /**
+         * @OA\Property()
+         */
+        public User $user;
+
+        /**
+         * @OA\Property()
+         */
+        public string $contact_phone;
+
+        /**
+         * @OA\Property()
+         */
+        public string $contact_mail;
+
+        /**
+         * @OA\Property()
+         */
+        public string $salary;
 
     }
 
@@ -918,5 +976,98 @@ namespace Responses {
     /** @OA\Schema(schema="level") */
     class Level extends BaseClass {}
 
+    /** @OA\Schema(schema="stage") */
+    class Stage extends BaseClass {
+        /**
+         * @OA\Property()
+         */
+        public StageType $stageType;
+    }
+
+    /** @OA\Schema(schema="stageType") */
+    class StageType extends BaseClass {}
+
+    /** @OA\Schema(schema="application") */
+    class Application extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public NotSoDetatilResume $resume;
+
+    }
+
+    /** @OA\Schema(schema="detailApplication") */
+    class DetailApplication extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public EvenMoreDetailResume $resume;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/applicationComment"))
+         */
+        public $comments;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/applicationTag"))
+         */
+        public $tags;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/approve"))
+         */
+        public $approves;
+    }
+
+    /** @OA\Schema(schema="applicationComment") */
+    class ApplicationComment extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public string $text;
+
+        /**
+         * @OA\Property()
+         */
+        public User $user;
+
+        /**
+         * @OA\Property()
+         */
+        public int $application_id;
+    }
+
+    /** @OA\Schema(schema="applicationTag") */
+    class ApplicationTag extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $company_id;
+
+    }
+
+    /** @OA\Schema(schema="approve") */
+    class Approve extends BaseClass
+    {
+        /**
+         * @OA\Property()
+         */
+        public string $surname;
+
+        /**
+         * @OA\Property()
+         */
+        public int $application_id;
+
+        /**
+         * @OA\Property()
+         */
+        public bool $status_id;
+
+    }
 
 }

@@ -55,7 +55,11 @@ class DatabaseSeeder extends Seeder
             FileMessageSeeder::class,
             LinkMessageSeeder::class,
             StageTypeSeeder::class,
-
+            StagesSeeder::class,
+            UserCityIDSeeder::class,
+            ApplicationSeeder::class,
+            ApplicationTagsSeeder::class,
+            ApplicationApplicationTagsSeeder::class
         ]);
     }
 }
