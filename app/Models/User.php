@@ -41,7 +41,12 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'post_count'
+        'post_count',
+        'work_record'
+    ];
+
+    protected $attributes = [
+        'work_record'
     ];
 
     /**

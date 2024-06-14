@@ -51,4 +51,8 @@ class Company extends Model
     public function companyChats(): HasMany {
         return $this->hasMany(CompanyChat::class);
     }
+
+    public function stages(): HasMany {
+        return $this->hasMany(Stage::class);
+    }
 }

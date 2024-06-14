@@ -11,21 +11,21 @@ class ApplicationService {
 
     private const REKSOFT_COMPANY_ID = 1;
 
-    public function getApplications(int $department_id, ?int $vacancy_id) {
-        $aplicationsBuilder = Application::whereRelation('vacancy', 'department_id', $department_id)
-        ->whereRelation('vacancy.department', 'company_id', $this::REKSOFT_COMPANY_ID);
+    public function getApplications(?int $vacancy_id) {
+        $applicationsBuilder = Application::whereRelation('vacancy.department', 'company_id',
+            $this::REKSOFT_COMPANY_ID);
 
         if($vacancy_id != null) {
-            $aplicationsBuilder->whereRelation('vacancy', 'id', $vacancy_id);
+            $applicationsBuilder->whereRelation('vacancy', 'id', $vacancy_id);
         }
 
-        $applications = $aplicationsBuilder->get();
+        $applications = $applicationsBuilder->get();
 
         return $applications->load([
             'resume.user.position',
             'resume.user.image',
             'resume.user.company',
-        ]);
+        ])->toArray();
     }
 
     public function getApplicationByID(int $application_id) {
@@ -40,12 +40,12 @@ class ApplicationService {
             "resume.resumeProgramSchools.programSchool.school",
             "resume.position",
             "resume.specialization",
-            "comments",
+            "comments.user.image",
             "tags",
             "approves"
         ]);
 
-        return $applications->get();
+        return $applications->get()->toArray();
     }
 
 
@@ -57,12 +57,11 @@ class ApplicationService {
         ?int $program_type_id,
         ?int $higher_salary,
         ?int $lower_salary
-    ) 
+    )
     {
-
         $experience_id = $experience_id != null ? $experience_id : 1;
-        $usersBuilder = User::with(['resumes'])->whereRelation('resumes', 'experience_id', $experience_id);
-        
+        $usersBuilder = User::with(['resumes'])->whereRelation('resumes', 'experience_id', '=', $experience_id);
+
         if ($city_id != null) {
             $usersBuilder->with(['city'])->whereRelation('city', 'id', $city_id);
         }
@@ -105,8 +104,6 @@ class ApplicationService {
             'resumes.resumeProgramSchools.programSchool.school',
             'resumes.position',
             'resumes.specialization',
-            'comments',
-            'tags'
         ]);
 
         return $users->toArray();
