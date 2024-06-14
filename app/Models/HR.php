@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class HR extends Model
@@ -30,5 +31,10 @@ class HR extends Model
 
     public function vacancies(): HasMany {
         return $this->hasMany(Vacancy::class);
+    }
+
+    public function calendar(): HasOne
+    {
+        return $this->hasOne(Calendar::class, 'hr_id', 'id');
     }
 }

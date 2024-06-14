@@ -105,6 +105,7 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('calendar')->group(function () {
         Route::post('login-with-google', [CalendarController::class, 'loginWithGoogle'])
             ->name('loginWithGoogle');
+        Route::post('create-slots', [CalendarController::class, 'createSlots'])->name('createSlots');
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');

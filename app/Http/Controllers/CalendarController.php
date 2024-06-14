@@ -25,4 +25,20 @@ class CalendarController extends Controller
             );
         }
     }
+
+    public function createSlots(Request $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->calendarService->createEvents(
+                $request->user(),
+                $request->start_time,
+                $request->end_time,
+                $request->slot_duration,
+                $request->break_duration,
+                $request->days,
+                $request->is_create_meet
+            )
+        );
+    }
+
 }

@@ -11,9 +11,9 @@ class Calendar extends Model
 {
     use HasFactory;
 
-    public function position(): BelongsTo
+    public function hr(): BelongsTo
     {
-        return $this->belongsTo(HR::class);
+        return $this->belongsTo(HR::class, 'hr_id', 'id', 'hrs');
     }
 
     public function events(): HasMany

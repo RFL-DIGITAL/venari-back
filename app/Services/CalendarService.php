@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Google;
 use App\Models\Calendar;
 use App\Models\Event;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Google\Service\Exception;
@@ -18,6 +19,7 @@ use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Illuminate\Http\Request;
 
+
 class CalendarService
 {
 
@@ -28,7 +30,7 @@ class CalendarService
         $this->client = $this->google->client();
     }
 
-    public function loginWithGoogle($user, $code)
+    public function loginWithGoogle($user, $code): array
     {
         $client = $this->google->client();
 
@@ -61,14 +63,14 @@ class CalendarService
         return ['message' => 'successfully authenticated with Google'];
     }
 
-    public function createRedirectUrl()
+    public function createRedirectUrl(): array
     {
         $auth_url = $this->client->createAuthUrl();
 
         return ['message' => $auth_url];
     }
 
-    private function createGCalendar(Calendar $calendar)
+    private function createGCalendar(Calendar $calendar): array
     {
         $this->client->setAccessToken(session('g_cal_token'));
 
@@ -91,7 +93,51 @@ class CalendarService
         return $calendar->toArray();
     }
 
-    public function createGEvent(Event $event, bool $isMeet)
+    public function createEvents(User   $user,
+                                 string $startTime,
+                                 string $endTime,
+                                 int    $slotDuration,
+                                 int    $breakDuration,
+                                 array  $days,
+                                 bool   $isCreateMeets
+    ): array
+    {
+        foreach ($days as $day) {
+            $startDateTime = DateTime::createFromFormat('H:i d-m-Y', $startTime . ' ' . $day);
+            $endDateTime = DateTime::createFromFormat('H:i d-m-Y', $endTime . ' ' . $day);
+
+            $i = $startDateTime;
+
+            while ($i < $endDateTime) {
+                $endDateTimeApproximate = clone $i;
+                $endDateTimeApproximate = $endDateTimeApproximate->modify('+' . $slotDuration . ' minutes');
+                if ($endDateTimeApproximate <= $endDateTime) {
+
+//                    dd($user->hrable->calendar);
+                    $event = new Event([
+                        'datetime_start' => $i,
+                        'datetime_end' => $endDateTimeApproximate,
+                        'calendar_id' => $user->hrable->calendar->id,
+                        'title' => 'Свободный слот для интервью'
+                    ]);
+
+                    $event->save();
+
+                    if (session('g_cal_token')) {
+                        $this->createGEvent($event, $isCreateMeets);
+                    }
+                }
+
+                $i = clone $endDateTimeApproximate;
+                $i->modify('+' . $breakDuration . ' minutes');
+            }
+        }
+
+        return ['message' => 'Events created successfully'];
+
+    }
+
+    public function createGEvent(Event $event, bool $isMeet): array
     {
         // todo: добавить валидацию запроса
 //        $this->validate($request, [
@@ -229,11 +275,14 @@ class CalendarService
 
                 $calendar = Calendar::find($calendarId);
                 $calendar->sync_token = $nextSyncToken;
+                $calendar->last_synced = new DateTime();
                 $calendar->save();
 
                 break;
             }
         }
+
+        return ['message' => 'Calendars successfully synced'];
     }
 
     public function syncGFromCalendar(int $calendarId)
@@ -256,8 +305,14 @@ class CalendarService
             $this->updateGEvent($gCal, $gCalendarID, $event, $baseTimezone);
         }
 
+        $nextSyncToken = str_replace('=ok', '', $gCal->events->listEvents($gCalendarID)
+            ->getNextSyncToken());
+
+        $calendar->sync_token = $nextSyncToken;
         $calendar->last_synced_at = new DateTime();
         $calendar->save();
+
+        return ['message' => 'Calendars successfully synced'];
     }
 
     public function updateGEventByEventID(int $id)
