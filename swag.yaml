@@ -61,6 +61,93 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/show'
+  /api/hr-panel/candidates/applications:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех откликов'
+      operationId: 9fe1c4bb113b53309be01139c2f88276
+      parameters:
+        -
+          name: vacancy_id
+          in: query
+          description: 'id вакансии'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplication'
+  '/api/hr-panel/candidates/applications/{id}':
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения подробного отклика'
+      operationId: 6422d0914e57f40a8d42f22a46855b5f
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id отклика'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplicationByID'
+  /api/hr-panel/candidates/:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения пользователей для страницы поиска по кандидатам'
+      operationId: 5e17c11f848bb655c0d5b94db15df4f1
+      parameters:
+        -
+          name: experince_id
+          in: query
+          description: 'id требуемого опыта'
+          required: false
+        -
+          name: city
+          in: query
+          description: 'Региона поиска'
+          required: false
+        -
+          name: specialization_id
+          in: query
+          description: 'id необходимой специализации'
+          required: false
+        -
+          name: employment_id
+          in: query
+          description: 'id занятости'
+          required: false
+        -
+          name: program_type_id
+          in: query
+          description: 'id требуемого типа образования'
+          required: false
+        -
+          name: higher_salary
+          in: query
+          description: 'верхнее допустимое значение зарплаты'
+          required: false
+        -
+          name: lower_salary
+          in: query
+          description: 'нижнее допустимое значение зарплаты'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUsers'
   /api/networking/:
     get:
       tags:
@@ -438,6 +525,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/editResume'
+  /api/hr-panel/candidates/stages:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех "категорий" для откликов'
+      operationId: cd32d35baebfad9b4605b4d12f2b9730
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getStages'
   /api/vacancies:
     get:
       tags:
@@ -634,6 +734,36 @@ components:
           example: 'true'
         response:
           $ref: '#/components/schemas/user'
+      type: object
+    getApplication:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/application'
+      type: object
+    getApplicationByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailApplication'
+      type: object
+    getUsers:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/userWithResume'
       type: object
     getAllChats:
       properties:
@@ -836,6 +966,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/resume'
+      type: object
+    getStages:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/stage'
       type: object
     vacanciesResponse:
       properties:
@@ -1248,6 +1388,28 @@ components:
         company:
           $ref: '#/components/schemas/company'
       type: object
+    evenMoreDetailUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/user'
+        -
+          properties:
+            city:
+              $ref: '#/components/schemas/detailCity'
+          type: object
+    userWithResume:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/evenMoreDetailUser'
+        -
+          properties:
+            resumes:
+              type: array
+              items:
+                $ref: '#/components/schemas/resume'
+          type: object
     previewChat:
       properties:
         name:
@@ -1538,6 +1700,37 @@ components:
         format:
           $ref: '#/components/schemas/format'
       type: object
+    evenMoreDetailResume:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/resume'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/evenMoreDetailUser'
+          type: object
+    notSoDetatilResume:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        contact_phone:
+          type: string
+        contact_mail:
+          type: string
+        salary:
+          type: string
+      type: object
     languageLevel:
       properties:
         id:
@@ -1662,6 +1855,115 @@ components:
           format: date
         updated_at:
           format: date
+      type: object
+    stage:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        stageType:
+          $ref: '#/components/schemas/stageType'
+      type: object
+    stageType:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    application:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        resume:
+          $ref: '#/components/schemas/notSoDetatilResume'
+      type: object
+    detailApplication:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        resume:
+          $ref: '#/components/schemas/evenMoreDetailResume'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/applicationComment'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/applicationTag'
+        approves:
+          type: array
+          items:
+            $ref: '#/components/schemas/approve'
+      type: object
+    applicationComment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        application_id:
+          type: integer
+      type: object
+    applicationTag:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company_id:
+          type: integer
+      type: object
+    approve:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        surname:
+          type: string
+        application_id:
+          type: integer
+        status_id:
+          type: boolean
       type: object
   requestBodies:
     CreateResumeRequest:
