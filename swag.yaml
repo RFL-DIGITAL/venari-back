@@ -498,7 +498,7 @@ paths:
           description: 'название вакансии'
           required: false
         -
-          name: $accountable_id
+          name: accountable_id
           in: query
           description: 'id ответственного (сущность hr)'
           required: false

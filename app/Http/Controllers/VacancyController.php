@@ -131,7 +131,7 @@ class VacancyController extends Controller
      *               description="название вакансии",
      *               required=false),
      *     @OA\Parameter(
-     *                name="$accountable_id",
+     *                name="accountable_id",
      *               in="query",
      *                description="id ответственного (сущность hr)",
      *                required=false),
@@ -152,7 +152,7 @@ class VacancyController extends Controller
         $specializationID = $request->query('specialization_id');
         $city = $request->query('city');
         $name = $request->query('name');
-        $accountable_id = $request->query('$accountable_id');
+        $accountable_id = $request->query('accountable_id');
 
         $innerVacancies = $this->vacancyService->getInnerVacanciesHR(
             $statusID,
