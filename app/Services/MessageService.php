@@ -54,7 +54,7 @@ class MessageService
                     event(new NewMessageEvent($messageDTO));
                 }
 
-                if ($request->has('image')) {
+                if ($request->get('image')) {
 
                         $message = new Message(
                             [
@@ -79,7 +79,7 @@ class MessageService
                         event(new NewMessageEvent($messageDTO));
                 }
 
-                if ($request->has('attachment')) {
+                if ($request->get('attachment')) {
                         $message = new Message(
                             [
                                 'from_id' => $ownerID,
@@ -128,7 +128,7 @@ class MessageService
                     event(new NewChatMessageEvent($messageDTO));
                 }
 
-                if ($request->has('image')) {
+                if ($request->get('image')) {
                         $message = new ChatMessage(
                             [
                                 'owner_id' => $ownerID,
