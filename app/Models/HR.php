@@ -12,6 +12,10 @@ class HR extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'token'
+    ];
+
     protected $table = 'hrs';
 
     public function user(): MorphOne
