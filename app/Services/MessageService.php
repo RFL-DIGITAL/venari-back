@@ -128,8 +128,7 @@ class MessageService
                     event(new NewChatMessageEvent($messageDTO));
                 }
 
-                if ($request->hasFile('images')) {
-                    foreach ($request->images as $image) {
+                if ($request->has('image')) {
                         $message = new ChatMessage(
                             [
                                 'owner_id' => $ownerID,
@@ -151,11 +150,9 @@ class MessageService
                         );
 
                         event(new NewChatMessageEvent($messageDTO));
-                    }
                 }
 
-                if ($request->hasFile('attachments')) {
-                    foreach ($request->attachments as $file) {
+                if ($request->has('attachment')) {
                         $message = new ChatMessage(
                             [
                                 'owner_id' => $ownerID,
@@ -177,7 +174,6 @@ class MessageService
                         );
 
                         event(new NewChatMessageEvent($messageDTO));
-                    }
                 }
 
                 break;
