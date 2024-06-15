@@ -705,6 +705,7 @@ namespace Responses {
          */
         public $statuses;
 
+
         /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/employment"))
          */
@@ -734,6 +735,11 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/hrWithUser"))
          */
         public $accountables;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/programType"))
+         */
+        public ProgramType  $program_types;
     }
 
 

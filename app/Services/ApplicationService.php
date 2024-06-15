@@ -59,33 +59,36 @@ class ApplicationService {
         ?int $lower_salary
     )
     {
-        $experience_id = $experience_id != null ? $experience_id : 1;
-        $usersBuilder = User::with(['resumes'])->whereRelation('resumes', 'experience_id', '=', $experience_id);
+
+        $usersBuilder = User::with('resumes');
+        if($experience_id) {
+            $usersBuilder->whereRelation('resumes', 'experience_id', '=', $experience_id);
+        }
 
         if ($city_id != null) {
-            $usersBuilder->with(['city'])->whereRelation('city', 'id', $city_id);
+            $usersBuilder->whereRelation('city', 'id', $city_id);
         }
 
         if ($specialization_id != null) {
-            $usersBuilder->with(['resume'])->whereRelation('resume', 'specialization_id', $specialization_id);
+            $usersBuilder->whereRelation('resume', 'specialization_id', $specialization_id);
         }
 
         if ($employment_id != null) {
-            $usersBuilder->with(['resume'])->whereRelation('resume', 'employment_id', $employment_id);
+            $usersBuilder->whereRelation('resume', 'employment_id', $employment_id);
         }
 
         if ($program_type_id != null) {
-            $usersBuilder->with(['resume'])
+            $usersBuilder
             ->whereRelation('resume.resumeProgramSchools.programSchool', 'program_type_id', $program_type_id);
         }
 
         if ($higher_salary != null) {
-            $usersBuilder->with(['resume'])
+            $usersBuilder
             ->whereRelation('resume', (int)'salary', '<' ,$higher_salary);
         }
 
         if ($lower_salary != null) {
-            $usersBuilder->with(['resume'])
+            $usersBuilder
             ->whereRelation('resume', (int)'salary', '<' ,$lower_salary);
         }
 
