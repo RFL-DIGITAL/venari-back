@@ -54,8 +54,7 @@ class MessageService
                     event(new NewMessageEvent($messageDTO));
                 }
 
-                if ($request->hasFile('images')) {
-                    foreach ($request->images as $image) {
+                if ($request->get('image')) {
 
                         $message = new Message(
                             [
@@ -65,7 +64,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createImageMessage($message, $image);
+                        $this->createImageMessage($message, $request->get('image'));
 
                         $messageDTO = new MessageDTO(
                             $message->id,
@@ -78,11 +77,9 @@ class MessageService
                         );
 
                         event(new NewMessageEvent($messageDTO));
-                    }
                 }
 
-                if ($request->hasFile('attachments')) {
-                    foreach ($request->attachments as $file) {
+                if ($request->get('attachment')) {
                         $message = new Message(
                             [
                                 'from_id' => $ownerID,
@@ -91,7 +88,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createFileMessage($message, $file);
+                        $this->createFileMessage($message, $request->get('attachment'));
 
                         $messageDTO = new MessageDTO(
                             $message->id,
@@ -104,7 +101,6 @@ class MessageService
                         );
 
                         event(new NewMessageEvent($messageDTO));
-                    }
                 }
                 break;
 
@@ -132,8 +128,7 @@ class MessageService
                     event(new NewChatMessageEvent($messageDTO));
                 }
 
-                if ($request->hasFile('images')) {
-                    foreach ($request->images as $image) {
+                if ($request->get('image')) {
                         $message = new ChatMessage(
                             [
                                 'owner_id' => $ownerID,
@@ -142,7 +137,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createImageMessage($message, $image);
+                        $this->createImageMessage($message, $request->get('image'));
 
                         $messageDTO = new MessageDTO(
                             $message->id,
@@ -155,11 +150,9 @@ class MessageService
                         );
 
                         event(new NewChatMessageEvent($messageDTO));
-                    }
                 }
 
-                if ($request->hasFile('attachments')) {
-                    foreach ($request->attachments as $file) {
+                if ($request->has('attachment')) {
                         $message = new ChatMessage(
                             [
                                 'owner_id' => $ownerID,
@@ -168,7 +161,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createFileMessage($message, $file);
+                        $this->createFileMessage($message, $request->get('attachment'));
 
                         $messageDTO = new MessageDTO(
                             $message->id,
@@ -181,7 +174,6 @@ class MessageService
                         );
 
                         event(new NewChatMessageEvent($messageDTO));
-                    }
                 }
 
                 break;
@@ -273,7 +265,7 @@ class MessageService
 
         $fileModel = new File(
             [
-                'file' => base64_encode(file_get_contents($file)),
+                'file' => $file,
                 'mime' => $file->getClientMimeType()
             ]
         );
@@ -291,7 +283,7 @@ class MessageService
 
         $imageModel = new Image(
             [
-                'image' => base64_encode(file_get_contents($image)),
+                'image' => $image,
                 'description' => 'Картинка в чате'
             ]
         );

@@ -69,12 +69,12 @@ Route::prefix('networking')->group(function () {
 });
 
 Route::prefix('posts')->group(function () {
-    Route::get('{id}/comments', [CommentController::class, 'getComments'])->name('getComments');
+    Route::get('{id}/comments', [PostController::class, 'getComments'])->name('getComments');
     Route::get('{id}', [PostController::class, 'getPostByID'])->name('getPostByID');
     Route::get('', [PostController::class, 'getPosts'])->name('getPosts');
 });
 
-Route::prefix('comments')->group(function () {
+Route::prefix('comments')->middleware('auth:api')->group(function () {
     Route::post('send-comment', [CommentController::class, 'sendComment'])->name('sendComment');
 });
 
