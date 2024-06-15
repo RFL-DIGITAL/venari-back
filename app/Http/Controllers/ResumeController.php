@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class ResumeController extends Controller
 {
     public function __construct(protected ResumeService $resumeService) {
-        $this->middleware('auth:api');
+//        $this->middleware('auth:api');
     }
 
     /**
