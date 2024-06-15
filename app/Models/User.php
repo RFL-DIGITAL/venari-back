@@ -42,11 +42,6 @@ class User extends Authenticatable
 
     protected $appends = [
         'post_count',
-        'work_record'
-    ];
-
-    protected $attributes = [
-        'work_record'
     ];
 
     /**
@@ -116,5 +111,10 @@ class User extends Authenticatable
 
     public function city(): BelongsTo {
         return $this->belongsTo(City::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(ApplicationTag::class, 'application_tag_users');
     }
 }

@@ -15,7 +15,7 @@ class ApplicationTag extends Model
             'name'
         ];
 
-    public function applications(): BelongsToMany {
-        return $this->belongsToMany(Application::class, 'application_application_tags');
+    public function users(): BelongsToMany {
+        return $this->belongsToMany(User::class, 'application_tag_users');
     }
 }
