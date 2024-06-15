@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CommentService;
 use App\Services\PostService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -10,7 +11,7 @@ class PostController extends Controller
 {
     private int $POST_COUNT = 10;
 
-    public function __construct(protected PostService $postService)
+    public function __construct(protected PostService $postService, protected CommentService $commentService)
     {
     }
 
@@ -157,6 +158,42 @@ class PostController extends Controller
         return $this->successResponse(
             $this->paginate(
                 $this->postService->getPostByCompanyID($id)
+            )
+        );
+    }
+
+    /**
+     * Метод получения всех комментариев поста
+     *
+     * @OA\Schema( schema="getComments",
+     *              @OA\Property(property="success",type="boolean",example="true"),
+     *              @OA\Property(property="response",type="array",
+     *                   @OA\Items(ref="#/components/schemas/detailComment")),
+     *   )
+     *
+     * @OA\Get(
+     *        path="/api/posts/{id}/comments",
+     *        tags={"CommentController"},
+     *     @OA\Parameter(
+     *           name="id",
+     *              in="path",
+     *           description="id поста",
+     *           required=true),
+     *        @OA\Response(
+     *        response="200",
+     *        description="Ответ при успешном выполнении запроса",
+     *        @OA\JsonContent(ref="#/components/schemas/getComments")
+     *      )
+     *    )
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getComments(int $id): JsonResponse
+    {
+        return $this->successResponse(
+            $this->paginate(
+                $this->commentService->getComments($id)
             )
         );
     }

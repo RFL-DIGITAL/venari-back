@@ -128,7 +128,11 @@ class UserController extends Controller
             'preview',
         ]);
 
-        return $this->successResponse($user->toArray());
+        if (!collect($user)->isEmpty()) {
+            return $this->successResponse($user[0]);
+        } else {
+            return $this->failureResponse(['message' => 'User not found.']);
+        }
     }
 
 }
