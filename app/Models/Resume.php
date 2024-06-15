@@ -79,8 +79,8 @@ class Resume extends Model
 
         $now = new Datetime();
         foreach ($userPositions as $userPosition) {
-//            dd(DateTime::createFromFormat('Y-m-d', $userPosition->start_date));
-            $experiences[] = date_diff(new DateTime($userPosition->start_date), $userPosition?->end_date != null ? new DateTime($userPosition->end_date) : $now);
+            $experiences[] = date_diff(new DateTime($userPosition->start_date),
+                $userPosition?->end_date != null ? new DateTime($userPosition->end_date) : $now);
         }
 
         $final_result = null;
