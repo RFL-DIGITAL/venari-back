@@ -14,7 +14,7 @@ class CalendarController extends Controller
 
     public function loginWithGoogle(Request $request): JsonResponse
     {
-        if ($request->has('code')) {
+        if ($request->get('code')) {
             return $this->successResponse(
                 $this->calendarService->loginWithGoogle($request->user(), $request->get('code'))
             );

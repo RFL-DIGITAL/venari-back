@@ -33,24 +33,34 @@ class CalendarService
     public function loginWithGoogle($user, $code): array
     {
         $client = $this->google->client();
-
         $token = $client->fetchAccessTokenWithAuthCode($code);
-
         $client->setAccessToken($token);
 
         $hr = $user->hrable;
-
         if ($hr->token == null) {
             $hr->token = json_encode($token);
             $hr->save();
 
-            $calendar = new Calendar;
+            $calendar = new Calendar();
             $calendar->hr_id = $hr->id;
             $calendar->title = 'Venari. Календарь пользователя ' . $hr->user->first_name . " " . $hr->user->last_name;
-            $calendar->g_calendar_id = 'Venari. Календарь пользователя ' . $hr->user->first_name . " " . $hr->user->last_name;
+
+            $title = $calendar->title;
+
+            // todo Поменять в проде на Москву
+            $timezone = env('APP_TIMEZONE');
+
+            $cal = new Google_Service_Calendar($client);
+
+            $google_calendar = new Google_Service_Calendar_Calendar($client);
+            $google_calendar->setSummary($title);
+            $google_calendar->setTimeZone($timezone);
+
+            $created_calendar = $cal->calendars->insert($google_calendar);
+
+            $calendar->g_calendar_id = $created_calendar->getId();
             $calendar->sync_token = '';
             $calendar->save();
-            $this->createGCalendar($calendar);
 
         } else {
             $calendar = Calendar::where('hr_id', $hr->id)->first();
@@ -76,6 +86,7 @@ class CalendarService
         $this->client->setAccessToken(session('g_cal_token'));
 
         $title = $calendar->title;
+        dd($calendar);
 
         // todo Поменять в проде на Москву
         $timezone = env('APP_TIMEZONE');
@@ -88,7 +99,8 @@ class CalendarService
 
         $created_calendar = $cal->calendars->insert($google_calendar);
 
-        $calendar->g_calendar_id = $created_calendar->getId();;
+        $calendar->g_calendar_id = $created_calendar->getId();
+
         $calendar->save();
 
         return $calendar->toArray();

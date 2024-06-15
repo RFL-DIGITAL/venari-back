@@ -13,12 +13,12 @@ class Google
     {
         $client = new Google_Client();
         $client->setAuthConfig($this->SECRETS_PATH);
-        $client->setClientId(env('GOOGLE_CLIENT_ID'));
-        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
-        $client->setRedirectUri(env('GOOGLE_REDIRECT_URL'));
-        $client->setScopes(explode(',', env('GOOGLE_SCOPES')));
-        $client->setApprovalPrompt(env('GOOGLE_APPROVAL_PROMPT'));
-        $client->setAccessType(env('GOOGLE_ACCESS_TYPE'));
+        $client->setClientId('789109854481-se2ttlco5kh487ne4vcjkhv9rhpogj3a.apps.googleusercontent.com');
+        $client->setClientSecret('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');
+        $client->setRedirectUri('http://localhost:5173/hr/calendar');
+        $client->setScopes('https://www.googleapis.com/auth/calendar.app.created');
+        $client->setApprovalPrompt('force');
+        $client->setAccessType('offline');
         return $client;
     }
 }
