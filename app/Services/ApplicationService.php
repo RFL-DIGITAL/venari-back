@@ -117,4 +117,8 @@ class ApplicationService {
         return $users->toArray();
 
     }
+
+    public function shareApplications() {
+
+    }
 }
