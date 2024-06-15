@@ -42,13 +42,13 @@ class CompanyController extends Controller
             'building.street.city.country',
             'image',
             'preview'
-        ]);
+        ])->toArray();
 
         if (!collect($data)->isEmpty()) {
-            return $this->successResponse($data->toArray());
+            return $this->successResponse($data[0]);
         }
 
-        return $this->failureResponse($data["errorMessage"] = 'Index Out Of Range');
+        return $this->failureResponse(['message' => 'Company not found.']);
     }
 
 }
