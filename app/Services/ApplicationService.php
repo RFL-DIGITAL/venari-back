@@ -254,7 +254,7 @@ class ApplicationService
                         'companyMessage',
                         null,
                         null,
-                        'Записаться на интервью'
+                        User::where('id', $from_id)->first()->hrable->id
                     );
 
                     $history = new History([
