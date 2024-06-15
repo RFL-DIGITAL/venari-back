@@ -18,10 +18,7 @@ class UserPosition extends Model
         'start_date',
         'end_date',
         'description',
-    ];
-
-    /** @var string Стаж работы */
-    public string $work_record;
+];
 
     public function position(): BelongsTo
     {
