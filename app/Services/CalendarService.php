@@ -18,7 +18,6 @@ use Google_Service_Calendar_CreateConferenceRequest;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 
 class CalendarService
@@ -157,13 +156,6 @@ class CalendarService
     {
         $baseTimezone = env('APP_TIMEZONE');
 
-        // todo: добавить валидацию запроса
-//        $this->validate($request, [
-//            'title' => 'required',
-//            'calendar_id' => 'required',
-//            'datetime_start' => 'required|date',
-//            'datetime_end' => 'required|date'
-//        ]);
         $this->client->setAccessToken(session('g_cal_token'));
 
         $startDateTime = Carbon::createFromFormat('Y/m/d H:i', $event->datetime_start->format('Y/m/d H:i'),
@@ -208,10 +200,6 @@ class CalendarService
 
     public function syncCalendarFromG(int $calendarId)
     {
-        // todo
-//        $this->validate($request, [
-//            'calendar_id' => 'required'
-//        ]);
         $this->client->setAccessToken(session('g_cal_token'));
 
         $baseTimezone = env('APP_TIMEZONE');
@@ -307,10 +295,6 @@ class CalendarService
 
     public function syncGFromCalendar(int $calendarId)
     {
-        // todo
-//        $this->validate($request, [
-//            'calendar_id' => 'required'
-//        ]);
         $this->client->setAccessToken(session('g_cal_token'));
 
         $baseTimezone = env('APP_TIMEZONE');
