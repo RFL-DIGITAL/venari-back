@@ -363,4 +363,9 @@ class CalendarService
 
         $gCal->events->update($gCalendarID, $event->g_event_id, $gEvent);
     }
+
+    public function getCalendarID($userID)
+    {
+        return User::where('id', $userID)->first()->hrable->calendar->g_calendar_id;
+    }
 }
