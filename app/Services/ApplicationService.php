@@ -223,6 +223,7 @@ class ApplicationService
                                 ?string $offerMessage
     ): array
     {
+//        dd('123');
         foreach ($applicationIDs as $applicationID) {
             $application = Application::where('id', $applicationID)->first();
             $application->stage_id = $stageID;
@@ -336,6 +337,7 @@ class ApplicationService
             $companyChat = CompanyChat::where('company_id',
                 User::where('id', $from_id)->first()->hrable->company_id)
                 ->where('user_id', $application->resume->user->id)->first();
+//            dd($application->resume->user->id);
 
             $this->messageService->sendMessage(
                 $from_id,

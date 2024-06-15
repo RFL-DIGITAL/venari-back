@@ -288,4 +288,20 @@ class ApplicationController extends Controller
         );
     }
 
+    public function changeStage(Request $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->applicationService->changeStage(
+                $request->get('stage_id'),
+                $request->get('application_ids'),
+                $request->user()->id,
+                $request->get('reject_reason_id'),
+                $request->get('is_send_reject_message'),
+                $request->get('reject_message'),
+                $request->get('interview_message'),
+                $request->get('offer_message'),
+            )
+        );
+    }
+
 }
