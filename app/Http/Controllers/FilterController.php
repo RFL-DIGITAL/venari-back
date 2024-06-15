@@ -7,6 +7,7 @@ use App\Models\Employment;
 use App\Models\Experience;
 use App\Models\Format;
 use App\Models\HR;
+use App\Models\ProgramType;
 use App\Models\Specialization;
 use App\Models\Status;
 use Illuminate\Http\JsonResponse;
@@ -52,7 +53,8 @@ class FilterController extends Controller
                     'user.image',
                     'user.preview',
                     'user.company.image',
-                ])->toArray()
+                ])->toArray(),
+            'program_types' => ProgramType::all()->toArray()
         ]);
     }
 }
