@@ -45,7 +45,9 @@ class ApplicationController extends Controller
     {
         $applications = $this->applicationService->getApplications($request->get('vacancy_id'));
 
-        return $this->successResponse($applications);
+        return $this->successResponse(
+            $this->paginate($applications)
+        );
     }
 
     /**
@@ -151,7 +153,9 @@ class ApplicationController extends Controller
             $request->get('lower_salary')
         );
 
-        return $this->successResponse($users);
+        return $this->successResponse(
+            $this->paginate($users)
+        );
 
     }
 
