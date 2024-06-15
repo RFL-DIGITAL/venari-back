@@ -11,9 +11,13 @@ class ApplicationService {
 
     private const REKSOFT_COMPANY_ID = 1;
 
-    public function getApplications(?int $vacancy_id) {
+    public function getApplications(?int $stage_id, ?int $vacancy_id) {
         $applicationsBuilder = Application::whereRelation('vacancy.department', 'company_id',
             $this::REKSOFT_COMPANY_ID);
+
+        if($stage_id != null) {
+            $applicationsBuilder->where('stage_id', $stage_id);
+        }
 
         if($vacancy_id != null) {
             $applicationsBuilder->whereRelation('vacancy', 'id', $vacancy_id);

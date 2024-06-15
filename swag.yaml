@@ -69,6 +69,11 @@ paths:
       operationId: 9fe1c4bb113b53309be01139c2f88276
       parameters:
         -
+          name: stage_id
+          in: query
+          description: 'id категории. Для категории Все кандидаты не отправлять этот параметр'
+          required: false
+        -
           name: vacancy_id
           in: query
           description: 'id вакансии'
@@ -1603,10 +1608,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/hrWithUser'
-        programTypes:
+        program_types:
           type: array
           items:
             $ref: '#/components/schemas/programType'
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/stage'
       type: object
     status:
       properties:

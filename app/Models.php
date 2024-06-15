@@ -739,7 +739,12 @@ namespace Responses {
         /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/programType"))
          */
-        public ProgramType  $program_types;
+        public  $program_types;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/stage"))
+         */
+        public  $stages;
     }
 
 
