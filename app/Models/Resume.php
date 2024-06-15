@@ -88,7 +88,7 @@ class Resume extends Model
         if (count($experiences) == 1) {
             $final_result = $experiences[0];
         } else {
-            for ($i = 0; $i < count($experiences); $i = $i + 2) {
+            for ($i = 0; $i < count($experiences)-1; $i = $i + 2) {
                 $diff_1 = $experiences[$i];
                 $diff_2 = $experiences[$i + 1];
 
