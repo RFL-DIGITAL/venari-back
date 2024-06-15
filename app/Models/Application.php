@@ -21,6 +21,10 @@ class Application extends Model
     {
         return $this->hasMany(Approve::class);
     }
+    public function histories(): hasMany
+    {
+        return $this->hasMany(History::class);
+    }
 
     public function tags(): BelongsToMany
     {

@@ -4,13 +4,22 @@ namespace App\Services;
 
 use App\Models\Application;
 use App\Models\ApplicationGroup;
+use App\Models\CompanyChat;
+use App\Models\History;
+use App\Models\RejectReason;
+use App\Models\Stage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Approve;
 
 class ApplicationService
 {
+    private MessageService $messageService;
 
+    public function __construct()
+    {
+        $this->messageService = new MessageService();
+    }
 
     private const REKSOFT_COMPANY_ID = 1;
 
@@ -66,7 +75,7 @@ class ApplicationService
         ?int $program_type_id,
         ?int $higher_salary,
         ?int $lower_salary
-    )
+    ): array
     {
 
         $usersBuilder = User::with('resumes');
@@ -123,7 +132,7 @@ class ApplicationService
 
     }
 
-    public function shareApplications(array $application_ids)
+    public function shareApplications(array $application_ids): string
     {
         $applicationGroup = new ApplicationGroup();
         $applicationGroup->code = uniqid();
@@ -138,7 +147,7 @@ class ApplicationService
         return route("getApplicationsByGroupCode", $applicationGroup->code);
     }
 
-    public function getApplicationsByGroupCode($code)
+    public function getApplicationsByGroupCode($code): array
     {
         $applicationGroup = ApplicationGroup::where('code', $code)->first();
 
@@ -181,7 +190,7 @@ class ApplicationService
                                 string $name,
                                 string $surname,
                                 bool   $isApproved,
-                                string $comment)
+                                string $comment): array
     {
         $approve = new Approve([
             'name' => $name,
@@ -193,5 +202,157 @@ class ApplicationService
         $approve->save();
 
         return $approve->toArray();
+    }
+
+    public function setHasUpdated(int $id, bool $hasUpdated): array
+    {
+        $application = Application::where('id', $id)->first();
+        $application->has_updated = $hasUpdated;
+        $application->save();
+
+        return ['message' => 'Watched status updated successfully'];
+    }
+
+    public function changeStage(int     $stageID,
+                                array   $applicationIDs,
+                                ?int    $from_id,
+                                ?int    $rejectReasonID,
+                                ?bool   $isSendRejectMessage,
+                                ?string $rejectMessage,
+                                ?string $interViewMessage,
+                                ?string $offerMessage
+    ): array
+    {
+        foreach ($applicationIDs as $applicationID) {
+            $application = Application::where('id', $applicationID)->first();
+            $application->stage_id = $stageID;
+            $application->save();
+
+            $stage = Stage::where('id', $stageID)->first();
+
+            switch ($stage->stageType->name) {
+                case 'reject':
+                    $this->rejectApplication(
+                        $isSendRejectMessage,
+                        $from_id,
+                        $application,
+                        $rejectMessage,
+                        $rejectReasonID
+                    );
+
+                    break;
+                case 'interview':
+                    $companyChat = CompanyChat::where('company_id',
+                        User::where('id', $from_id)->first()->hrable->company_id)
+                        ->where('user_id', $application->resume->user->id)->first();
+
+                    $this->messageService->sendMessage(
+                        $from_id,
+                        $companyChat->id,
+                        $interViewMessage,
+                        'companyMessage',
+                        null,
+                        null,
+                        'Записаться на интервью'
+                    );
+
+                    $history = new History([
+                        'text' => 'Приглашён на интервью. Перемещён в категорию "' . $stage->name . '"',
+                        'application_id' => $applicationID,
+                    ]);
+
+                    $history->save();
+
+                    break;
+                case 'offer':
+                    $companyChat = CompanyChat::where('company_id',
+                        User::where('id', $from_id)->first()->hrable->company_id)
+                        ->where('user_id', $application->resume->user->id)->first();
+
+                    $this->messageService->sendMessage(
+                        $from_id,
+                        $companyChat->id,
+                        $offerMessage,
+                        'companyMessage',
+                        null,
+                        null,
+                        null
+                    );
+
+                    $history = new History([
+                        'text' => 'Отправлен оффер',
+                        'application_id' => $applicationID,
+                    ]);
+
+                    $history->save();
+
+                    break;
+                default:
+                    $history = new History([
+                        'text' => 'Перемещён в категорию "' . $stage->name . '"',
+                        'application_id' => $applicationID,
+                    ]);
+
+                    $history->save();
+
+                    break;
+            }
+
+        }
+
+        return ['message' => 'Watched status updated successfully'];
+    }
+
+    public function reject(array   $applicationIDs,
+                           ?int    $from_id,
+                           ?int    $rejectReasonID,
+                           ?bool   $isSendRejectMessage,
+                           ?string $rejectMessage)
+    {
+        foreach ($applicationIDs as $applicationID) {
+            $application = Application::where('id', $applicationID)->first();
+
+            $this->rejectApplication($isSendRejectMessage, $from_id, $application, $rejectMessage, $rejectReasonID);
+        }
+
+        return ['message' => 'Application rejected successfully'];
+    }
+
+    /**
+     * @param bool|null $isSendRejectMessage
+     * @param int|null $from_id
+     * @param $application
+     * @param string|null $rejectMessage
+     * @param int|null $rejectReasonID
+     */
+    public function rejectApplication(?bool   $isSendRejectMessage,
+                                      ?int    $from_id,
+                                              $application,
+                                      ?string $rejectMessage,
+                                      ?int    $rejectReasonID
+    ): void
+    {
+        if ($isSendRejectMessage) {
+            $companyChat = CompanyChat::where('company_id',
+                User::where('id', $from_id)->first()->hrable->company_id)
+                ->where('user_id', $application->resume->user->id)->first();
+
+            $this->messageService->sendMessage(
+                $from_id,
+                $companyChat->id,
+                $rejectMessage,
+                'companyMessage',
+                null,
+                null,
+                null
+            );
+        }
+
+        $history = new History([
+            'text' => 'Отказ. Причина: ' . RejectReason::where('id', $rejectReasonID)->first()->text,
+            'application_id' => $application->id,
+        ]);
+
+        $history->save();
     }
 }
