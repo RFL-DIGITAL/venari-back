@@ -527,6 +527,15 @@ namespace Responses {
         public $resumes;
     }
 
+    /** @OA\Schema(schema="userWithResumeAndApplication") */
+    class UserWithResumeAndApplication extends UserWithResume
+    {
+        /**
+         * @OA\Property()
+         */
+        public int $application_id;
+    }
+
     /** @OA\Schema(schema="previewChat") */
     class PreviewChat
     {
@@ -1080,5 +1089,4 @@ namespace Responses {
         public bool $status_id;
 
     }
-
 }

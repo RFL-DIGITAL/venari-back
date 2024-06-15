@@ -15,7 +15,8 @@ class Approve extends Model
             'name',
             'surname',
             'status',
-            'application_id'
+            'application_id',
+            'text'
         ];
 
     public function application(): BelongsTo {

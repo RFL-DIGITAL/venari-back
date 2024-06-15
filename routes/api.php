@@ -86,6 +86,11 @@ Route::get('/files/{id}', [FileController::class, 'getFileByID'])->name('getFile
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
+Route::prefix('variants')->group(function () {
+   Route::get('see-variants/{code}', [ApplicationController::class, 'getApplicationsByGroupCode'])->name('getApplicationsByGroupCode');
+   Route::post('send-approve', [ApplicationController::class, 'sendApprove'])->name('sendApprove');
+});
+
 Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('vacancies')->group(function () {
         Route::post('create-vacancy', [VacancyController::class, 'createVacancy'])->name('createVacancy');
@@ -115,6 +120,7 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('candidates')->group(function () {
         Route::get('stages', [StageController::class, 'getStages']);
         Route::get('applications', [ApplicationController::class, 'getApplication']);
+        Route::post('share-applications', [ApplicationController::class, 'shareApplications']);
         Route::get('applications/{id}', [ApplicationController::class, 'getApplicationByID']);
         Route::get('', [ApplicationController::class, 'getUsers']);
     });
