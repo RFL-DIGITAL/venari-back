@@ -43,7 +43,6 @@ class ApplicationController extends Controller
      */
     public function getApplication(Request $request): JsonResponse
     {
-
         $applications = $this->applicationService->getApplications($request->get('vacancy_id'));
 
         return $this->successResponse($applications);

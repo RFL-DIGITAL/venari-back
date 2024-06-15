@@ -1397,6 +1397,10 @@ components:
           properties:
             city:
               $ref: '#/components/schemas/detailCity'
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/applicationTag'
           type: object
     userWithResume:
       type: object
@@ -1909,10 +1913,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/applicationComment'
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/applicationTag'
         approves:
           type: array
           items:

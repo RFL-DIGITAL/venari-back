@@ -44,10 +44,6 @@ class User extends Authenticatable
         'post_count',
     ];
 
-    protected $attributes = [
-        'work_record'
-    ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -115,5 +111,10 @@ class User extends Authenticatable
 
     public function city(): BelongsTo {
         return $this->belongsTo(City::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(ApplicationTag::class, 'application_tag_users');
     }
 }
