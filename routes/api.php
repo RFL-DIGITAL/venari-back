@@ -91,6 +91,14 @@ Route::prefix('variants')->group(function () {
    Route::post('send-approve', [ApplicationController::class, 'sendApprove'])->name('sendApprove');
 });
 
+Route::prefix('resumes')->group(function () {
+    Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
+    Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume');
+    Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
+    Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
+        ->name('createResumeFromDoc');
+});
+
 Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('vacancies')->group(function () {
         Route::post('create-vacancy', [VacancyController::class, 'createVacancy'])->name('createVacancy');
@@ -101,13 +109,7 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
             ->name('unArchiveVacancies');
         Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
     });
-    Route::prefix('resumes')->group(function () {
-        Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
-        Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume');
-        Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
-        Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
-            ->name('createResumeFromDoc');
-    });
+
     Route::prefix('calendar')->group(function () {
         Route::post('login-with-google', [CalendarController::class, 'loginWithGoogle'])
             ->name('loginWithGoogle');
