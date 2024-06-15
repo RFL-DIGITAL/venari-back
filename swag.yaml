@@ -1603,6 +1603,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/hrWithUser'
+        programTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/programType'
       type: object
     status:
       properties:
