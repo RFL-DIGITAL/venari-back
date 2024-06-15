@@ -87,7 +87,7 @@ class Resume extends Model
 
         if (count($experiences) > 0) {
             if (count($experiences) == 1) {
-                $final_result = $experiences[0];
+                $final_result = $experiences[0]->format("%y years %m months %d days");
             } else {
                 for ($i = 0; $i < count($experiences) - 1; $i = $i + 2) {
                     $diff_1 = $experiences[$i];
