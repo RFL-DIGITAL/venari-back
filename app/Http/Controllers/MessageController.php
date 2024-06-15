@@ -155,7 +155,15 @@ class MessageController extends Controller
     public function sendMessage(Request $request): JsonResponse
     {
         return $this->successResponse(
-            $this->messageService->sendMessage($request)
+            $this->messageService->sendMessage(
+                auth()->id(),
+                $request->to_id,
+                $request->body,
+                $request->type,
+                $request->get('image'),
+                $request->get('attachment'),
+                $request->get('link')
+            )
         );
     }
 
