@@ -122,6 +122,7 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');
 
     Route::prefix('candidates')->group(function () {
+        Route::post('change-stages', [ApplicationController::class, 'changeStage']);
         Route::get('stages', [StageController::class, 'getStages']);
         Route::get('applications', [ApplicationController::class, 'getApplication']);
         Route::post('share-applications', [ApplicationController::class, 'shareApplications']);
