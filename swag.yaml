@@ -214,25 +214,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/sendComment'
-  '/api/posts/{id}/comments':
-    get:
-      tags:
-        - CommentController
-      summary: 'Метод получения всех комментариев поста'
-      operationId: da850347cec64e7a5d304db8fc79e6ad
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'id поста'
-          required: true
-      responses:
-        '200':
-          description: 'Ответ при успешном выполнении запроса'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getComments'
   '/api/companies/{id}':
     get:
       tags:
@@ -461,6 +442,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPostsByCompany'
+  '/api/posts/{id}/comments':
+    get:
+      tags:
+        - CommentController
+      summary: 'Метод получения всех комментариев поста'
+      operationId: 08b37e91e3a6336d1fb0558b8dc2cf4d
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getComments'
   /api/hr-panel/resumes/create-from-file:
     post:
       tags:
@@ -733,7 +733,7 @@ components:
           type: boolean
           example: 'true'
         response:
-          $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/userWithResume'
       type: object
     getApplication:
       properties:
@@ -804,16 +804,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/comment'
-      type: object
-    getComments:
-      properties:
-        success:
-          type: boolean
-          example: 'true'
-        response:
-          type: array
-          items:
-            $ref: '#/components/schemas/detailComment'
       type: object
     showCompany:
       properties:
@@ -926,6 +916,16 @@ components:
           example: 'true'
         response:
           $ref: '#/components/schemas/post'
+      type: object
+    getComments:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailComment'
       type: object
     createResumeFromDoc:
       properties:

@@ -98,7 +98,7 @@ class UserController extends Controller
      *
      * @OA\Schema( schema="show",
      *                @OA\Property(property="success",type="boolean",example="true"),
-     *                @OA\Property(property="response", ref="#/components/schemas/user"),
+     *                @OA\Property(property="response", ref="#/components/schemas/userWithResume"),
      *     )
      *
      * @OA\Get(
@@ -123,9 +123,12 @@ class UserController extends Controller
     {
         $user = User::where('id', $id)->get()->load([
             'company',
+            'city.country',
+            'company',
             'position',
             'image',
             'preview',
+            'resumes'
         ]);
 
         if (!collect($user)->isEmpty()) {
