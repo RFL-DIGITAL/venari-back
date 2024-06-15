@@ -41,7 +41,7 @@ class ApplicationService {
             "resume.position",
             "resume.specialization",
             "comments.user.image",
-            "tags",
+            "resume.user.tags",
             "approves"
         ]);
 
@@ -104,6 +104,7 @@ class ApplicationService {
             'resumes.resumeProgramSchools.programSchool.school',
             'resumes.position',
             'resumes.specialization',
+            'tags'
         ]);
 
         return $users->toArray();

@@ -511,6 +511,11 @@ namespace Responses {
          * @OA\Property()
          */
         public DetailCity $city;
+
+        /**
+         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/applicationTag"))
+         */
+        public $tags;
     }
 
     /** @OA\Schema(schema="userWithResume") */
@@ -1009,11 +1014,6 @@ namespace Responses {
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/applicationComment"))
          */
         public $comments;
-
-        /**
-         * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/applicationTag"))
-         */
-        public $tags;
 
         /**
          * @OA\Property(type="array", @OA\Items(ref="#/components/schemas/approve"))
