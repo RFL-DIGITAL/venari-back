@@ -41,4 +41,9 @@ class Application extends Model
     {
         return $this->belongsTo(Resume::class);
     }
+
+    public function applicationGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(ApplicationGroup::class, 'application_application_groups');
+    }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MassVacanciesRequest;
+use App\Http\Requests\ShareApplicationsRequest;
 use App\Models\City;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -177,6 +179,30 @@ class ApplicationController extends Controller
             $this->paginate($users)
         );
 
+    }
+
+    /**
+     * Метод разархивации вакансий по их id
+     *
+     * @OA\Post(
+     *              path="/api/hr-panel/vacancies/un-archive-vacancies",
+     *              tags={"HR-panel"},
+     *              @OA\RequestBody(ref="#/components/requestBodies/MassVacanciesRequest"),
+     *              @OA\Response(
+     *              response="200",
+     *              description="Ответ при успешном выполнении запроса",
+     *              @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
+     *            )
+     *          )
+     *
+     * @param ShareApplicationsRequest $request
+     * @return JsonResponse
+     */
+    public function shareApplications(ShareApplicationsRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->applicationService->shareApplications($request->applications)
+        );
     }
 
 }
