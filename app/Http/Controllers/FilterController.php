@@ -12,6 +12,7 @@ use App\Models\Specialization;
 use App\Models\Status;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\Stage;
 
 class FilterController extends Controller
 {
@@ -54,7 +55,8 @@ class FilterController extends Controller
                     'user.preview',
                     'user.company.image',
                 ])->toArray(),
-            'program_types' => ProgramType::all()->toArray()
+            'program_types' => ProgramType::all()->toArray(),
+            'stages' => Stage::all()->toArray()
         ]);
     }
 }

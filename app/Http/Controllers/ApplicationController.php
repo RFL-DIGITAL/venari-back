@@ -8,10 +8,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Services\ApplicationService;
+
 class ApplicationController extends Controller
 {
 
-    public function __construct(protected ApplicationService $applicationService) {}
+    public function __construct(protected ApplicationService $applicationService)
+    {
+    }
 
 
     /**
@@ -26,6 +29,11 @@ class ApplicationController extends Controller
      * @OA\Get(
      *         path="/api/hr-panel/candidates/applications",
      *         tags={"HR-panel"},
+     *     @OA\Parameter(
+     *             name="stage_id",
+     *            in="query",
+     *             description="id категории. Для категории Все кандидаты не отправлять этот параметр",
+     *             required=false),
      *     @OA\Parameter(
      *            name="vacancy_id",
      *           in="query",
@@ -43,11 +51,21 @@ class ApplicationController extends Controller
      */
     public function getApplication(Request $request): JsonResponse
     {
-        $applications = $this->applicationService->getApplications($request->get('vacancy_id'));
-
-        return $this->successResponse(
-            $this->paginate($applications)
+        $applications = $this->applicationService->getApplications(
+            $request->get('stage_id'),
+            $request->get('vacancy_id')
         );
+
+        if (!empty($applications)) {
+            return $this->successResponse(
+                $this->paginate($applications)
+            );
+        } else {
+            return $this->failureResponse(
+                ['message' => 'Applications not found']
+            );
+        }
+
     }
 
     /**
@@ -77,7 +95,8 @@ class ApplicationController extends Controller
      * @param int $application_id
      * @return JsonResponse
      */
-    public function getApplicationByID(int $application_id) {
+    public function getApplicationByID(int $application_id)
+    {
         $applications = $this->applicationService->getApplicationByID($application_id);
 
         return $this->successResponse($applications);
@@ -140,7 +159,8 @@ class ApplicationController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getUsers(Request $request) {
+    public function getUsers(Request $request)
+    {
         $city = City::where('name', $request->get('city'))->first();
 
         $users = $this->applicationService->getUsers(
