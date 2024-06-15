@@ -379,7 +379,10 @@ class ResumeService
             'position',
             'specialization',
             'employment',
-            'user'
+            'user.image',
+            'user.city.country',
+            'user.position',
+            'user.company',
         ]);
 
         return $resume->toArray();
