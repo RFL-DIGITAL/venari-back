@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('application_groups', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('code');
+        Schema::table('approves', function (Blueprint $table) {
+            $table->text('text')->nullable();
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('application_groups');
+        Schema::table('approves', function (Blueprint $table) {
+            $table->dropColumn('text');
+        });
     }
 };
