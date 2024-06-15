@@ -411,7 +411,9 @@ class CalendarService
     }
 
     public function bookSlot(int $eventID) {
-        Event::where('id', $eventID)->first()->is_picked = true;
+        $event = Event::where('id', $eventID)->first();
+        $event->is_picked = true;
+        $event->save();
 
         return ['message' => 'Event booked'];
     }
