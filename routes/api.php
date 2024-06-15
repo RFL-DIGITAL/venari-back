@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FileController;
@@ -101,6 +102,11 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
         Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
         Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
             ->name('createResumeFromDoc');
+    });
+    Route::prefix('calendar')->group(function () {
+        Route::post('login-with-google', [CalendarController::class, 'loginWithGoogle'])
+            ->name('loginWithGoogle');
+        Route::post('create-slots', [CalendarController::class, 'createSlots'])->name('createSlots');
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');
