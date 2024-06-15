@@ -44,7 +44,7 @@ class CalendarController extends Controller
     public function getCalendarID(Request $request): JsonResponse
     {
         return $this->successResponse(
-            ['calendar_id' => $this->calendarService->getCalendarID($request->user())]
+            ['calendar_id' => $this->calendarService->getCalendarID($request->user()->id)]
         );
     }
 
