@@ -77,7 +77,7 @@ class Resume extends Model
         })->get();
         $experiences = [];
 
-        $now  = new Datetime();
+        $now = new Datetime();
         foreach ($userPositions as $userPosition) {
 //            dd(DateTime::createFromFormat('Y-m-d', $userPosition->start_date));
             $experiences[] = date_diff(new DateTime($userPosition->start_date), $userPosition?->end_date != null ? new DateTime($userPosition->end_date) : $now);
@@ -87,10 +87,9 @@ class Resume extends Model
 
         if (count($experiences) > 0) {
             if (count($experiences) == 1) {
-                $final_result = $experiences[0];
-            }
-            else {
-                for ($i = 0; $i < count($experiences)-1; $i = $i + 2) {
+                $final_result = $experiences[0]->format("%y years %m months %d days");
+            } else {
+                for ($i = 0; $i < count($experiences) - 1; $i = $i + 2) {
                     $diff_1 = $experiences[$i];
                     $diff_2 = $experiences[$i + 1];
 
@@ -107,13 +106,11 @@ class Resume extends Model
 
                     $final_result = $dt->diff(new DateTime());
                 }
+                return $final_result->format("%y years %m months %d days");
             }
-
-            return $final_result->format("%y years %m months %d days");
         } else {
             $final_result = "0 years";
         }
-
         return $final_result;
     }
 }

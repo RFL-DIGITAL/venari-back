@@ -153,6 +153,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getUsers'
+  /api/hr-panel/candidates/applications/share-applications:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод шэринга откликов'
+      operationId: b9bd9a52235fa235dca848fde1fa0f4c
+      requestBody:
+        $ref: '#/components/requestBodies/ShareApplicationsRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/shareApplications'
+  '/api/variants/see-variants/{code}':
+    get:
+      tags:
+        - Approves
+      summary: 'Метод получения пользователей для страницы отображения всех апрувов'
+      operationId: 03da41cb44df496a345d4c111f0d819d
+      parameters:
+        -
+          name: code
+          in: path
+          description: 'код для просмотра откликов для подтверждения'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplicationsByGroupCode'
+  /api/hr-panel/variants/sendApprove:
+    post:
+      tags:
+        - Approves
+      summary: 'Метод отправки апрува'
+      operationId: 902a3e0de04f3d1be70184161f606e67
+      requestBody:
+        $ref: '#/components/requestBodies/SendApproveRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendApprove'
   /api/networking/:
     get:
       tags:
@@ -769,6 +818,41 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/userWithResume'
+      type: object
+    shareApplications:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+      type: object
+    link:
+      properties:
+        link:
+          type: string
+      type: object
+    getApplicationsByGroupCode:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/userWithResumeAndApplication'
+      type: object
+    sendApprove:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/approve'
       type: object
     getAllChats:
       properties:
@@ -1418,6 +1502,16 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/resume'
+          type: object
+    userWithResumeAndApplication:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/userWithResume'
+        -
+          properties:
+            application_id:
+              type: integer
           type: object
     previewChat:
       properties:
@@ -2181,6 +2275,19 @@ components:
             properties:
               file: {  }
             type: object
+    SendApproveRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              application_id:
+                type: integer
+              name: {  }
+              surname: {  }
+              is_approved:
+                type: boolean
+              comment: {  }
+            type: object
     SendCommentRequest:
       content:
         application/json:
@@ -2217,6 +2324,15 @@ components:
                   description: 'Массив изображений, без base64'
                   type: string
                   format: binary
+            type: object
+    ShareApplicationsRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              application_ids:
+                type: array
+                items: {  }
             type: object
 externalDocs:
   description: 'Как документировать этот код'

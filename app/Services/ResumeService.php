@@ -378,7 +378,8 @@ class ResumeService
             'resumeProgramSchools.programSchool.school',
             'position',
             'specialization',
-            'employment'
+            'employment',
+            'user'
         ]);
 
         return $resume->toArray();
