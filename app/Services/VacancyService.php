@@ -270,7 +270,6 @@ class VacancyService
                     'skills',
                     'image',
                     'specialization',
-
                 ]);
 
         return $vacancies->toArray();
