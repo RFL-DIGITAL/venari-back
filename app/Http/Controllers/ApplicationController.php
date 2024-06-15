@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassVacanciesRequest;
+use App\Http\Requests\SendApproveRequest;
 use App\Http\Requests\ShareApplicationsRequest;
 use App\Models\City;
 use Illuminate\Http\JsonResponse;
@@ -99,9 +100,9 @@ class ApplicationController extends Controller
      */
     public function getApplicationByID(int $application_id)
     {
-        $applications = $this->applicationService->getApplicationByID($application_id);
+        $application = $this->applicationService->getApplicationByID($application_id);
 
-        return $this->successResponse($applications);
+        return $this->successResponse($application);
     }
 
     /**
@@ -182,16 +183,26 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Метод разархивации вакансий по их id
+     * Метод шэринга откликов
+     *
+     * @OA\Schema( schema="shareApplications",
+     *                  @OA\Property(property="success",type="boolean",example="true"),
+     *                  @OA\Property(property="response",type="array",
+     *                       @OA\Items(ref="#/components/schemas/link")),
+     *       )
+     *
+     * @OA\Schema( schema="link",
+     *                   @OA\Property(property="link",type="string"),
+     *        )
      *
      * @OA\Post(
-     *              path="/api/hr-panel/vacancies/un-archive-vacancies",
+     *              path="/api/hr-panel/candidates/applications/share-applications",
      *              tags={"HR-panel"},
-     *              @OA\RequestBody(ref="#/components/requestBodies/MassVacanciesRequest"),
+     *              @OA\RequestBody(ref="#/components/requestBodies/ShareApplicationsRequest"),
      *              @OA\Response(
      *              response="200",
      *              description="Ответ при успешном выполнении запроса",
-     *              @OA\JsonContent(ref="#/components/schemas/vacanciesResponse")
+     *              @OA\JsonContent(ref="#/components/schemas/shareApplications")
      *            )
      *          )
      *
@@ -201,7 +212,79 @@ class ApplicationController extends Controller
     public function shareApplications(ShareApplicationsRequest $request): JsonResponse
     {
         return $this->successResponse(
-            $this->applicationService->shareApplications($request->applications)
+            $this->applicationService->shareApplications($request->application_ids)
+        );
+    }
+
+    /**
+     * Метод получения пользователей для страницы отображения всех апрувов
+     *
+     * @OA\Schema( schema="getApplicationsByGroupCode",
+     *                 @OA\Property(property="success",type="boolean",example="true"),
+     *                 @OA\Property(property="response",type="array",
+     *                      @OA\Items(ref="#/components/schemas/userWithResumeAndApplication")),
+     *      )
+     *
+     * @OA\Get(
+     *           path="/api/variants/see-variants/{code}",
+     *           tags={"Approves"},
+     *     @OA\Parameter(
+     *                 name="code",
+     *                in="path",
+     *                 description="код для просмотра откликов для подтверждения",
+     *                 required=false),
+     *           @OA\Response(
+     *           response="200",
+     *           description="Ответ при успешном выполнении запроса",
+     *        @OA\JsonContent(ref="#/components/schemas/getApplicationsByGroupCode")
+     *             )
+     *       )
+     *
+     * @param $code
+     * @return JsonResponse
+     */
+    public function getApplicationsByGroupCode($code): JsonResponse
+    {
+        return $this->successResponse(
+            $this->applicationService->getApplicationsByGroupCode($code)
+        );
+    }
+
+
+    /**
+     * Метод отправки апрува
+     *
+     * @OA\Schema( schema="sendApprove",
+     *                  @OA\Property(property="success",type="boolean",example="true"),
+     *                  @OA\Property(property="response",type="array",
+     *                       @OA\Items(ref="#/components/schemas/approve")),
+     *       )
+     *
+     *
+     * @OA\Post(
+     *              path="/api/hr-panel/variants/sendApprove",
+     *              tags={"Approves"},
+     *              @OA\RequestBody(ref="#/components/requestBodies/SendApproveRequest"),
+     *              @OA\Response(
+     *              response="200",
+     *              description="Ответ при успешном выполнении запроса",
+     *              @OA\JsonContent(ref="#/components/schemas/sendApprove")
+     *            )
+     *          )
+     *
+     * @param SendApproveRequest $request
+     * @return JsonResponse
+     */
+    public function sendApprove(SendApproveRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            $this->applicationService->sendApprove(
+                $request->get('application_id'),
+                $request->get('name'),
+                $request->get('surname'),
+                $request->get('is_approved'),
+                $request->get('comment'),
+            )
         );
     }
 

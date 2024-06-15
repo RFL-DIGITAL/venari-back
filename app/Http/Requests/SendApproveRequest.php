@@ -5,11 +5,15 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * @OA\RequestBody(request="ShareApplicationsRequest", @OA\JsonContent(
- *      @OA\Property(property="application_ids", type="array", @OA\Items()),
- *  ))
+ * @OA\RequestBody(request="SendApproveRequest", @OA\JsonContent(
+ *     @OA\Property(property="application_id", type="int"),
+ *     @OA\Property(property="name"),
+ *     @OA\Property(property="surname"),
+ *     @OA\Property(property="is_approved", type="bool"),
+ *     @OA\Property(property="comment"),
+ * ))
  */
-class ShareApplicationsRequest extends FormRequest
+class SendApproveRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
