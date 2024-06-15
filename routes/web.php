@@ -27,6 +27,8 @@ Route::get('swag.json', function () {
     return response()->json($p->toJson());
 });
 
+//Route::get('swagger.json', )
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
