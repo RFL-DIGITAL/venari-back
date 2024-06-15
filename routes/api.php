@@ -115,6 +115,8 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
             ->name('loginWithGoogle');
         Route::post('create-slots', [CalendarController::class, 'createSlots'])->name('createSlots');
         Route::get('get-calendar-id', [CalendarController::class, 'getCalendarID'])->name('getCalendarID');
+        Route::post('get-available-slots', [CalendarController::class, 'getAvailableSlotsInMonth'])->name('getAvailableSlotsInMonth');
+        Route::post('book-event', [CalendarController::class, 'bookSlot'])->name('bookSlot');
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');

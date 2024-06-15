@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
+use DateTimeZone;
 use Google\Service\Exception;
 use Google\Service\HangoutsChat;
 use Google_Service_Calendar;
@@ -379,5 +380,53 @@ class CalendarService
     public function getCalendarID($userID)
     {
         return User::where('id', $userID)->first()->hrable->calendar->g_calendar_id;
+    }
+
+    public function getAvailableSlotsInMonth(int $accountable_id, string $month): array
+    {
+        $calendar = Calendar::where('hr_id', $accountable_id)->first();
+
+        $startOfMonth = DateTime::createFromFormat('Y-m-d', $month, new DateTimeZone("Asia/Novosibirsk"));
+        if (new DateTime() > $startOfMonth) {
+            $startOfMonth = new DateTime(timezone: new DateTimeZone("Asia/Novosibirsk"));
+        }
+
+        $endOfMonth = DateTime::createFromFormat("Y-m-d", date("Y-m-t", strtotime($month)), new DateTimeZone("Asia/Novosibirsk"));
+        $events = Event::where('calendar_id', $calendar->id)
+            ->where('datetime_start', '>', $startOfMonth)
+            ->where('datetime_end', '<', $endOfMonth)
+            ->where('is_picked', false)->get();
+        $calendar = [];
+        $startOfDay = DateTime::createFromFormat('Y-m-d', $month, new DateTimeZone("Asia/Novosibirsk"));
+        for ($i = 0; $i <= (int)$endOfMonth->format("t")-1; $i++) {
+            $endOfDay = clone $startOfDay;
+            $startOfDay = Carbon::create($startOfDay)->startOfDay();
+            $endOfDay = Carbon::create($endOfDay)->endOfDay();
+            $calendar[$i+1] = [];
+
+            $sortedEvents = $events
+                ->where('datetime_start', '>', $startOfDay)
+                ->where('datetime_end', '<', $endOfDay)
+                ->select('datetime_start', 'id')->toArray();
+
+            usort($sortedEvents, function ($a, $b) {
+                return $a['datetime_start'] > $b['datetime_start'];
+            });
+
+
+            $calendar[$i+1][] = $sortedEvents;
+
+            $startOfDay = $startOfDay->modify('+1 days');
+        }
+
+        return $calendar;
+    }
+
+    public function bookSlot(int $eventID) {
+        $event = Event::where('id', $eventID)->first();
+        $event->is_picked = true;
+        $event->save();
+
+        return ['message' => 'Event booked'];
     }
 }
