@@ -17,6 +17,7 @@ use Google_Service_Calendar_ConferenceSolutionKey;
 use Google_Service_Calendar_CreateConferenceRequest;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 
@@ -65,6 +66,7 @@ class CalendarService
 
     public function createRedirectUrl(): array
     {
+        $this->client = $this->google->client();
         $auth_url = $this->client->createAuthUrl();
 
         return ['message' => $auth_url];
@@ -113,7 +115,21 @@ class CalendarService
                 $endDateTimeApproximate = $endDateTimeApproximate->modify('+' . $slotDuration . ' minutes');
                 if ($endDateTimeApproximate <= $endDateTime) {
 
-//                    dd($user->hrable->calendar);
+                    if (Event::where(function (Builder $query) use ($i, $endDateTimeApproximate) {
+                            $query->where('datetime_start', '<=', $endDateTimeApproximate)
+                                ->where('datetime_start', '>=', $i);
+                        })->orWhere(function (Builder $query) use ($i, $endDateTimeApproximate) {
+                            $query->where('datetime_end', '<=', $endDateTimeApproximate)
+                                ->where('datetime_end', '>=', $i);
+                        })->count() != null or
+                        Event::where('datetime_start', '<=', $i)->where('datetime_end', '>=', $endDateTimeApproximate)
+                            ->count() != null) {
+                        $i = clone $endDateTimeApproximate;
+                        $i->modify('+' . $breakDuration . ' minutes');
+
+                        continue;
+                    }
+
                     $event = new Event([
                         'datetime_start' => $i,
                         'datetime_end' => $endDateTimeApproximate,
@@ -139,6 +155,8 @@ class CalendarService
 
     public function createGEvent(Event $event, bool $isMeet): array
     {
+        $baseTimezone = env('APP_TIMEZONE');
+
         // todo: добавить валидацию запроса
 //        $this->validate($request, [
 //            'title' => 'required',
@@ -148,8 +166,10 @@ class CalendarService
 //        ]);
         $this->client->setAccessToken(session('g_cal_token'));
 
-        $startDateTime = Carbon::createFromFormat('Y/m/d H:i', $event->datetime_start->format('Y/m/d H:i'));
-        $endDateTime = Carbon::createFromFormat('Y/m/d H:i', $event->datetime_end->format('Y/m/d H:i'));
+        $startDateTime = Carbon::createFromFormat('Y/m/d H:i', $event->datetime_start->format('Y/m/d H:i'),
+            $baseTimezone);
+        $endDateTime = Carbon::createFromFormat('Y/m/d H:i', $event->datetime_end->format('Y/m/d H:i'),
+            $baseTimezone);
 
         $cal = new Google_Service_Calendar($this->client);
         $gEvent = new Google_Service_Calendar_Event();
@@ -275,7 +295,7 @@ class CalendarService
 
                 $calendar = Calendar::find($calendarId);
                 $calendar->sync_token = $nextSyncToken;
-                $calendar->last_synced = new DateTime();
+                $calendar->last_synced_at = new DateTime();
                 $calendar->save();
 
                 break;
