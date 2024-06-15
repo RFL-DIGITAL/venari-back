@@ -11,7 +11,9 @@ use Illuminate\Http\Request;
 
 class ResumeController extends Controller
 {
-    public function __construct(protected ResumeService $resumeService) {}
+    public function __construct(protected ResumeService $resumeService) {
+        $this->middleware('auth:api');
+    }
 
     /**
      * Метод создания резюме из загруженного .doc файла

@@ -18,4 +18,9 @@ class Experience extends Model
     {
         return $this->hasMany(Vacancy::class);
     }
+
+    public function resumes(): HasMany
+    {
+        return $this->hasMany(Resume::class);
+    }
 }
