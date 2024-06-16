@@ -435,11 +435,11 @@ class CalendarService
         return ['message' => 'Event booked'];
     }
 
-    public function downloadICS(int $hr_id): bool|string
+    public function downloadICS(): bool|string
     {
-        $this->client->setAccessToken(HR::where('id', $hr_id)->token);
+        $this->client->setAccessToken(auth()->user()->hrable->token);
 
-        $calendar = Calendar::where('hr_id', $hr_id)->first();
+        $calendar = Calendar::where('hr_id', auth()->user()->hrable->id)->first();
 
         $gCalendarID = $calendar->g_calendar_id;
         $gCal = new Google_Service_Calendar($this->client);
