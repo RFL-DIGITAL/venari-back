@@ -152,6 +152,11 @@ class ApplicationController extends Controller
      *                in="query",
      *                 description="нижнее допустимое значение зарплаты",
      *                 required=false),
+     *   @OA\Parameter(
+     *               name="search",
+     *              in="query",
+     *               description="строка поиска",
+     *               required=false),
      *           @OA\Response(
      *           response="200",
      *           description="Ответ при успешном выполнении запроса",
@@ -173,7 +178,8 @@ class ApplicationController extends Controller
             $request->get('employment_id'),
             $request->get('program_type_id'),
             $request->get('higher_salary'),
-            $request->get('lower_salary')
+            $request->get('lower_salary'),
+            $request->get('search')
         );
 
         return $this->successResponse(
