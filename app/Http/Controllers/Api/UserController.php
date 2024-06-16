@@ -8,11 +8,8 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Crypt;
 use OpenApi\Annotations as OA;
 
-use App\Models\Post;
-use Illuminate\Http\Request;
 use App\Models\User;
 
 class UserController extends Controller

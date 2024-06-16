@@ -40,12 +40,12 @@ class UserService
     ): array
     {
         $user = new User;
-        $user->first_name = Crypt::encrypt($first_name);
-        $user->middle_name = $middle_name != null ? Crypt::encrypt($middle_name) : $middle_name;
-        $user->last_name = Crypt::encrypt($last_name);
-        $user->date_of_birth = $birth_date != null ? Crypt::encrypt($birth_date) : $birth_date;
+        $user->first_name = $first_name;
+        $user->middle_name = $middle_name;
+        $user->last_name = $last_name;
+        $user->date_of_birth = $birth_date;
         $user->email = $email;
-        $user->phone = $phone != null ? Crypt::encrypt($phone) : $phone;
+        $user->phone = $phone;
         $user->password = Hash::make($password);
         $user->user_name = $user_name;
         $user->sex = $sex;
