@@ -21,19 +21,22 @@ class HomeController extends Controller
     {
         if ($request->has('code')) {
 //            return $this->successResponse(
-                $this->calendarService->loginWithGoogle($request->user(), $request->get('code'));
-                $this->calendarService->syncCalendarFromG(1);
-                $this->calendarService->createEvents(
-                    $request->user(),
-                    '13:00',
-                    '22:00',
-                    '60',
-                    '0',
-                    [
-                        '15-06-2024', '16-06-2024'
-                    ],
-                    false
-                );
+            $this->calendarService->loginWithGoogle($request->user(), $request->get('code'));
+            $tempFile = tempnam(sys_get_temp_dir(), $this->calendarService->downloadICS(1));
+
+            return response()->download($tempFile, 'calendar.ics', ['Content-Type: text/calendar']);
+//                $this->calendarService->syncCalendarFromG(1);
+//                $this->calendarService->createEvents(
+//                    $request->user(),
+//                    '13:00',
+//                    '22:00',
+//                    '60',
+//                    '0',
+//                    [
+//                        '15-06-2024', '16-06-2024'
+//                    ],
+//                    false
+//                );
 //            );
 
         } else {

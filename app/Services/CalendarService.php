@@ -5,10 +5,13 @@ namespace App\Services;
 use App\Google;
 use App\Models\Calendar;
 use App\Models\Event;
+use App\Models\HR;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
+use Google\Service\Calendar\AclRule;
+use Google\Service\Calendar\AclRuleScope;
 use Google\Service\Exception;
 use Google\Service\HangoutsChat;
 use Google_Service_Calendar;
@@ -19,6 +22,7 @@ use Google_Service_Calendar_CreateConferenceRequest;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Http;
 
 
 class CalendarService
@@ -87,7 +91,6 @@ class CalendarService
         $this->client->setAccessToken(session('g_cal_token'));
 
         $title = $calendar->title;
-        dd($calendar);
 
         // todo Поменять в проде на Москву
         $timezone = env('APP_TIMEZONE');
@@ -399,11 +402,11 @@ class CalendarService
             ->where('is_picked', false)->get();
         $calendar = [];
         $startOfDay = DateTime::createFromFormat('Y-m-d', $month, new DateTimeZone("Asia/Novosibirsk"));
-        for ($i = 0; $i <= (int)$endOfMonth->format("t")-1; $i++) {
+        for ($i = 0; $i <= (int)$endOfMonth->format("t") - 1; $i++) {
             $endOfDay = clone $startOfDay;
             $startOfDay = Carbon::create($startOfDay)->startOfDay();
             $endOfDay = Carbon::create($endOfDay)->endOfDay();
-            $calendar[$i+1] = [];
+            $calendar[$i + 1] = [];
 
             $sortedEvents = $events
                 ->where('datetime_start', '>', $startOfDay)
@@ -415,7 +418,7 @@ class CalendarService
             });
 
 
-            $calendar[$i+1][] = $sortedEvents;
+            $calendar[$i + 1][] = $sortedEvents;
 
             $startOfDay = $startOfDay->modify('+1 days');
         }
@@ -423,11 +426,37 @@ class CalendarService
         return $calendar;
     }
 
-    public function bookSlot(int $eventID) {
+    public function bookSlot(int $eventID)
+    {
         $event = Event::where('id', $eventID)->first();
         $event->is_picked = true;
         $event->save();
 
         return ['message' => 'Event booked'];
+    }
+
+    public function downloadICS(int $hr_id): bool|string
+    {
+        $this->client->setAccessToken(HR::where('id', $hr_id)->token);
+
+        $calendar = Calendar::where('hr_id', $hr_id)->first();
+
+        $gCalendarID = $calendar->g_calendar_id;
+        $gCal = new Google_Service_Calendar($this->client);
+
+        $rule = new AclRule();
+        $scope = new AclRuleScope();
+
+        $scope->setType("default");
+        $scope->setValue("");
+        $rule->setScope($scope);
+        $rule->setRole("reader");
+
+        $createdRule = $gCal->acl->insert($gCalendarID, $rule);
+
+        $iCS = file_get_contents('https://www.google.com/calendar/ical/'.$gCalendarID.'/public/basic.ics');
+        $gCal->acl->delete($gCalendarID, $createdRule->getId());
+
+        return $iCS;
     }
 }
