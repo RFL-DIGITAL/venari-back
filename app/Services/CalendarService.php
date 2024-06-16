@@ -439,7 +439,7 @@ class CalendarService
         $this->messageService->sendMessage(
             $user->id,
             $companyChatID,
-            'Подтверждена запись на интервью. Дата и время: '.date('H:i d.m.Y', strtotime($event->datetime_start)).'\n Ссылка на Google Meet: '.$event->meet_link,
+            'Подтверждена запись на интервью. Дата и время: '.date('H:i d.m.Y', strtotime($event->datetime_start)).' Ссылка на Google Meet: '.$event->meet_link,
             'companyMessage',
             null,
             null,
