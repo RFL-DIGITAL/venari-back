@@ -59,7 +59,7 @@ class UserService
 
         $token = $user->createToken('Access Token')->accessToken;
         $data = [
-            'user' => Helper::unEncryptUserData($user),
+            'user' => $user,
             'access_token' => $token,
         ];
 
