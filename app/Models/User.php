@@ -41,14 +41,6 @@ class User extends Authenticatable
         'company_id',
     ];
 
-    protected $attributes = [
-        'first_name',
-        'last_name',
-        'date_of_birth',
-        'phone',
-        'middle_name'
-    ];
-
     protected $appends = [
         'post_count',
     ];
