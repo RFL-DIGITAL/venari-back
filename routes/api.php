@@ -96,11 +96,13 @@ Route::prefix('variants')->group(function () {
 
 Route::prefix('resumes')->group(function () {
     Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
-    Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume');
-    Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
+    Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume')->middleware('auth:api');
+    Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume')->middleware('auth:api');;
     Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
-        ->name('createResumeFromDoc');
+        ->name('createResumeFromDoc')->middleware('auth:api');
 });
+
+Route::get('resume-filters', [FilterController::class, 'getFiltersForResumeCreation'])->name('getFiltersForResumeCreation');
 
 Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('vacancies')->group(function () {
