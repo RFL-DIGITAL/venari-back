@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Models\City;
 
 class User extends Authenticatable
 {
@@ -40,7 +41,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'post_count'
+        'post_count',
     ];
 
     /**
@@ -106,5 +107,14 @@ class User extends Authenticatable
 
     public function companyChats(): HasMany {
         return $this->hasMany(CompanyChat::class);
+    }
+
+    public function city(): BelongsTo {
+        return $this->belongsTo(City::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(ApplicationTag::class, 'application_tag_users');
     }
 }

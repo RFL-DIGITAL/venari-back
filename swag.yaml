@@ -61,6 +61,147 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/show'
+  /api/hr-panel/candidates/applications:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех откликов'
+      operationId: 9fe1c4bb113b53309be01139c2f88276
+      parameters:
+        -
+          name: stage_id
+          in: query
+          description: 'id категории. Для категории Все кандидаты не отправлять этот параметр'
+          required: false
+        -
+          name: vacancy_id
+          in: query
+          description: 'id вакансии'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplication'
+  '/api/hr-panel/candidates/applications/{id}':
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения подробного отклика'
+      operationId: 6422d0914e57f40a8d42f22a46855b5f
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id отклика'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplicationByID'
+  /api/hr-panel/candidates/:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения пользователей для страницы поиска по кандидатам'
+      operationId: 5e17c11f848bb655c0d5b94db15df4f1
+      parameters:
+        -
+          name: experince_id
+          in: query
+          description: 'id требуемого опыта'
+          required: false
+        -
+          name: city
+          in: query
+          description: 'Региона поиска'
+          required: false
+        -
+          name: specialization_id
+          in: query
+          description: 'id необходимой специализации'
+          required: false
+        -
+          name: employment_id
+          in: query
+          description: 'id занятости'
+          required: false
+        -
+          name: program_type_id
+          in: query
+          description: 'id требуемого типа образования'
+          required: false
+        -
+          name: higher_salary
+          in: query
+          description: 'верхнее допустимое значение зарплаты'
+          required: false
+        -
+          name: lower_salary
+          in: query
+          description: 'нижнее допустимое значение зарплаты'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUsers'
+  /api/hr-panel/candidates/applications/share-applications:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод шэринга откликов'
+      operationId: b9bd9a52235fa235dca848fde1fa0f4c
+      requestBody:
+        $ref: '#/components/requestBodies/ShareApplicationsRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/shareApplications'
+  '/api/variants/see-variants/{code}':
+    get:
+      tags:
+        - Approves
+      summary: 'Метод получения пользователей для страницы отображения всех апрувов'
+      operationId: 03da41cb44df496a345d4c111f0d819d
+      parameters:
+        -
+          name: code
+          in: path
+          description: 'код для просмотра откликов для подтверждения'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplicationsByGroupCode'
+  /api/hr-panel/variants/sendApprove:
+    post:
+      tags:
+        - Approves
+      summary: 'Метод отправки апрува'
+      operationId: 902a3e0de04f3d1be70184161f606e67
+      requestBody:
+        $ref: '#/components/requestBodies/SendApproveRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendApprove'
   /api/networking/:
     get:
       tags:
@@ -127,25 +268,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/sendComment'
-  '/api/posts/{id}/comments':
-    get:
-      tags:
-        - CommentController
-      summary: 'Метод получения всех комментариев поста'
-      operationId: da850347cec64e7a5d304db8fc79e6ad
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'id поста'
-          required: true
-      responses:
-        '200':
-          description: 'Ответ при успешном выполнении запроса'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getComments'
   '/api/companies/{id}':
     get:
       tags:
@@ -374,6 +496,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPostsByCompany'
+  '/api/posts/{id}/comments':
+    get:
+      tags:
+        - CommentController
+      summary: 'Метод получения всех комментариев поста'
+      operationId: 08b37e91e3a6336d1fb0558b8dc2cf4d
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getComments'
   /api/hr-panel/resumes/create-from-file:
     post:
       tags:
@@ -438,6 +579,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/editResume'
+  /api/hr-panel/candidates/stages:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех "категорий" для откликов'
+      operationId: cd32d35baebfad9b4605b4d12f2b9730
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getStages'
   /api/vacancies:
     get:
       tags:
@@ -498,7 +652,7 @@ paths:
           description: 'название вакансии'
           required: false
         -
-          name: $accountable_id
+          name: accountable_id
           in: query
           description: 'id ответственного (сущность hr)'
           required: false
@@ -633,7 +787,72 @@ components:
           type: boolean
           example: 'true'
         response:
-          $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/userWithResume'
+      type: object
+    getApplication:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/application'
+      type: object
+    getApplicationByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailApplication'
+      type: object
+    getUsers:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/userWithResume'
+      type: object
+    shareApplications:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+      type: object
+    link:
+      properties:
+        link:
+          type: string
+      type: object
+    getApplicationsByGroupCode:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/userWithResumeAndApplication'
+      type: object
+    sendApprove:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/approve'
       type: object
     getAllChats:
       properties:
@@ -674,16 +893,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/comment'
-      type: object
-    getComments:
-      properties:
-        success:
-          type: boolean
-          example: 'true'
-        response:
-          type: array
-          items:
-            $ref: '#/components/schemas/detailComment'
       type: object
     showCompany:
       properties:
@@ -797,6 +1006,16 @@ components:
         response:
           $ref: '#/components/schemas/post'
       type: object
+    getComments:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailComment'
+      type: object
     createResumeFromDoc:
       properties:
         success:
@@ -836,6 +1055,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/resume'
+      type: object
+    getStages:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/stage'
       type: object
     vacanciesResponse:
       properties:
@@ -1248,6 +1477,42 @@ components:
         company:
           $ref: '#/components/schemas/company'
       type: object
+    evenMoreDetailUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/user'
+        -
+          properties:
+            city:
+              $ref: '#/components/schemas/detailCity'
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/applicationTag'
+          type: object
+    userWithResume:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/evenMoreDetailUser'
+        -
+          properties:
+            resumes:
+              type: array
+              items:
+                $ref: '#/components/schemas/resume'
+          type: object
+    userWithResumeAndApplication:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/userWithResume'
+        -
+          properties:
+            application_id:
+              type: integer
+          type: object
     previewChat:
       properties:
         name:
@@ -1437,6 +1702,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/hrWithUser'
+        program_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/programType'
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/stage'
       type: object
     status:
       properties:
@@ -1537,6 +1810,37 @@ components:
             $ref: '#/components/schemas/skill'
         format:
           $ref: '#/components/schemas/format'
+      type: object
+    evenMoreDetailResume:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/resume'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/evenMoreDetailUser'
+          type: object
+    notSoDetatilResume:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        contact_phone:
+          type: string
+        contact_mail:
+          type: string
+        salary:
+          type: string
       type: object
     languageLevel:
       properties:
@@ -1662,6 +1966,111 @@ components:
           format: date
         updated_at:
           format: date
+      type: object
+    stage:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        stageType:
+          $ref: '#/components/schemas/stageType'
+      type: object
+    stageType:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    application:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        resume:
+          $ref: '#/components/schemas/notSoDetatilResume'
+      type: object
+    detailApplication:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        resume:
+          $ref: '#/components/schemas/evenMoreDetailResume'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/applicationComment'
+        approves:
+          type: array
+          items:
+            $ref: '#/components/schemas/approve'
+      type: object
+    applicationComment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        application_id:
+          type: integer
+      type: object
+    applicationTag:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company_id:
+          type: integer
+      type: object
+    approve:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        surname:
+          type: string
+        application_id:
+          type: integer
+        status_id:
+          type: boolean
       type: object
   requestBodies:
     CreateResumeRequest:
@@ -1866,6 +2275,19 @@ components:
             properties:
               file: {  }
             type: object
+    SendApproveRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              application_id:
+                type: integer
+              name: {  }
+              surname: {  }
+              is_approved:
+                type: boolean
+              comment: {  }
+            type: object
     SendCommentRequest:
       content:
         application/json:
@@ -1902,6 +2324,15 @@ components:
                   description: 'Массив изображений, без base64'
                   type: string
                   format: binary
+            type: object
+    ShareApplicationsRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              application_ids:
+                type: array
+                items: {  }
             type: object
 externalDocs:
   description: 'Как документировать этот код'

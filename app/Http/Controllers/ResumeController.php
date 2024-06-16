@@ -23,8 +23,8 @@ class ResumeController extends Controller
      *         )
      *
      * @OA\Post(
-     *              path="/api/hr-panel/resumes/create-from-file",
-     *              tags={"HR-panel"},
+     *              path="/api/resumes/create-from-file",
+     *              tags={"Resume"},
      *              @OA\RequestBody(ref="#/components/requestBodies/ResumeFileRequest"),
      *              @OA\Response(
      *              response="200",
@@ -62,8 +62,8 @@ class ResumeController extends Controller
      *          )
      *
      * @OA\Get(
-     *               path="/api/hr-panel/resumes/{id}",
-     *               tags={"HR-panel"},
+     *               path="/api/resumes/{id}",
+     *               tags={"Resume"},
      *     @OA\Parameter(
      *             name="id",
      *            in="query",
@@ -95,8 +95,8 @@ class ResumeController extends Controller
      *        )
      *
      * @OA\Post(
-     *             path="/api/hr-panel/resumes/create-resume",
-     *             tags={"HR-panel"},
+     *             path="/api/resumes/create-resume",
+     *             tags={"Resume"},
      *             @OA\RequestBody(ref="#/components/requestBodies/CreateResumeRequest"),
      *             @OA\Response(
      *             response="200",
@@ -119,6 +119,7 @@ class ResumeController extends Controller
                 $request->programSchools,
                 $request->userPositions,
                 $request->employment_id,
+                $request->city_id,
                 $request->specialization_id,
                 $request->position,
                 $request->languageLevels,
@@ -138,8 +139,8 @@ class ResumeController extends Controller
      *         )
      *
      * @OA\Post(
-     *              path="/api/hr-panel/resumes/edit-resume",
-     *              tags={"HR-panel"},
+     *              path="/api/resumes/edit-resume",
+     *              tags={"Resume"},
      *              @OA\RequestBody(ref="#/components/requestBodies/EditResumeRequest"),
      *              @OA\Response(
      *              response="200",
@@ -163,6 +164,7 @@ class ResumeController extends Controller
                 $request->programSchools,
                 $request->userPositions,
                 $request->employment_id,
+                $request->city_id,
                 $request->specialization_id,
                 $request->position,
                 $request->languageLevels,

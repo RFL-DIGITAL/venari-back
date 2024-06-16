@@ -10,10 +10,12 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResumeController;
+use App\Http\Controllers\StageController;
 use App\Http\Controllers\VacancyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,8 +44,10 @@ Route::prefix('companies')->group(function () {
 
 Route::prefix('vacancies')->group(function () {
     Route::get('/{id}', [VacancyController::class, 'getVacancyByID'])->name('getVacancyByID');
+    Route::post('apply', [ApplicationController::class, 'apply'])->name('apply')
+        ->middleware('auth:api');
 
-    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
+    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies')->middleware('auth:api');
 });
 
 Route::middleware('auth:api')->prefix('messages')->group(function () {
@@ -68,12 +72,12 @@ Route::prefix('networking')->group(function () {
 });
 
 Route::prefix('posts')->group(function () {
-    Route::get('{id}/comments', [CommentController::class, 'getComments'])->name('getComments');
+    Route::get('{id}/comments', [PostController::class, 'getComments'])->name('getComments');
     Route::get('{id}', [PostController::class, 'getPostByID'])->name('getPostByID');
     Route::get('', [PostController::class, 'getPosts'])->name('getPosts');
 });
 
-Route::prefix('comments')->group(function () {
+Route::prefix('comments')->middleware('auth:api')->group(function () {
     Route::post('send-comment', [CommentController::class, 'sendComment'])->name('sendComment');
 });
 
@@ -84,6 +88,22 @@ Route::get('/files/{id}', [FileController::class, 'getFileByID'])->name('getFile
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
+Route::prefix('variants')->group(function () {
+   Route::get('see-variants/{code}', [ApplicationController::class, 'getApplicationsByGroupCode'])
+       ->name('getApplicationsByGroupCode');
+   Route::post('send-approve', [ApplicationController::class, 'sendApprove'])->name('sendApprove');
+});
+
+Route::prefix('resumes')->group(function () {
+    Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
+    Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume')->middleware('auth:api');
+    Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume')->middleware('auth:api');;
+    Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
+        ->name('createResumeFromDoc')->middleware('auth:api');
+});
+
+Route::get('resume-filters', [FilterController::class, 'getFiltersForResumeCreation'])->name('getFiltersForResumeCreation');
+
 Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     Route::prefix('vacancies')->group(function () {
         Route::post('create-vacancy', [VacancyController::class, 'createVacancy'])->name('createVacancy');
@@ -92,16 +112,9 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
             ->name('archiveVacancies');
         Route::post('un-archive-vacancies', [VacancyController::class, 'unArchiveVacancies'])
             ->name('unArchiveVacancies');
+        Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
+    });
 
-       Route::get('', [VacancyController::class, 'getVacanciesHR'])->name('getVacanciesHR');
-    });
-    Route::prefix('resumes')->group(function () {
-        Route::get('{id}', [ResumeController::class, 'getResumeByID'])->name('getResumeByID');
-        Route::post('create-resume', [ResumeController::class, 'createResume'])->name('createResume');
-        Route::post('edit-resume', [ResumeController::class, 'editResume'])->name('editResume');
-        Route::post('create-from-file', [ResumeController::class, 'createResumeFromDoc'])
-            ->name('createResumeFromDoc');
-    });
     Route::prefix('calendar')->group(function () {
         Route::post('login-with-google', [CalendarController::class, 'loginWithGoogle'])
             ->name('loginWithGoogle');
@@ -112,4 +125,13 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');
+
+    Route::prefix('candidates')->group(function () {
+        Route::post('change-stages', [ApplicationController::class, 'changeStage']);
+        Route::get('stages', [StageController::class, 'getStages']);
+        Route::get('applications', [ApplicationController::class, 'getApplication']);
+        Route::post('share-applications', [ApplicationController::class, 'shareApplications']);
+        Route::get('applications/{id}', [ApplicationController::class, 'getApplicationByID']);
+        Route::get('', [ApplicationController::class, 'getUsers']);
+    });
 });

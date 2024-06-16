@@ -23,7 +23,7 @@ class SendMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -34,7 +34,9 @@ class SendMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'body' => 'required|string',
+            'image' => 'string',
+            'file' => 'string'
         ];
     }
 }

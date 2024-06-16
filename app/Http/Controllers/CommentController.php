@@ -11,6 +11,7 @@ class CommentController extends Controller
 
     public function __construct(protected CommentService $commentService)
     {
+        $this->middleware('auth:api');
     }
 
     /**
@@ -38,7 +39,7 @@ class CommentController extends Controller
      */
     public function sendComment(Request $request): JsonResponse
     {
-        $userID = auth()->id();
+        $userID = $request->user()->id;
 
         if ($request->exists('parent_id')) {
             return $this->successResponse(
@@ -55,42 +56,6 @@ class CommentController extends Controller
                 $userID,
                 $request->text,
                 $request->post_id,
-            )
-        );
-    }
-
-    /**
-     * Метод получения всех комментариев поста
-     *
-     * @OA\Schema( schema="getComments",
-     *              @OA\Property(property="success",type="boolean",example="true"),
-     *              @OA\Property(property="response",type="array",
-     *                   @OA\Items(ref="#/components/schemas/detailComment")),
-     *   )
-     *
-     * @OA\Get(
-     *        path="/api/posts/{id}/comments",
-     *        tags={"CommentController"},
-     *     @OA\Parameter(
-     *           name="id",
-     *              in="path",
-     *           description="id поста",
-     *           required=true),
-     *        @OA\Response(
-     *        response="200",
-     *        description="Ответ при успешном выполнении запроса",
-     *        @OA\JsonContent(ref="#/components/schemas/getComments")
-     *      )
-     *    )
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function getComments(int $id): JsonResponse
-    {
-        return $this->successResponse(
-            $this->paginate(
-                $this->commentService->getComments($id)
             )
         );
     }
