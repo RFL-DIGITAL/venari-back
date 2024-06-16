@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Google;
 use App\Models\Calendar;
 use App\Models\Event;
+use App\Models\HR;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
@@ -90,7 +91,6 @@ class CalendarService
         $this->client->setAccessToken(session('g_cal_token'));
 
         $title = $calendar->title;
-        dd($calendar);
 
         // todo Поменять в проде на Москву
         $timezone = env('APP_TIMEZONE');
@@ -434,11 +434,12 @@ class CalendarService
         return ['message' => 'Event booked'];
     }
 
-    public function downloadICS(int $calendarId)
+    public function downloadICS(int $hr_id): bool|string
     {
-        $this->client->setAccessToken(session('g_cal_token'));
+        $this->client->setAccessToken(HR::where('id', $hr_id)->token);
 
-        $calendar = Calendar::find($calendarId);
+        $calendar = Calendar::where('hr_id', $hr_id)->first();
+
         $gCalendarID = $calendar->g_calendar_id;
         $gCal = new Google_Service_Calendar($this->client);
 
@@ -452,7 +453,7 @@ class CalendarService
 
         $createdRule = $gCal->acl->insert($gCalendarID, $rule);
 
-        $iCS = Http::get('https://www.google.com/calendar/ical/'.$gCalendarID.'/public/basic.ics');
+        $iCS = file_get_contents('https://www.google.com/calendar/ical/'.$gCalendarID.'/public/basic.ics');
         $gCal->acl->delete($gCalendarID, $createdRule->getId());
 
         return $iCS;

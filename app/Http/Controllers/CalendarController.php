@@ -8,10 +8,13 @@ use App\Services\CalendarService;
 use DateTime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CalendarController extends Controller
 {
-    public function __construct(protected CalendarService $calendarService) {}
+    public function __construct(protected CalendarService $calendarService)
+    {
+    }
 
     public function loginWithGoogle(Request $request): JsonResponse
     {
@@ -66,6 +69,13 @@ class CalendarController extends Controller
                 $request->event_id,
             )
         );
+    }
+
+    public function downloadICS(Request $request): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($request) {
+            echo $this->calendarService->downloadICS($request->user->hrable->id);
+        }, 'calendar.ics');
     }
 
 }
