@@ -43,7 +43,7 @@ class VacancyController extends Controller
      */
     public function getVacancies(Request $request): JsonResponse
     {
-        $innerVacancies = $this->vacancyService->getInnerVacancies($request->user()?->id);
+//        $innerVacancies = $this->vacancyService->getInnerVacancies($request->user()?->id);
 
 
         if (Cache::has('outer_vacancies')) {
@@ -54,15 +54,15 @@ class VacancyController extends Controller
         }
 
 
-        $vacancies = array_merge(
-            $innerVacancies,
-            $outerVacancies
-        );
-
-        shuffle($vacancies);
+//        $vacancies = array_merge(
+//            $innerVacancies,
+//            $outerVacancies
+//        );
+//
+//        shuffle($vacancies);
 
         return $this->successResponse(
-            $this->paginate($vacancies)
+            $this->paginate($outerVacancies)
         );
     }
 

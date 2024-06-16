@@ -8,6 +8,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\StageController;
@@ -47,7 +48,12 @@ Route::prefix('vacancies')->group(function () {
     Route::post('apply', [ApplicationController::class, 'apply'])->name('apply')
         ->middleware('auth:api');
 
-    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies')->middleware('auth:api');
+    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
+});
+
+Route::prefix('notifications')->middleware('auth:api')->group(function () {
+    Route::get('', [NotificationController::class, 'getNotifications'])->name('getNotifications');
+    Route::post('read', [NotificationController::class, 'readNotifications'])->name('readNotifications');
 });
 
 Route::middleware('auth:api')->prefix('messages')->group(function () {

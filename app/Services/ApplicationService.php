@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ApplicationGroup;
 use App\Models\CompanyChat;
 use App\Models\History;
+use App\Models\Notification;
 use App\Models\RejectReason;
 use App\Models\Resume;
 use App\Models\Stage;
@@ -72,18 +73,18 @@ class ApplicationService
 
 
     public function getUsers(
-        ?int $experience_id,
-        ?int $city_id,
-        ?int $specialization_id,
-        ?int $employment_id,
-        ?int $program_type_id,
-        ?int $higher_salary,
-        ?int $lower_salary,
+        ?int    $experience_id,
+        ?int    $city_id,
+        ?int    $specialization_id,
+        ?int    $employment_id,
+        ?int    $program_type_id,
+        ?int    $higher_salary,
+        ?int    $lower_salary,
         ?string $search
     ): array
     {
 
-        if($search) {
+        if ($search) {
             $users = User::search($search)->get()->load([
                 'city.country',
                 'company',
@@ -226,6 +227,11 @@ class ApplicationService
         ]);
         $approve->save();
 
+        $notificationForHR = new Notification();
+        $notificationForHR->text = $name . ' ' . $surname . ' оставил отзыв по вашему списку кандидатов.';
+        $notificationForHR->user_id = Application::where('id', $applicationID)->vacancy->accountable->user->id;
+        $notificationForHR->save();
+
         return $approve->toArray();
     }
 
@@ -281,6 +287,12 @@ class ApplicationService
                         null,
                         User::where('id', $from_id)->first()->hrable->id
                     );
+
+                    $notificationForUser = new Notification();
+                    $notificationForUser->text = 'Вы были приглашены на интервью по вакансии '.
+                        $application->vacancy->position;
+                    $notificationForUser->user_id = $application->resume->user->id;
+                    $notificationForUser->save();
 
                     $history = new History([
                         'text' => 'Приглашён на интервью. Перемещён в категорию "' . $stage->name . '"',
@@ -383,7 +395,8 @@ class ApplicationService
         $history->save();
     }
 
-    public function apply(int $userID, int $vacancyID) {
+    public function apply(int $userID, int $vacancyID)
+    {
         $application = new Application(
             [
                 'resume_id' => Resume::where('user_id', $userID)->first()->id,
