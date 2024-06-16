@@ -31,7 +31,7 @@ class VacancyService
      *
      * @return array массив вакансий с внещнего сервиса
      */
-    public function getOuterVacancies(): array
+    public function getOuterVacancies(?int $userID): array
     {
         $page = Parser::getDocument('https://rntgroup.com/career/vacancies/');
         $pq = phpQuery::newDocument($page);
@@ -67,6 +67,7 @@ class VacancyService
             if ($foundVacancy != null) {
                 $vacancies[] = $foundVacancy->load(
                     [
+                        'applications.resume',
                         'employment',
                         'department.company.image',
                         'experience',
@@ -191,6 +192,7 @@ class VacancyService
 
             $vacancy->load(
                 [
+                    'applications.resume',
                     'employment',
                     'department.company.image',
                     'experience',
@@ -201,7 +203,14 @@ class VacancyService
             $vacancies[] = $vacancy->toArray();
         }
 
-        return $vacancies;
+        if ($userID != null) {
+            $updatedVacancies = [];
+            foreach ($vacancies as $vacancy) {
+                $updatedVacancies[] = $this->setAvailabilityStatusToVacancy($vacancy, $userID);;
+            }
+        }
+
+        return $updatedVacancies;
     }
 
     /**
@@ -211,19 +220,45 @@ class VacancyService
      *
      * @return array массив вакансий из нашей системы
      */
-    public function getInnerVacancies(): array
+    public function getInnerVacancies(?int $userID): array
     {
-        $vacancies = Vacancy::where('is_closed', false)->where('is_outer', false)->get()
-            ->load(
-                [
-                    'employment',
-                    'department.company.image',
-                    'experience',
-                    'city',
-                    'position'
-                ]);
+        $vacancies = Vacancy::where('is_closed', false)->where('is_outer', false)->get()->load(
+            [
+                'applications.resume',
+                'employment',
+                'department.company.image',
+                'experience',
+                'city',
+                'position'
+            ])->toArray();
 
-        return $vacancies->toArray();
+        if ($userID != null) {
+            $updatedVacancies = [];
+            foreach ($vacancies as $vacancy) {
+                $updatedVacancies[] = $this->setAvailabilityStatusToVacancy($vacancy, $userID);;
+            }
+        }
+
+        return $updatedVacancies;
+    }
+
+    public function setAvailabilityStatusToVacancy($vacancy, $userID)
+    {
+        if (count($vacancy['applications']) != 0) {
+            foreach ($vacancy['applications'] as $application) {
+                if ($application['resume']['user_id'] == $userID) {
+                    $vacancy['can_apply'] = false;
+                    break;
+
+                } else {
+                    $vacancy['can_apply'] = true;
+                }
+            }
+        } else {
+            $vacancy['can_apply'] = true;
+        }
+
+        return $vacancy;
     }
 
     /**
@@ -281,11 +316,12 @@ class VacancyService
      * @param int $id - id вакансии
      * @return array
      */
-    public function getVacancyByID(int $id): array
+    public function getVacancyByID(int $id, $userID): array
     {
         $vacancy = Vacancy::where('id', $id)->get()->first()
             ->load(
                 [
+                    'applications.resume',
                     'employment',
                     'department.company.image',
                     'department.company.building.street.city.country',
@@ -294,9 +330,9 @@ class VacancyService
                     'position',
                     'skills',
                     'image',
-                ]);
+                ])->toArray();
 
-        return $vacancy->toArray();
+        return $this->setAvailabilityStatusToVacancy($vacancy, $userID);
     }
 
     /**

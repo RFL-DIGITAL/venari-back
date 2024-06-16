@@ -8,8 +8,10 @@ use App\Models\Experience;
 use App\Models\Format;
 use App\Models\HR;
 use App\Models\ProgramType;
+use App\Models\RejectReason;
 use App\Models\Specialization;
 use App\Models\Status;
+use App\Models\Template;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Stage;
@@ -56,7 +58,9 @@ class FilterController extends Controller
                     'user.company.image',
                 ])->toArray(),
             'program_types' => ProgramType::all()->toArray(),
-            'stages' => Stage::all()->toArray()
+            'stages' => Stage::all()->load('stageType')->toArray(),
+            'templates' => Template::all()->toArray(),
+            'reject_reasons' => RejectReason::all()->toArray(),
         ]);
     }
 }

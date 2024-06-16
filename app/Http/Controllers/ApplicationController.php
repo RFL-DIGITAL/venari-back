@@ -304,4 +304,13 @@ class ApplicationController extends Controller
         );
     }
 
+    public function apply(Request $request) {
+        return $this->successResponse(
+            $this->applicationService->apply(
+                $request->user()->id,
+                $request->get('vacancy_id')
+            )
+        );
+    }
+
 }
