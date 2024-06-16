@@ -44,8 +44,10 @@ Route::prefix('companies')->group(function () {
 
 Route::prefix('vacancies')->group(function () {
     Route::get('/{id}', [VacancyController::class, 'getVacancyByID'])->name('getVacancyByID');
+    Route::post('apply', [ApplicationController::class, 'apply'])->name('apply')
+        ->middleware('auth:api');
 
-    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies');
+    Route::get('', [VacancyController::class, 'getVacancies'])->name('getVacancies')->middleware('auth:api');
 });
 
 Route::middleware('auth:api')->prefix('messages')->group(function () {
@@ -87,7 +89,8 @@ Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
 Route::prefix('variants')->group(function () {
-   Route::get('see-variants/{code}', [ApplicationController::class, 'getApplicationsByGroupCode'])->name('getApplicationsByGroupCode');
+   Route::get('see-variants/{code}', [ApplicationController::class, 'getApplicationsByGroupCode'])
+       ->name('getApplicationsByGroupCode');
    Route::post('send-approve', [ApplicationController::class, 'sendApprove'])->name('sendApprove');
 });
 

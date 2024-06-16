@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateVacancyRequest;
 use App\Http\Requests\EditVacancyRequest;
 use App\Http\Requests\MassVacanciesRequest;
-use App\Models\Vacancy;
 use App\Services\VacancyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -42,14 +41,15 @@ class VacancyController extends Controller
      *
      * @return JsonResponse
      */
-    public function getVacancies(): JsonResponse
+    public function getVacancies(Request $request): JsonResponse
     {
-        $innerVacancies = $this->vacancyService->getInnerVacancies();
+        $innerVacancies = $this->vacancyService->getInnerVacancies($request->user()?->id);
+
 
         if (Cache::has('outer_vacancies')) {
             $outerVacancies = Cache::get('outer_vacancies');
         } else {
-            $outerVacancies = $this->vacancyService->getOuterVacancies();
+            $outerVacancies = $this->vacancyService->getOuterVacancies($request->user()?->id);
             Cache::put('outer_vacancies', $outerVacancies, now()->addMinutes(15));
         }
 
@@ -93,9 +93,9 @@ class VacancyController extends Controller
      * @param int $id - id вакансии
      * @return JsonResponse
      */
-    public function getVacancyByID(int $id): JsonResponse
+    public function getVacancyByID(Request $request, int $id): JsonResponse
     {
-        return $this->successResponse($this->vacancyService->getVacancyByID($id));
+        return $this->successResponse($this->vacancyService->getVacancyByID($id, $request->user()?->id));
     }
 
     /**

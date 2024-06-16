@@ -7,6 +7,7 @@ use App\Models\ApplicationGroup;
 use App\Models\CompanyChat;
 use App\Models\History;
 use App\Models\RejectReason;
+use App\Models\Resume;
 use App\Models\Stage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,6 +49,9 @@ class ApplicationService
     public function getApplicationByID(int $application_id)
     {
         $applications = Application::where('id', $application_id)->with([
+            "histories",
+            'vacancy.position',
+            'vacancy.сity',
             "resume.user.city.country",
             "resume.userPositions.company",
             "resume.userPositions.position",
@@ -61,7 +65,9 @@ class ApplicationService
             "comments.user.image",
             "resume.user.tags",
             "approves"
-        ]);
+        ])->get()->toArray();
+
+//        dd($applications);
 
         return $applications->get()->toArray();
     }
@@ -357,4 +363,18 @@ class ApplicationService
 
         $history->save();
     }
+
+    public function apply(int $userID, int $vacancyID) {
+        $application = new Application(
+            [
+                'resume_id' => Resume::where('user_id', $userID)->first()->id,
+                'vacancy_id' => $vacancyID,
+            ]
+        );
+
+        $application->save();
+
+        return ['message' => 'New application created successfully'];
+    }
+
 }

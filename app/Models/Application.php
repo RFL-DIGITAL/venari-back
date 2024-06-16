@@ -12,6 +12,12 @@ class Application extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'resume_id',
+        'vacancy_id'
+    ];
+
+
     public function comments(): hasMany
     {
         return $this->hasMany(ApplicationComment::class);
