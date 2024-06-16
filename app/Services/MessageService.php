@@ -30,7 +30,7 @@ class MessageService
                                 $links): array
     {
         $messageDTO = [];
-
+        $type = MessageType::tryFrom($type);
         switch ($type) {
             case MessageType::message:
                 if ($body != '') {
