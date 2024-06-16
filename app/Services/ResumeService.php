@@ -166,8 +166,6 @@ class ResumeService
 
     public function createResume(
         int     $user_id,
-        string  $contact_phone,
-        string  $contact_mail,
         string  $salary,
         ?string $description,
         ?array  $programSchools,
@@ -182,8 +180,6 @@ class ResumeService
     ): array
     {
         $resume = new Resume([
-            'contact_phone' => $contact_phone,
-            'contact_mail' => $contact_mail,
             'salary' => $salary,
             'description' => $description == "" ? null : $description,
             'user_id' => $user_id,
@@ -270,8 +266,6 @@ class ResumeService
     public function editResume(
         int     $resume_id,
         int     $user_id,
-        string  $contact_phone,
-        string  $contact_mail,
         string  $salary,
         ?string $description,
         ?array  $programSchools,
@@ -288,8 +282,6 @@ class ResumeService
         $resume = Resume::where('id', $resume_id)->first();
         $resume->update(
             [
-                'contact_phone' => $contact_phone,
-                'contact_mail' => $contact_mail,
                 'salary' => $salary,
                 'description' => $description == "" ? null : $description,
                 'user_id' => $user_id,

@@ -112,8 +112,6 @@ class ResumeController extends Controller
         return $this->successResponse(
             $this->resumeService->createResume(
                 $request->user()->id,
-                $request->contact_phone,
-                $request->contact_mail,
                 $request->salary,
                 $request->description,
                 $request->programSchools,
@@ -157,8 +155,6 @@ class ResumeController extends Controller
             $this->resumeService->editResume(
                 $request->id,
                 $request->user()->id,
-                $request->contact_phone,
-                $request->contact_mail,
                 $request->salary,
                 $request->description,
                 $request->programSchools,
