@@ -122,8 +122,8 @@ class CalendarService
     ): array
     {
         foreach ($days as $day) {
-            $startDateTime = DateTime::createFromFormat('H:i d-m-Y', $startTime . ' ' . $day);
-            $endDateTime = DateTime::createFromFormat('H:i d-m-Y', $endTime . ' ' . $day);
+            $startDateTime = DateTime::createFromFormat('H:i d.m.Y', $startTime . ' ' . $day);
+            $endDateTime = DateTime::createFromFormat('H:i d.m.Y', $endTime . ' ' . $day);
 
             $i = $startDateTime;
 
