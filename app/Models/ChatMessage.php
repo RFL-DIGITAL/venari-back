@@ -10,7 +10,7 @@ use Laravel\Scout\Searchable;
 
 class ChatMessage extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $fillable = [
         'owner_id',

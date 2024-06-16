@@ -9,7 +9,7 @@ use Laravel\Scout\Searchable;
 
 class LinkMessage extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $fillable = [
         'link'

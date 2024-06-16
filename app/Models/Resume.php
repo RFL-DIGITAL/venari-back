@@ -13,7 +13,7 @@ use Laravel\Scout\Searchable;
 
 class Resume extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $fillable = [
         'contact_phone',

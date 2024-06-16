@@ -11,7 +11,7 @@ use Laravel\Scout\Searchable;
 
 class Chat extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $appends = [
         'member_count',

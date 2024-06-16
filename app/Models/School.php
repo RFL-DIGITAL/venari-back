@@ -10,7 +10,8 @@ use Laravel\Scout\Searchable;
 
 class School extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'name'

@@ -12,7 +12,7 @@ use Laravel\Scout\Searchable;
 
 class Vacancy extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     public static int $DEFAULT_DEPARTMENT_ID = 1;
 

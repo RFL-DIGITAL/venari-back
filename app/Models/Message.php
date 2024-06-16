@@ -10,7 +10,7 @@ use Laravel\Scout\Searchable;
 
 class Message extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $fillable = [
         'from_id',

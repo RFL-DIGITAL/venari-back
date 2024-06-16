@@ -10,7 +10,7 @@ use Laravel\Scout\Searchable;
 
 class CompanyChat extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     public function company(): BelongsTo
     {
