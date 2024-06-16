@@ -51,7 +51,7 @@ class ApplicationService
         $applications = Application::where('id', $application_id)->with([
             "histories",
             'vacancy.position',
-            'vacancy.сity',
+            'vacancy.city',
             "resume.user.city.country",
             "resume.userPositions.company",
             "resume.userPositions.position",
@@ -65,11 +65,9 @@ class ApplicationService
             "comments.user.image",
             "resume.user.tags",
             "approves"
-        ])->get()->toArray();
+        ])->get();
 
-//        dd($applications);
-
-        return $applications->get()->toArray();
+        return $applications->toArray();
     }
 
 
