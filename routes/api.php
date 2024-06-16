@@ -122,7 +122,7 @@ Route::middleware('auth:api')->prefix('hr-panel')->group(function () {
         Route::get('get-calendar-id', [CalendarController::class, 'getCalendarID'])->name('getCalendarID');
         Route::post('get-available-slots', [CalendarController::class, 'getAvailableSlotsInMonth'])->name('getAvailableSlotsInMonth');
         Route::post('book-event', [CalendarController::class, 'bookSlot'])->name('bookSlot');
-        Route::get('download-ics', [CalendarController::class, 'downloadIcs'])->name('downloadIcs');
+        Route::get('download-ics', [CalendarController::class, 'downloadICS'])->name('downloadIcs');
     });
 
     Route::get('filters', [FilterController::class, 'getAllFilters'])->name('getAllFilters');
