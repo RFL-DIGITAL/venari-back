@@ -288,7 +288,7 @@ class ApplicationService
                         'companyMessage',
                         null,
                         null,
-                        User::where('id', $from_id)->first()->hrable->id
+                        [User::where('id', $from_id)->first()->hrable->id]
                     );
 
                     $history = new History([
