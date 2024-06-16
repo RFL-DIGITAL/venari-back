@@ -301,7 +301,7 @@ class ApplicationController extends Controller
             $this->applicationService->changeStage(
                 $request->get('stage_id'),
                 $request->get('application_ids'),
-                $request->user()->id,
+                auth()->id(),
                 $request->get('reject_reason_id'),
                 $request->get('is_send_reject_message'),
                 $request->get('reject_message'),
@@ -314,7 +314,7 @@ class ApplicationController extends Controller
     public function apply(Request $request) {
         return $this->successResponse(
             $this->applicationService->apply(
-                $request->user()->id,
+                auth()->id(),
                 $request->get('vacancy_id')
             )
         );
