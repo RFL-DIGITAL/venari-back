@@ -13,8 +13,18 @@ class PostService
     private string $HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
 
 
-    public function getInnerPosts(): array
+    public function getInnerPosts(?string $search = null): array
     {
+
+        if($search) {
+            $posts = Post::search($search)->get()->load([
+                'user.image',
+                'user.hrable.company.image',
+                'images',
+            ]);
+            return $posts->toArray();
+        }
+
         $posts = Post::where('source', 'venari')->get()
             ->load([
                 'user.image',

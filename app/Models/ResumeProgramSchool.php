@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 /**
  * Связывающая сущность, реализующая многие-ко-многим между Resume и ProgramSchool
  */
 class ResumeProgramSchool extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $table = 'program_school_resumes';
 

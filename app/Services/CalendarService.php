@@ -120,14 +120,15 @@ class CalendarService
     ): array
     {
         foreach ($days as $day) {
-            $startDateTime = DateTime::createFromFormat('H:i d-m-Y', $startTime . ' ' . $day);
-            $endDateTime = DateTime::createFromFormat('H:i d-m-Y', $endTime . ' ' . $day);
+            $startDateTime = DateTime::createFromFormat('H:i d.m.Y', $startTime . ' ' . $day);
+            $endDateTime = DateTime::createFromFormat('H:i d.m.Y', $endTime . ' ' . $day);
 
             $i = $startDateTime;
 
             while ($i < $endDateTime) {
                 $endDateTimeApproximate = clone $i;
                 $endDateTimeApproximate = $endDateTimeApproximate->modify('+' . $slotDuration . ' minutes');
+
                 if ($endDateTimeApproximate <= $endDateTime) {
 
                     if (Event::where(function (Builder $query) use ($i, $endDateTimeApproximate) {
@@ -154,9 +155,8 @@ class CalendarService
 
                     $event->save();
 
-                    if (session('g_cal_token')) {
-                        $this->createGEvent($event, $isCreateMeets);
-                    }
+                    $this->createGEvent($event, $isCreateMeets);
+
                 }
 
                 $i = clone $endDateTimeApproximate;
@@ -172,7 +172,8 @@ class CalendarService
     {
         $baseTimezone = env('APP_TIMEZONE');
 
-        $this->client->setAccessToken(session('g_cal_token'));
+
+        $this->client->setAccessToken(auth()->user()->hrable->token);
 
         $startDateTime = Carbon::createFromFormat('Y/m/d H:i', $event->datetime_start->format('Y/m/d H:i'),
             $baseTimezone);
@@ -434,11 +435,11 @@ class CalendarService
         return ['message' => 'Event booked'];
     }
 
-    public function downloadICS(int $hr_id): bool|string
+    public function downloadICS(): bool|string
     {
-        $this->client->setAccessToken(HR::where('id', $hr_id)->token);
+        $this->client->setAccessToken(auth()->user()->hrable->token);
 
-        $calendar = Calendar::where('hr_id', $hr_id)->first();
+        $calendar = Calendar::where('hr_id', auth()->user()->hrable->id)->first();
 
         $gCalendarID = $calendar->g_calendar_id;
         $gCal = new Google_Service_Calendar($this->client);

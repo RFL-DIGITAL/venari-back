@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Models\City;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
@@ -116,5 +118,28 @@ class User extends Authenticatable
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(ApplicationTag::class, 'application_tag_users');
+    }
+
+    /**
+     * Переопределение массива индекса модели по умолчанию
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+        $array['search_country'] = implode(',',$this->city()->pluck('name')->toArray());
+        $array['resume_description'] = implode(',', $this->resumes()->pluck('description')->toArray());
+        $array['resume_solary'] = implode(',', $this->resumes()->with('userPositions')->pluck('salary')->toArray());
+        $skillsCollection = User::with('resumes.skills')->get();
+        $skills = [];
+        foreach ($skillsCollection as $skill)
+        {
+            if($skill?->skill?->name) {
+                $skills[] = $skill?->skill?->name;
+            }
+        }
+        $array['skills'] = implode(',', $skills);
+        return $array;
     }
 }
