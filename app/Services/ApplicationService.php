@@ -65,7 +65,7 @@ class ApplicationService
             "comments.user.image",
             "resume.user.tags",
             "approves"
-        ])->get();
+        ])->first();
 
         return $applications->toArray();
     }
