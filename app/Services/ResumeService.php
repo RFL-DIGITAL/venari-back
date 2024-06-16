@@ -202,7 +202,7 @@ class ResumeService
             $resumeProgramSchool = new ResumeProgramSchool([
                 'programSchool_id' => $programSchoolModel->id,
                 'resume_id' => $resume->id,
-                'start_date' => $programSchool['start_date'],
+                'start_date' => $programSchool['start_date'] ?? null,
                 'end_date' => $programSchool['end_date']
             ]);
 
@@ -303,7 +303,7 @@ class ResumeService
             $resumeProgramSchool = ResumeProgramSchool::firstOrCreate([
                 'programSchool_id' => $programSchoolModel->id,
                 'resume_id' => $resume->id,
-                'start_date' => $programSchool['start_date'],
+                'start_date' => $programSchool['start_date'] ?? null,
                 'end_date' => $programSchool['end_date']
             ]);
 
