@@ -25,7 +25,6 @@ jobs:
             cd ..;
             cp -r venari-back/* public_html/;
             cd public_html;
-            composer install;
             php artisan migrate;
             php artisan optimize;
             chmod -R ugo+rw vendor;
