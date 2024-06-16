@@ -171,7 +171,7 @@ class ApplicationService
         }
         $applicationGroup->save();
 
-        return route("getApplicationsByGroupCode", $applicationGroup->code);
+        return $applicationGroup->code;
     }
 
     public function getApplicationsByGroupCode($code): array
