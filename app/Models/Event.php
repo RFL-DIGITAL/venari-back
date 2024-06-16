@@ -16,7 +16,7 @@ class Event extends Model
         'calendar_id',
     ];
 
-    use HasFactory, Searchable;
+    use HasFactory;
 
     public function calendar(): BelongsTo
     {
