@@ -304,7 +304,7 @@ class ApplicationService
                     $this->messageService->sendMessage(
                         $from_id,
                         $companyChat->id,
-                        $offerMessage,
+                        $offerMessage ?? "Вам направлено приглашение на работу",
                         'companyMessage',
                         null,
                         null,
