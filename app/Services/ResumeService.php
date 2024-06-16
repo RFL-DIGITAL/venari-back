@@ -28,8 +28,8 @@ class ResumeService
         $dataForResume = $this->parseData($request->file('file'));
 
         $resume = new Resume([
-            'contact_phone' => $dataForResume['phone'] == "" ? null : $dataForResume['phone'],
-            'contact_mail' => $dataForResume['email'] == "" ? null : $dataForResume['email'],
+//            'contact_phone' => $dataForResume['phone'] == "" ? null : $dataForResume['phone'],
+//            'contact_mail' => $dataForResume['email'] == "" ? null : $dataForResume['email'],
             'salary' => $dataForResume['salary'] == "" ? null : $dataForResume['salary'],
             'description' => $dataForResume['additional'] == "" ? null : $dataForResume['additional'],
             'user_id' => $request->user()->id,
