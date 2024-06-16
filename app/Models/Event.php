@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class Event extends Model
 {
@@ -15,7 +16,7 @@ class Event extends Model
         'calendar_id',
     ];
 
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function calendar(): BelongsTo
     {
