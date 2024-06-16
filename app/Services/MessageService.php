@@ -8,6 +8,7 @@ use App\DTO\MessageType;
 use App\Events\NewChatMessageEvent;
 use App\Events\NewCompanyMessageEvent;
 use App\Events\NewMessageEvent;
+use App\Helper;
 use App\Models\ChatMessage;
 use App\Models\CompanyMessage;
 use App\Models\File;
@@ -306,20 +307,11 @@ class MessageService
     {
         $imageMessage = new ImageMessage();
 
-        $imageModel = new Image(
-            [
-                'image' => $image,
-                'description' => 'Картинка в чате'
-            ]
-        );
-        $imageModel->save();
-
-        $imageMessage->image()->associate($imageModel);
+        $imageMessage->image()->associate(Helper::createNewImageModel($image));
         $imageMessage->message()->associate($message);
         $imageMessage->save();
     }
 
-    // todo: создание сообщений с ссылкой
     private function createLinkMessage($message, $link): void
     {
         $linkMessage = new LinkMessage(

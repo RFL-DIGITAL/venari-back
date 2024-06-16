@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Crypt;
 use OpenApi\Annotations as OA;
 
 use App\Models\Post;
@@ -23,7 +25,6 @@ class UserController extends Controller
 
 
     /**
-     *
      * Метод регистрации
      *
      * @OA\Schema( schema="registerUser",
@@ -46,11 +47,20 @@ class UserController extends Controller
      * @param RegisterRequest $request
      * @return JsonResponse
      */
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $this->userService->register($request->get('login'),
+        $data = $this->userService->register(
+            $request->get('first_name'),
+            $request->get('middle_name'),
+            $request->get('last_name'),
+            $request->get('birth_date'),
             $request->get('email'),
-            $request->get('password'));
+            $request->get('password'),
+            $request->get('phone'),
+            $request->get('user_name'),
+            $request->get('sex'),
+            $request->get('image')
+        );
 
         return $this->successResponse($data);
     }
