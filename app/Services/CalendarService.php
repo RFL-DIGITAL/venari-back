@@ -7,6 +7,7 @@ use App\Models\Calendar;
 use App\Models\CompanyChat;
 use App\Models\Event;
 use App\Models\HR;
+use App\Models\Notification;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
@@ -121,8 +122,8 @@ class CalendarService
     ): array
     {
         foreach ($days as $day) {
-            $startDateTime = DateTime::createFromFormat('H:i d.m.Y', $startTime . ' ' . $day);
-            $endDateTime = DateTime::createFromFormat('H:i d.m.Y', $endTime . ' ' . $day);
+            $startDateTime = DateTime::createFromFormat('H:i d-m-Y', $startTime . ' ' . $day);
+            $endDateTime = DateTime::createFromFormat('H:i d-m-Y', $endTime . ' ' . $day);
 
             $i = $startDateTime;
 
@@ -439,12 +440,19 @@ class CalendarService
         $this->messageService->sendMessage(
             $user->id,
             $companyChatID,
-            'Подтверждена запись на интервью. Дата и время: '.date('H:i d.m.Y', strtotime($event->datetime_start)).' Ссылка на Google Meet: '.$event->meet_link,
+            'Подтверждена запись на интервью. Дата и время: ' . date('H:i d.m.Y', strtotime($event->datetime_start)) . ' Ссылка на Google Meet: ' . $event->meet_link,
             'companyMessage',
             null,
             null,
             null
         );
+
+        $user = User::where('id', $userID);
+
+        $notificationForHR = new Notification();
+        $notificationForHR->text = $user->first_name . ' ' . $user->last_name . ' записался на интервью ' . date('H:i d.m.Y', strtotime($event->datetime_start)) . '. Всреча уже у вас в календаре';
+        $notificationForHR->user_id = HR::where('id', $hrID)->user->id;
+        $notificationForHR->save();
 
         return ['message' => 'Event booked'];
     }
@@ -468,7 +476,7 @@ class CalendarService
 
         $createdRule = $gCal->acl->insert($gCalendarID, $rule);
 
-        $iCS = file_get_contents('https://www.google.com/calendar/ical/'.$gCalendarID.'/public/basic.ics');
+        $iCS = file_get_contents('https://www.google.com/calendar/ical/' . $gCalendarID . '/public/basic.ics');
         $gCal->acl->delete($gCalendarID, $createdRule->getId());
 
         return $iCS;

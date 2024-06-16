@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Employment;
 use App\Models\Experience;
 use App\Models\Image;
+use App\Models\Notification;
 use App\Models\Position;
 use App\Models\Skill;
 use App\Models\User;
@@ -202,6 +203,8 @@ class VacancyService
 
             $vacancies[] = $vacancy->toArray();
         }
+
+        $updatedVacancies = $vacancies;
 
         if ($userID != null) {
             $updatedVacancies = [];
@@ -412,6 +415,17 @@ class VacancyService
                 'description' => '',
             ]
         );
+
+        $users = User::whereHas('position', function ($query) use ($position) {
+            $query->where('id', $position->id);
+        })->get();
+
+        foreach ($users as $user) {
+            $notificationForUser = new Notification();
+            $notificationForUser->text = 'Появилась новая вакансия по вашей специальности!';
+            $notificationForUser->user_id = $user->id;
+            $notificationForUser->save();
+        }
 
         if ($image != null) {
             $imageModel = new Image(
