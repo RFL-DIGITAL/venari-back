@@ -17,6 +17,7 @@ class ApplicationController extends Controller
 
     public function __construct(protected ApplicationService $applicationService)
     {
+        $this->middleware('auth:api');
     }
 
 
