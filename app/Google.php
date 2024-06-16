@@ -6,7 +6,7 @@ use Google_Client;
 
 class Google
 {
-    private string $SECRETS_PATH = __DIR__.'\secrets.json';
+    private string $SECRETS_PATH = __DIR__.'/secrets.json';
 
 
     public function client()
