@@ -284,7 +284,7 @@ class ApplicationService
                     $this->messageService->sendMessage(
                         $from_id,
                         $companyChat->id,
-                        $interViewMessage,
+                        $interViewMessage ?? "Приглашение на интервью",
                         'companyMessage',
                         null,
                         null,
