@@ -33,8 +33,11 @@ class RegisterRequest extends FormRequest
     {
         return [
             'email' => 'email|required',
-            'login' => 'required|string|min:8',
             'password' => 'required|string|min:8',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'user_name' => 'required|string',
+            'sex' => 'required|bool',
         ];
     }
 }
