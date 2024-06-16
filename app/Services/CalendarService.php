@@ -425,10 +425,11 @@ class CalendarService
         return $calendar;
     }
 
-    public function bookSlot(int $eventID)
+    public function bookSlot(int $userID, int $eventID)
     {
         $event = Event::where('id', $eventID)->first();
         $event->is_picked = true;
+        $event->user_id = $userID;
         $event->save();
 
         return ['message' => 'Event booked'];
