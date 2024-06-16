@@ -235,8 +235,8 @@ class ResumeService
         foreach ($userPositions as $userPosition) {
             $userPosition = UserPosition::firstOrCreate([
                 'user_id' => $user_id,
-                'company_id' => $userPosition['company_id'],
-                'position_id' => $userPosition['position_id'],
+                'company_id' => Company::firstOrCreate(['name' => $userPosition['company_id']]),
+                'position_id' => Position::firstOrCreate(['name' => $userPosition['position_id']]),
                 'start_date' => $userPosition['start_date'],
                 'end_date' => $userPosition['end_date'] == null ? null : $userPosition['end_date'],
                 'description' => $userPosition['description'],
@@ -345,8 +345,8 @@ class ResumeService
         foreach ($userPositions as $userPosition) {
             $userPosition = UserPosition::firstOrCreate([
                 'user_id' => $user_id,
-                'company_id' => $userPosition['company_id'],
-                'position_id' => $userPosition['position_id'],
+                'company_id' => Company::firstOrCreate(['name' => $userPosition['company_id']]),
+                'position_id' => Position::firstOrCreate(['name' => $userPosition['position_id']]),
                 'start_date' => $userPosition['start_date'],
                 'end_date' => $userPosition['end_date'] == null ? null : $userPosition['end_date'],
                 'description' => $userPosition['description'],
