@@ -29,7 +29,7 @@ class PostFactory extends Factory
             'user_id' => $userID,
             'title' => $this->faker->sentence(),
             'likes' => $this->faker->randomDigit()*100,
-            'user_name' => User::where('id', $userID)->first()->name,
+            'user_name' => User::where('id', $userID)->first()->first_name,
         ];
     }
 }

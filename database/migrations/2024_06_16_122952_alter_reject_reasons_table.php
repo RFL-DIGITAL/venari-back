@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('program_school_resumes', function (Blueprint $table) {
-            $table->dateTime('start_date')->nullable()->change();
+        Schema::table('reject_reasons', function (Blueprint $table) {
+            $table->dropColumn('text');
+            $table->string('name')->nullable();
         });
     }
 
@@ -21,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('reject_reasons', function (Blueprint $table) {
+            $table->dropColumn('name');
+            $table->string('text')->nullable();
+        });
     }
 };

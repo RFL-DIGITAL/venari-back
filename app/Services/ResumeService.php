@@ -166,8 +166,6 @@ class ResumeService
 
     public function createResume(
         int     $user_id,
-        string  $contact_phone,
-        string  $contact_mail,
         string  $salary,
         ?string $description,
         ?array  $programSchools,
@@ -182,8 +180,6 @@ class ResumeService
     ): array
     {
         $resume = new Resume([
-            'contact_phone' => $contact_phone,
-            'contact_mail' => $contact_mail,
             'salary' => $salary,
             'description' => $description == "" ? null : $description,
             'user_id' => $user_id,
@@ -200,7 +196,7 @@ class ResumeService
         foreach ($programSchools as $programSchool) {
 
             $programSchoolModel = ProgramSchool::firstOrCreate(['program_id' => $programSchool['program_id'],
-                'school_id' => $programSchool['school_id']]);
+                'school_id' => School::firstOrCreate(['name' => $programSchool['school_id']])->id]);
 
             $resumeProgramSchool = new ResumeProgramSchool([
                 'programSchool_id' => $programSchoolModel->id,
@@ -235,8 +231,8 @@ class ResumeService
         foreach ($userPositions as $userPosition) {
             $userPosition = UserPosition::firstOrCreate([
                 'user_id' => $user_id,
-                'company_id' => $userPosition['company_id'],
-                'position_id' => $userPosition['position_id'],
+                'company_id' => Company::firstOrCreate(['name' => $userPosition['company_id']])->id,
+                'position_id' => Position::firstOrCreate(['name' => $userPosition['position_id']])->id,
                 'start_date' => $userPosition['start_date'],
                 'end_date' => $userPosition['end_date'] == null ? null : $userPosition['end_date'],
                 'description' => $userPosition['description'],
@@ -270,8 +266,6 @@ class ResumeService
     public function editResume(
         int     $resume_id,
         int     $user_id,
-        string  $contact_phone,
-        string  $contact_mail,
         string  $salary,
         ?string $description,
         ?array  $programSchools,
@@ -288,8 +282,6 @@ class ResumeService
         $resume = Resume::where('id', $resume_id)->first();
         $resume->update(
             [
-                'contact_phone' => $contact_phone,
-                'contact_mail' => $contact_mail,
                 'salary' => $salary,
                 'description' => $description == "" ? null : $description,
                 'user_id' => $user_id,
@@ -306,7 +298,7 @@ class ResumeService
         foreach ($programSchools as $programSchool) {
 
             $programSchoolModel = ProgramSchool::firstOrCreate(['program_id' => $programSchool['program_id'],
-                'school_id' => $programSchool['school_id']]);
+                'school_id' => School::firstOrCreate(['name' => $programSchool['school_id']])->id]);
 
             $resumeProgramSchool = ResumeProgramSchool::firstOrCreate([
                 'programSchool_id' => $programSchoolModel->id,
@@ -345,8 +337,8 @@ class ResumeService
         foreach ($userPositions as $userPosition) {
             $userPosition = UserPosition::firstOrCreate([
                 'user_id' => $user_id,
-                'company_id' => $userPosition['company_id'],
-                'position_id' => $userPosition['position_id'],
+                'company_id' => Company::firstOrCreate(['name' => $userPosition['company_id']])->id,
+                'position_id' => Position::firstOrCreate(['name' => $userPosition['position_id']])->id,
                 'start_date' => $userPosition['start_date'],
                 'end_date' => $userPosition['end_date'] == null ? null : $userPosition['end_date'],
                 'description' => $userPosition['description'],
