@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $appends = [
         'comment_count'
@@ -44,4 +46,22 @@ class Post extends Model
     {
         return $this->belongsToMany(Image::class);
     }
+
+
+
+    /**
+     * Переопределение массива индекса модели по умолчанию
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+        $array['categories'] = implode(',', $this->categories()->pluck('name')->toArray());
+
+        return $array;
+    }
+
+
+
 }

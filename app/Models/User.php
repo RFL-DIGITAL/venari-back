@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Crypt;
 use Laravel\Passport\HasApiTokens;
 use App\Models\City;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -65,7 +65,6 @@ class User extends Authenticatable
     ];
 
 
-
     public function hrable(): MorphTo
     {
         return $this->morphTo();
@@ -73,32 +72,6 @@ class User extends Authenticatable
 
     public function messages(): hasMany {
         return $this->hasMany(Message::class, 'from_id', 'id');
-    }
-
-    public function getFirstNameAttribute(): string {
-        return Crypt::decrypt($this->attributes['first_name']);
-    }
-
-    public function getLastNameAttribute(): string {
-        return Crypt::decrypt($this->attributes['last_name']);
-    }
-
-    public function getDateOfBirthAttribute(): ?string {
-        return $this->attributes['date_of_birth'] != null ?
-            Crypt::decrypt($this->attributes['date_of_birth']):
-            $this->attributes['date_of_birth'];
-    }
-
-    public function getPhoneAttribute(): ?string {
-        return $this->attributes['phone'] != null ?
-            Crypt::decrypt($this->attributes['phone']):
-            $this->attributes['phone'];
-    }
-
-    public function getMiddleNameAttribute(): ?string {
-        return $this->attributes['middle_name'] != null ?
-            Crypt::decrypt($this->attributes['middle_name']):
-            $this->attributes['middle_name'];
     }
 
     public function chats(): BelongsToMany {
@@ -145,5 +118,28 @@ class User extends Authenticatable
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(ApplicationTag::class, 'application_tag_users');
+    }
+
+    /**
+     * Переопределение массива индекса модели по умолчанию
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+        $array['search_country'] = implode(',',$this->city()->pluck('name')->toArray());
+        $array['resume_description'] = implode(',', $this->resumes()->pluck('description')->toArray());
+        $array['resume_solary'] = implode(',', $this->resumes()->with('userPositions')->pluck('salary')->toArray());
+        $skillsCollection = User::with('resumes.skills')->get();
+        $skills = [];
+        foreach ($skillsCollection as $skill)
+        {
+            if($skill?->skill?->name) {
+                $skills[] = $skill?->skill?->name;
+            }
+        }
+        $array['skills'] = implode(',', $skills);
+        return $array;
     }
 }

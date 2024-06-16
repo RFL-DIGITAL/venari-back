@@ -14,6 +14,7 @@ class CalendarController extends Controller
 {
     public function __construct(protected CalendarService $calendarService)
     {
+        $this->middleware('auth:api');
     }
 
     public function loginWithGoogle(Request $request): JsonResponse
@@ -77,7 +78,7 @@ class CalendarController extends Controller
     public function downloadICS(Request $request): StreamedResponse
     {
         return response()->streamDownload(function () use ($request) {
-            echo $this->calendarService->downloadICS($request->user->hrable->id);
+            echo $this->calendarService->downloadICS(auth()->user()->hrable->id);
         }, 'calendar.ics');
     }
 

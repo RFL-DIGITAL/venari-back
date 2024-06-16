@@ -146,6 +146,11 @@ paths:
           in: query
           description: 'нижнее допустимое значение зарплаты'
           required: false
+        -
+          name: search
+          in: query
+          description: 'строка поиска'
+          required: false
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
@@ -515,12 +520,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getComments'
-  /api/hr-panel/resumes/create-from-file:
+  /api/resumes/create-from-file:
     post:
       tags:
-        - HR-panel
+        - Resume
       summary: 'Метод создания резюме из загруженного .doc файла'
-      operationId: 60011d77dc3dca7500f074072ad2dfa4
+      operationId: 2844559213379bc0d17b91ce3833188c
       requestBody:
         $ref: '#/components/requestBodies/ResumeFileRequest'
       responses:
@@ -530,12 +535,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/createResumeFromDoc'
-  '/api/hr-panel/resumes/{id}':
+  '/api/resumes/{id}':
     get:
       tags:
-        - HR-panel
+        - Resume
       summary: 'Метод получения резюме по id'
-      operationId: a4b6abfc65340bf718f27002874053c1
+      operationId: 722fd984a509b02d02217ce2530daf73
       parameters:
         -
           name: id
@@ -549,12 +554,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getResumeByID'
-  /api/hr-panel/resumes/create-resume:
+  /api/resumes/create-resume:
     post:
       tags:
-        - HR-panel
+        - Resume
       summary: 'Метод создания резюме'
-      operationId: 79cee936f8ea7080738bb76e4e95d8f0
+      operationId: c2cbfc2867a91f3765dac713125f4900
       requestBody:
         $ref: '#/components/requestBodies/CreateResumeRequest'
       responses:
@@ -564,12 +569,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/createResume'
-  /api/hr-panel/resumes/edit-resume:
+  /api/resumes/edit-resume:
     post:
       tags:
-        - HR-panel
+        - Resume
       summary: 'Метод обновления данных в резюме'
-      operationId: 9f7ce4d19b756bad855af8ff5eb79d68
+      operationId: 2dba6aa968a1a4be94c23a9abc3810b7
       requestBody:
         $ref: '#/components/requestBodies/EditResumeRequest'
       responses:

@@ -80,9 +80,30 @@ class ApplicationService
         ?int $employment_id,
         ?int $program_type_id,
         ?int $higher_salary,
-        ?int $lower_salary
+        ?int $lower_salary,
+        ?string $search
     ): array
     {
+
+        if($search) {
+            $users = User::search($search)->get()->load([
+                'city.country',
+                'company',
+                'position',
+                'image',
+                'resumes.userPositions.company',
+                'resumes.userPositions.position',
+                'resumes.languageLevels.language',
+                'resumes.languageLevels.level',
+                'resumes.skills',
+                'resumes.resumeProgramSchools.programSchool.program.programType',
+                'resumes.resumeProgramSchools.programSchool.school',
+                'resumes.position',
+                'resumes.specialization',
+                'tags'
+            ]);
+            return $users->toArray();
+        }
 
         $usersBuilder = User::with('resumes');
         if ($experience_id) {
@@ -150,7 +171,7 @@ class ApplicationService
         }
         $applicationGroup->save();
 
-        return route("getApplicationsByGroupCode", $applicationGroup->code);
+        return $applicationGroup->code;
     }
 
     public function getApplicationsByGroupCode($code): array
