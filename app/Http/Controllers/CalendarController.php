@@ -67,7 +67,10 @@ class CalendarController extends Controller
     {
         return $this->successResponse(
             $this->calendarService->bookSlot(
+                $request->user()->id,
                 $request->event_id,
+                $request->company_chat_id,
+                $request->hr_id
             )
         );
     }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Google;
 use App\Models\Calendar;
+use App\Models\CompanyChat;
 use App\Models\Event;
 use App\Models\HR;
 use App\Models\User;
@@ -30,7 +31,7 @@ class CalendarService
 
     private $client;
 
-    public function __construct(protected Google $google)
+    public function __construct(protected Google $google, protected MessageService $messageService)
     {
         $this->client = $this->google->client();
     }
@@ -426,11 +427,24 @@ class CalendarService
         return $calendar;
     }
 
-    public function bookSlot(int $eventID)
+    public function bookSlot(int $userID, int $eventID, int $companyChatID, int $hrID)
     {
         $event = Event::where('id', $eventID)->first();
         $event->is_picked = true;
+        $event->user_id = $userID;
         $event->save();
+
+        $user = User::where('hrable_id', $hrID)->first();
+
+        $this->messageService->sendMessage(
+            $user->id,
+            $companyChatID,
+            'Подтверждена запись на интервью. Дата и время: '.date('H:i d.m.Y', strtotime($event->datetime_start)).' Ссылка на Google Meet: '.$event->meet_link,
+            'companyMessage',
+            null,
+            null,
+            null
+        );
 
         return ['message' => 'Event booked'];
     }
