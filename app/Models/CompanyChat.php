@@ -12,6 +12,11 @@ class CompanyChat extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'company_id',
+        'user_id'
+    ];
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
