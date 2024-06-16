@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\Company;
 use App\Models\Department;
 use App\Models\Employment;
 use App\Models\Experience;
 use App\Models\Format;
 use App\Models\HR;
+use App\Models\Language;
+use App\Models\Level;
+use App\Models\Position;
+use App\Models\Program;
 use App\Models\ProgramType;
 use App\Models\RejectReason;
+use App\Models\School;
 use App\Models\Specialization;
 use App\Models\Status;
 use App\Models\Template;
@@ -61,6 +68,23 @@ class FilterController extends Controller
             'stages' => Stage::all()->load('stageType')->toArray(),
             'templates' => Template::all()->toArray(),
             'reject_reasons' => RejectReason::all()->toArray(),
+        ]);
+    }
+
+    public function getFiltersForResumeCreation(): JsonResponse
+    {
+        return $this->successResponse([
+            'employments' => Employment::all()->toArray(),
+            'formats' => Format::all()->toArray(),
+            'specializations' => Specialization::all()->toArray(),
+            'city' => City::all()->toArray(),
+            'languages' => Language::all()->toArray(),
+            'level' => Level::all()->toArray(),
+            'universities' => School::all()->toArray(),
+            'programs' => Program::all()->toArray(),
+            'program_types' => ProgramType::all()->toArray(),
+            'companies' => Company::all()->toArray(),
+            'positions' => Position::all()->toArray(),
         ]);
     }
 }

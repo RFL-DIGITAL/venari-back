@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\City;
 use App\Models\Company;
 use App\Models\Employment;
 use App\Models\Format;
@@ -17,6 +18,7 @@ use App\Models\ResumeProgramSchool;
 use App\Models\School;
 use App\Models\Skill;
 use App\Models\Specialization;
+use App\Models\User;
 use App\Models\UserPosition;
 
 class ResumeService
@@ -171,6 +173,7 @@ class ResumeService
         ?array  $programSchools,
         ?array  $userPositions,
         int     $employment_id,
+        string  $cityName,
         int     $specialization_id,
         string  $position,
         array   $languageLevels,
@@ -242,6 +245,10 @@ class ResumeService
             $resume->userPositions()->save($userPosition);
         }
 
+        $user = User::where('id', $user_id)->first();
+        $city_id = City::firstOrCreate(['name' => $cityName])->id;
+        $user->city_id = $city_id;
+        $user->save();
         $resume->save();
 
         $resume->load([
@@ -269,6 +276,7 @@ class ResumeService
         ?string $description,
         ?array  $programSchools,
         ?array  $userPositions,
+        string  $cityName,
         int     $employment_id,
         int     $specialization_id,
         string  $position,
@@ -279,13 +287,13 @@ class ResumeService
     {
         $resume = Resume::where('id', $resume_id)->first();
         $resume->update(
-        [
-            'contact_phone' => $contact_phone,
-            'contact_mail' => $contact_mail,
-            'salary' => $salary,
-            'description' => $description == "" ? null : $description,
-            'user_id' => $user_id,
-        ]);
+            [
+                'contact_phone' => $contact_phone,
+                'contact_mail' => $contact_mail,
+                'salary' => $salary,
+                'description' => $description == "" ? null : $description,
+                'user_id' => $user_id,
+            ]);
 
         $resume->save();
 
@@ -347,6 +355,10 @@ class ResumeService
             $resume->userPositions()->save($userPosition);
         }
 
+        $user = User::where('id', $user_id)->first();
+        $city_id = City::firstOrCreate(['name' => $cityName])->id;
+        $user->city_id = $city_id;
+        $user->save();
         $resume->save();
 
         $resume->load([
