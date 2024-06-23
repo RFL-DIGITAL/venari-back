@@ -2,8 +2,14 @@
 
 namespace App\Services;
 
+use App\Helper;
+use App\Models\Heading;
+use App\Models\ImageBlock;
+use App\Models\Part;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Text;
+use App\Models\Title;
 use App\Parser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -149,5 +155,46 @@ class PostService
         );
 
         return $post->toArray();
+    }
+
+    public function createPost(int $post_id, array $post_parts): array
+    {
+        foreach ($post_parts as $part) {
+            $partModel = new Part();
+            $partModel->order = $part->order;
+            $partModel->post_id = $post_id;
+
+            switch ($part->type) {
+                case 'title':
+                    $title = new Title();
+                    $title->name = $part->content;
+                    $title->save();
+                    $partModel->content()->associate($title);
+                    break;
+                case 'text':
+                    $text = new Text();
+                    $text->name = $part->content;
+                    $text->save();
+                    $partModel->content()->associate($text);
+                    break;
+                case 'heading':
+                    $heading = new Heading();
+                    $heading->name = $part->content;
+                    $heading->save();
+                    $partModel->content()->associate($heading);
+                    break;
+                case 'image_block':
+                    $image_block = new ImageBlock();
+                    foreach ($part->content as $image) {
+                        $image_block->images()->append(Helper::createNewImageModel($image));
+                    }
+                    $heading->name = $part->content;
+                    $heading->save();
+                    $partModel->content()->associate($heading);
+                    break;
+            }
+        }
+
+        return ['message' => 'Post created successfully'];
     }
 }
