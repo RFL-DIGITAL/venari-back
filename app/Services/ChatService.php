@@ -167,7 +167,7 @@ class ChatService
                     $message->id,
                     $message->from_id,
                     $message->to_id,
-                    $message->owner,
+                    $message->owner->load('images'),
                     $this->createAttachment(
                         $message?->body,
                         $message?->fileMessage?->file->id,
@@ -199,7 +199,7 @@ class ChatService
                 $chatMessage->id,
                 $chatMessage->owner_id,
                 $chatMessage->chat_id,
-                $chatMessage->owner,
+                $chatMessage->owner->load('image'),
                 $this->createAttachment(
                     $chatMessage?->body,
                     $chatMessage?->fileMessage?->file->id,
@@ -231,7 +231,7 @@ class ChatService
                 $companyMessage->id,
                 $companyMessage->owner_id,
                 $companyMessage->companyChat_id,
-                $owner,
+                $owner->load('images'),
                 $this->createAttachment(
                     $companyMessage?->body,
                     $companyMessage?->fileMessage?->file->id,
