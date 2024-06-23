@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePostRequest;
 use App\Services\CommentService;
 use App\Services\PostService;
 use Illuminate\Http\JsonResponse;
@@ -194,6 +195,16 @@ class PostController extends Controller
         return $this->successResponse(
             $this->paginate(
                 $this->commentService->getComments($id)
+            )
+        );
+    }
+
+    public function createPost(): JsonResponse
+    {
+        return $this->successResponse(
+            $this->postService->createPost(
+                request()->post_id,
+                request()->post_parts
             )
         );
     }
