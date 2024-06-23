@@ -62,7 +62,6 @@ class Post extends Model
     public function toSearchableArray(): array
     {
         $array = $this->toArray();
-        $array['categories'] = implode(',', $this->categories()->pluck('name')->toArray());
 
         return $array;
     }

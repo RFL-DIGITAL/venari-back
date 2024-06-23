@@ -398,7 +398,7 @@ class CalendarService
         }
 
         $endOfMonth = DateTime::createFromFormat("Y-m-d", date("Y-m-t", strtotime($month)), new DateTimeZone("Asia/Novosibirsk"));
-        $events = Event::where('calendar_id', $calendar->id)
+        $events = Event::where('calendar_id', $calendar?->id)
             ->where('datetime_start', '>', $startOfMonth)
             ->where('datetime_end', '<', $endOfMonth)
             ->where('is_picked', false)->get();
