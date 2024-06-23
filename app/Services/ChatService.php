@@ -104,7 +104,7 @@ class ChatService
                         $chat->name,
                         $chat?->image?->image,
                         $body,
-                        $message != null ? $message->updated_at->toDateTimeString() : '',
+                        $message != null ? $message?->updated_at?->toDateTimeString() : '',
                         MessageType::chatMessage,
                         $chat->id
                     );
@@ -131,7 +131,7 @@ class ChatService
                         $companyChat->company->name,
                         $companyChat->company->image->image,
                         $body,
-                        $companyMessage != null ? $companyMessage->updated_at->toDateTimeString() : '',
+                        $companyMessage != null ? $companyMessage->updated_at?->toDateTimeString() : '',
                         MessageType::companyMessage,
                         $companyChat->id
                     );
