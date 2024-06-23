@@ -39,4 +39,8 @@ class Image extends Model
     {
         return $this->hasMany(Image::class);
     }
+
+    public function imageBlocks(): BelongsToMany {
+        return $this->belongsToMany(ImageBlock::class, 'image_block_images');
+    }
 }
