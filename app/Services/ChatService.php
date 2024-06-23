@@ -57,7 +57,7 @@ class ChatService
                 $recentChats[$key] = [
                     "avatar" => $avatar,
                     "body" => $this->formatMessageBody($message),
-                    "updated_at" => $message->updated_at->toDateTimeString(),
+                    "updated_at" => $message?->updated_at?->toDateTimeString(),
                     'user_id' => $id
                 ];
 
