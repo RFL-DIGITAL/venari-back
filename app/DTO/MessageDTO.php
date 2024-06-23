@@ -51,11 +51,10 @@ class MessageDTO implements Jsonable, JsonSerializable
         $this->created_at = $created_at;
         $this->attachmentDTO = $attachmentDTO;
         $this->owner = $owner;
-        $this->owner->load('image');
+//        $this->owner->load('image');
         $this->to_id = $to_id;
         $this->owner_id = $owner_id;
         $this->id = $id;
-        $owner->load('image');
     }
 
     public function getId(): int
