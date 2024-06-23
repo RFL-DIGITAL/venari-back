@@ -23,6 +23,7 @@ class NewMessageEvent implements ShouldBroadcast
     public function __construct(MessageDTO $message)
     {
         $this->message = $message->jsonSerialize();
+        dd($message->jsonSerialize());
     }
 
     /**
