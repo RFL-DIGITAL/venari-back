@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Parser;
 use Illuminate\Database\Eloquent\Builder;
@@ -88,6 +89,7 @@ class PostService
             $post->source = 'habr';
             $post->user_id = self::HABR_USER_ID;
             $post->save();
+            $post->categories()->attach(Category::where('name', 'Новости')->first()->id);
             $post->load([
                 'user.image',
                 'user.hrable.company.image',
