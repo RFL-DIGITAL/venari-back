@@ -42,12 +42,18 @@ class PostController extends Controller
     {
         $innerPosts = $this->postService->getInnerPosts();
 
-        if (Cache::has('outer_posts')) {
-            $outerPosts = Cache::get('outer_posts');
-        } else {
-            $outerPosts = $this->postService->getOuterPosts($this->POST_COUNT);
-            Cache::put('outer_posts', $outerPosts, now()->addMinutes(15));
+        if (request()->get('force_outer')) {
+           $outerPosts = [];
         }
+        else {
+            if (Cache::has('outer_posts')) {
+                $outerPosts = Cache::get('outer_posts');
+            } else {
+                $outerPosts = $this->postService->getOuterPosts($this->POST_COUNT);
+                Cache::put('outer_posts', $outerPosts, now()->addMinutes(15));
+            }
+        }
+
 
         $posts = array_merge(
             $innerPosts,
