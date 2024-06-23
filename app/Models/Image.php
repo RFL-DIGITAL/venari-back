@@ -23,7 +23,7 @@ class Image extends Model
     }
 
     public function posts(): BelongsToMany{
-        return $this->belongsToMany(Post::class);
+        return $this->belongsToMany(Post::class, 'image_post');
     }
 
     public function chats(): HasMany{

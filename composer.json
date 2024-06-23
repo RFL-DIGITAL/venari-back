@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "naxon/laravel-url-uploaded-file": "1.0.1",
         "ext-curl": "*",
         "ext-gd": "*",
         "ext-libxml": "*",
@@ -38,6 +39,12 @@
         "phpunit/phpunit": "^10.0",
         "spatie/laravel-ignition": "^2.0"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "laravel-url-uploaded-file"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
