@@ -114,7 +114,7 @@ class MessageDTO implements Jsonable, JsonSerializable
         ];
     }
 
-    public function getOwner(): User
+    public function getOwner(): User|null
     {
         return $this->owner;
     }
