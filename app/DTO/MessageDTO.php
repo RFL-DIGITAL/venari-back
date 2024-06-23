@@ -44,7 +44,7 @@ class MessageDTO implements Jsonable, JsonSerializable
         int           $id,
         int           $owner_id,
         string        $to_id,
-        User          $owner,
+        User|null          $owner,
         AttachmentDTO $attachmentDTO,
         string        $created_at
     ) {
