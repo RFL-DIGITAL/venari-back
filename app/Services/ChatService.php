@@ -231,7 +231,7 @@ class ChatService
                 $companyMessage->id,
                 $companyMessage->owner_id,
                 $companyMessage->companyChat_id,
-                $owner->load('images'),
+                $owner?->images,
                 $this->createAttachment(
                     $companyMessage?->body,
                     $companyMessage?->fileMessage?->file->id,
