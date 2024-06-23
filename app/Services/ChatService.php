@@ -13,6 +13,7 @@ use App\Models\CompanyMessage;
 use App\Models\Image;
 use App\Models\Message;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class ChatService
@@ -57,7 +58,7 @@ class ChatService
                 $recentChats[$key] = [
                     "avatar" => $avatar,
                     "body" => $this->formatMessageBody($message),
-                    "updated_at" => $message->updated_at->toDateTimeString(),
+                    "updated_at" => $message?->updated_at != null ? $message->updated_at->toDateTimeString() : null,
                     'user_id' => $id
                 ];
 
@@ -104,7 +105,7 @@ class ChatService
                         $chat->name,
                         $chat?->image?->image,
                         $body,
-                        $message != null ? $message->updated_at->toDateTimeString() : '',
+                        $message != null ? $message?->updated_at?->toDateTimeString() : '',
                         MessageType::chatMessage,
                         $chat->id
                     );
@@ -131,7 +132,7 @@ class ChatService
                         $companyChat->company->name,
                         $companyChat->company->image->image,
                         $body,
-                        $companyMessage != null ? $companyMessage->updated_at->toDateTimeString() : '',
+                        $companyMessage != null ? $companyMessage->updated_at?->toDateTimeString() : '',
                         MessageType::companyMessage,
                         $companyChat->id
                     );
@@ -167,7 +168,7 @@ class ChatService
                     $message->id,
                     $message->from_id,
                     $message->to_id,
-                    $message->owner->load('images'),
+                    $message?->owner?->images,
                     $this->createAttachment(
                         $message?->body,
                         $message?->fileMessage?->file->id,
@@ -222,23 +223,23 @@ class ChatService
         foreach ($companyMessages as $companyMessage) {
             $owner = $companyMessage->owner;
             // todo: в будущем стоит учесть ситуацию, когда в такой чат заходит hr.
-            if ($owner->hrable->company->id == CompanyChat::where('id', $companyChatID)->first()->company->id) {
-                $owner->name = $owner->hrable->company->name;
-                $owner->image_id = $owner->hrable->company->image_id;
+            if ($owner->company_id == CompanyChat::where('id', $companyChatID)->first()->company_id) {
+                $owner->name = $owner->company->name;
+                $owner->image_id = $owner->company->image_id;
             }
 
             $messageDTOs[] = new MessageDTO(
                 $companyMessage->id,
                 $companyMessage->owner_id,
                 $companyMessage->companyChat_id,
-                $owner->load('images'),
+                $owner?->images,
                 $this->createAttachment(
                     $companyMessage?->body,
                     $companyMessage?->fileMessage?->file->id,
                     $companyMessage?->imageMessage?->image->id,
                     $companyMessage?->linkMessage?->link,
                 ),
-                $companyMessage->created_at
+                $companyMessage->created_at ?? Carbon::now()->toString()
             );
         }
 

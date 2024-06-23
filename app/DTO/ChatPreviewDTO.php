@@ -46,7 +46,7 @@ class ChatPreviewDTO implements Jsonable, JsonSerializable
         $this->body = $body;
     }
 
-    public function getUpdatedAt(): string
+    public function getUpdatedAt(): string|null
     {
         return $this->updated_at;
     }
