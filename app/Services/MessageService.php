@@ -255,8 +255,7 @@ class MessageService
                     }
                 }
 
-                if ($links != null and count($links) > 0) {
-                    foreach ($links as $link) {
+                if ($links != null) {
                         $message = new CompanyMessage(
                             [
                                 'owner_id' => $ownerID,
@@ -265,7 +264,7 @@ class MessageService
                         );
                         $message->save();
 
-                        $this->createLinkMessage($message, $link);
+                        $this->createLinkMessage($message, $links);
 
                         $messageDTO = new MessageDTO(
                             $message->id,
@@ -279,7 +278,6 @@ class MessageService
 
                         event(new NewCompanyMessageEvent($messageDTO));
                     }
-                }
         }
 
         return $messageDTO->jsonSerialize();

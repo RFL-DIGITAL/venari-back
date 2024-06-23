@@ -262,6 +262,17 @@ class ApplicationService
 
             $stage = Stage::where('id', $stageID)->first();
 
+            $companyChat = CompanyChat::where('company_id',
+                User::where('id', $from_id)->first()->hrable->company_id)
+                ->where('user_id', $application->resume->user->id)->first();
+
+            if(!$companyChat?->id) {
+               $companyChat = CompanyChat::create([
+                    'company_id' => auth()->user()->hrable->company_id,
+                    'user_id' => $application->resume->user->id
+                ]);
+            }
+
             switch ($stage->stageType->name) {
                 case 'reject':
                     $this->rejectApplication(
@@ -274,14 +285,12 @@ class ApplicationService
 
                     break;
                 case 'interview':
-                    $companyChat = CompanyChat::where('company_id',
-                        User::where('id', $from_id)->first()->hrable->company_id)
-                        ->where('user_id', $application->resume->user->id)->first();
+
 
                     $this->messageService->sendMessage(
                         $from_id,
                         $companyChat->id,
-                        $interViewMessage,
+                        $interViewMessage ?? "Приглашение на интервью",
                         'companyMessage',
                         null,
                         null,
@@ -303,14 +312,11 @@ class ApplicationService
 
                     break;
                 case 'offer':
-                    $companyChat = CompanyChat::where('company_id',
-                        User::where('id', $from_id)->first()->hrable->company_id)
-                        ->where('user_id', $application->resume->user->id)->first();
 
                     $this->messageService->sendMessage(
                         $from_id,
                         $companyChat->id,
-                        $offerMessage,
+                        $offerMessage ?? "Вам направлено приглашение на работу",
                         'companyMessage',
                         null,
                         null,
