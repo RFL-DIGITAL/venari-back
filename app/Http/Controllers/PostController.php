@@ -209,7 +209,7 @@ class PostController extends Controller
     {
         return $this->successResponse(
             $this->postService->createPost(
-                request()->post_id,
+                request()->user_id,
                 request()->post_parts
             )
         );

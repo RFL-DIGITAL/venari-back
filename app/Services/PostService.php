@@ -10,7 +10,9 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Text;
 use App\Models\Title;
+use App\Models\User;
 use App\Parser;
+use Google\Service\ShoppingContent\Resource\Pos;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use phpQuery;
@@ -157,12 +159,19 @@ class PostService
         return $post->toArray();
     }
 
-    public function createPost(int $post_id, array $post_parts): array
+    public function createPost($user_id, array $post_parts): array
     {
+        $post = new Post();
+        $user = User::where('id', $user_id)->first();
+        $post->user_id = $user->id;
+        $post->user_name = $user->user_name;
+
         foreach ($post_parts as $part) {
             $partModel = new Part();
             $partModel->order = $part['order'];
-            $partModel->post_id = $post_id;
+
+            $isAddedText = false;
+            $isAddedPhotos = false;
 
             switch ($part['type']) {
                 case 'title':
@@ -170,12 +179,17 @@ class PostService
                     $title->name = $part['content'];
                     $title->save();
                     $partModel->content()->associate($title);
+                    $post->title = $title->name;
                     break;
                 case 'text':
                     $text = new Text();
                     $text->name = $part['content'];;
                     $text->save();
                     $partModel->content()->associate($text);
+                    if (!$isAddedText) {
+                        $post->text = $text->name;
+                        $isAddedText = true;
+                    }
                     break;
                 case 'heading':
                     $heading = new Heading();
@@ -186,13 +200,19 @@ class PostService
                 case 'image_block':
                     $image_block = new ImageBlock();
                     foreach ($part['content'] as $image) {
-                        $image_block->images()->attach(Helper::createNewImageModel($image)->id);
+                        $imageID = Helper::createNewImageModel($image)->id;
+                        if(!$isAddedPhotos) {
+                            $post->images()->attach($imageID);
+                        }
+                        $image_block->images()->attach($imageID);
                     }
+                    $isAddedPhotos = true;
                     $image_block->save();
                     $partModel->content()->associate($image_block);
                     break;
             }
-
+            $post->save();
+            $partModel->post_id = $post->id;
             $partModel->save();
         }
 
