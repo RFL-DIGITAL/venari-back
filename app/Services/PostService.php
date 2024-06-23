@@ -161,37 +161,39 @@ class PostService
     {
         foreach ($post_parts as $part) {
             $partModel = new Part();
-            $partModel->order = $part->order;
+            $partModel->order = $part['order'];
             $partModel->post_id = $post_id;
 
-            switch ($part->type) {
+            switch ($part['type']) {
                 case 'title':
                     $title = new Title();
-                    $title->name = $part->content;
+                    $title->name = $part['content'];
                     $title->save();
                     $partModel->content()->associate($title);
                     break;
                 case 'text':
                     $text = new Text();
-                    $text->name = $part->content;
+                    $text->name = $part['content'];;
                     $text->save();
                     $partModel->content()->associate($text);
                     break;
                 case 'heading':
                     $heading = new Heading();
-                    $heading->name = $part->content;
+                    $heading->name = $part['content'];
                     $heading->save();
                     $partModel->content()->associate($heading);
                     break;
                 case 'image_block':
                     $image_block = new ImageBlock();
-                    foreach ($part->content as $image) {
+                    foreach ($part['content'] as $image) {
                         $image_block->images()->attach(Helper::createNewImageModel($image)->id);
                     }
                     $image_block->save();
                     $partModel->content()->associate($image_block);
                     break;
             }
+
+            $partModel->save();
         }
 
         return ['message' => 'Post created successfully'];
