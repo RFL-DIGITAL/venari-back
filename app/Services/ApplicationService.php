@@ -263,12 +263,12 @@ class ApplicationService
             $stage = Stage::where('id', $stageID)->first();
 
             $companyChat = CompanyChat::where('company_id',
-                User::where('id', $from_id)->first()?->hrable?->company_id)
+                User::where('id', $from_id)->first()?->company_id)
                 ->where('user_id', $application->resume?->user?->id)->first();
 
             if(!$companyChat?->id) {
                $companyChat = CompanyChat::create([
-                    'company_id' => auth()->user()->hrable->company_id ?? 1,
+                    'company_id' => auth()->user()?->company_id ?? 1,
                     'user_id' => $application->resume->user->id
                 ]);
             }
