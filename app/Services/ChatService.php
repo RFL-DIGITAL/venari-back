@@ -13,6 +13,7 @@ use App\Models\CompanyMessage;
 use App\Models\Image;
 use App\Models\Message;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class ChatService
@@ -238,7 +239,7 @@ class ChatService
                     $companyMessage?->imageMessage?->image->id,
                     $companyMessage?->linkMessage?->link,
                 ),
-                $companyMessage->created_at
+                $companyMessage->created_at ?? Carbon::now()->toString()
             );
         }
 
