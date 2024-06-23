@@ -8,13 +8,18 @@ servers:
   -
     url: 'https://venari.backend.rfld.ru'
     description: 'Боевой сервер'
+  -
+    url: 'http://127.0.0.1:8000'
+    description: dev
 paths:
   /api/register:
-    get:
+    post:
       tags:
         - UserController
       summary: 'Метод регистрации'
-      operationId: c491d067c8de8d0e0a4cc77bb7d7b363
+      operationId: 482fd8cbb98dc3225fa0e7ac40c1abe6
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterRequest'
       responses:
         '200':
           description: 'Ответ при успешном выполнении запроса'
@@ -22,6 +27,410 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/registerUser'
+  /api/login:
+    post:
+      tags:
+        - UserController
+      summary: 'метод авторизации пользователя. возвращает токен'
+      operationId: afd167661891a2c4c1b49a04643b9223
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginUser'
+  '/api/users/{id}':
+    get:
+      tags:
+        - UserController
+      summary: 'Метод получения информации о пользователи по его id'
+      operationId: 6f51bd5fa2dddcd25e44cfa53dcbd10a
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id пользователя'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/show'
+  /api/hr-panel/candidates/applications:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех откликов'
+      operationId: 9fe1c4bb113b53309be01139c2f88276
+      parameters:
+        -
+          name: stage_id
+          in: query
+          description: 'id категории. Для категории Все кандидаты не отправлять этот параметр'
+          required: false
+        -
+          name: vacancy_id
+          in: query
+          description: 'id вакансии'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplication'
+  '/api/hr-panel/candidates/applications/{id}':
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения подробного отклика'
+      operationId: 6422d0914e57f40a8d42f22a46855b5f
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id отклика'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplicationByID'
+  /api/hr-panel/candidates/:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения пользователей для страницы поиска по кандидатам'
+      operationId: 5e17c11f848bb655c0d5b94db15df4f1
+      parameters:
+        -
+          name: experince_id
+          in: query
+          description: 'id требуемого опыта'
+          required: false
+        -
+          name: city
+          in: query
+          description: 'Региона поиска'
+          required: false
+        -
+          name: specialization_id
+          in: query
+          description: 'id необходимой специализации'
+          required: false
+        -
+          name: employment_id
+          in: query
+          description: 'id занятости'
+          required: false
+        -
+          name: program_type_id
+          in: query
+          description: 'id требуемого типа образования'
+          required: false
+        -
+          name: higher_salary
+          in: query
+          description: 'верхнее допустимое значение зарплаты'
+          required: false
+        -
+          name: lower_salary
+          in: query
+          description: 'нижнее допустимое значение зарплаты'
+          required: false
+        -
+          name: search
+          in: query
+          description: 'строка поиска'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUsers'
+  /api/hr-panel/candidates/applications/share-applications:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод шэринга откликов'
+      operationId: b9bd9a52235fa235dca848fde1fa0f4c
+      requestBody:
+        $ref: '#/components/requestBodies/ShareApplicationsRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/shareApplications'
+  '/api/variants/see-variants/{code}':
+    get:
+      tags:
+        - Approves
+      summary: 'Метод получения пользователей для страницы отображения всех апрувов'
+      operationId: 03da41cb44df496a345d4c111f0d819d
+      parameters:
+        -
+          name: code
+          in: path
+          description: 'код для просмотра откликов для подтверждения'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getApplicationsByGroupCode'
+  /api/hr-panel/variants/sendApprove:
+    post:
+      tags:
+        - Approves
+      summary: 'Метод отправки апрува'
+      operationId: 902a3e0de04f3d1be70184161f606e67
+      requestBody:
+        $ref: '#/components/requestBodies/SendApproveRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendApprove'
+  /api/networking/:
+    get:
+      tags:
+        - СhatController
+      summary: 'Метод получения всех чатов (страница нетворкинг)'
+      operationId: b8f0e7be13bb3f689586654c9699af0d
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllChats'
+  '/api/networking/{chat_id}/messages':
+    get:
+      tags:
+        - СhatController
+      summary: 'Метод получения сообщений чата по id чата'
+      operationId: 44f858925d585bc9ba9261ad1cf84a3f
+      parameters:
+        -
+          name: chat_id
+          in: path
+          description: 'id чата'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChatMessagesByChatID'
+  '/api/networking/{chat_id}':
+    get:
+      tags:
+        - СhatController
+      summary: 'Метод получения подробной информации о чате по id'
+      operationId: 5a457c7cfd6308a8fc2e82ec59d696a8
+      parameters:
+        -
+          name: chat_id
+          in: path
+          description: 'id чата'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChatDetail'
+  /api/comments/send-comment:
+    post:
+      tags:
+        - CommentController
+      summary: 'Метод отправки комментария'
+      operationId: e0fb87a1130be57faf66f1ca0405bdb8
+      requestBody:
+        $ref: '#/components/requestBodies/SendCommentRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendComment'
+  '/api/companies/{id}':
+    get:
+      tags:
+        - CompanyController
+      summary: 'Метод получения информации о компании по её id'
+      operationId: 01c261c039e4b27beeb888ef46bd86db
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id компании'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/showCompany'
+  '/api/files/{id}':
+    get:
+      tags:
+        - FileController
+      summary: 'Метод получения файла по его id'
+      operationId: fdbc4480f2c1bcd3cf1eb5e570955243
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id файла'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+  /api/hr-panel/filters:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех доступных фильтров'
+      operationId: 1c89f0c3eaf81d35d338d0b4bf9e0ac0
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllFilters'
+  '/api/images/{id}':
+    get:
+      tags:
+        - ImageController
+      summary: 'Метод получения изображения по его id'
+      operationId: e548787fe1e043626c156a73136a459e
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id изображения'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+  /api/messages:
+    get:
+      tags:
+        - MessageController
+      summary: "Метод получения всех чатов пользователя. Отсортированы в обратном порядке по времени последнего сообщения\n(самый поздний - первый)"
+      operationId: b7712de7ca6db35b0b2202a5b7bdff7a
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getChats'
+  '/api/messages/{user_id}':
+    get:
+      tags:
+        - MessageController
+      summary: 'Метод получения сообщений 1-1 по id пользователя'
+      operationId: 93692c2c6643a27380a2798c8130dce9
+      parameters:
+        -
+          name: user_id
+          in: path
+          description: 'id пользователя'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMessagesByUserID'
+  '/api/messages/companies/{company_chat_id}':
+    get:
+      tags:
+        - MessageController
+      summary: 'Метод получения всех сообщений с компанией по id компани-чата'
+      operationId: 34b26691d145d076bcd0934a5052ddfc
+      parameters:
+        -
+          name: company_chat_id
+          in: path
+          description: 'id компани-чата'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCompanyMessagesByCompanyChatID'
+  /api/messages/send-message:
+    post:
+      tags:
+        - MessageController
+      summary: 'Метод отправки сообщений'
+      operationId: 4bd87a3a7705f49799ee91b062338872
+      requestBody:
+        $ref: '#/components/requestBodies/SendMessageRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendMessage'
+  /api/messages/join-chat:
+    post:
+      tags:
+        - MessageController
+      summary: 'Метод вступления в чат'
+      operationId: 6316f6dc3962c016667f2927535a8bdb
+      requestBody:
+        $ref: '#/components/requestBodies/JoinChatRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/joinChat'
+  /api/messages/quit-chat:
+    post:
+      tags:
+        - MessageController
+      summary: 'Метод покидания чата'
+      operationId: 40a2f6ee23b76dd0c224b9c7be580607
+      requestBody:
+        $ref: '#/components/requestBodies/JoinChatRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/joinChat'
   /api/posts:
     get:
       tags:
@@ -35,16 +444,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPosts'
-  /api/posts/:
+  '/api/posts/{id}':
     get:
       tags:
         - PostController
       summary: 'Метод получения поста по его id (подробная страница)'
-      operationId: ca959cc7c6472d1743b8dc2e4e26a224
+      operationId: 575616ce88c4119bb7a6c703f83cb6ee
       parameters:
         -
           name: id
-          in: query
+          in: path
           description: 'id поста'
           required: true
       responses:
@@ -54,6 +463,140 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getPostByID'
+  '/api/users/{id}/posts':
+    get:
+      tags:
+        - PostController
+      summary: 'Метод получения постов по id пользователя'
+      operationId: 8b4ca3da355ba0949751c12e732a3497
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostsByUser'
+  '/api/companies/{id}/posts':
+    get:
+      tags:
+        - PostController
+      summary: 'Метод получения постов по id компании'
+      operationId: 480e67b5ae55306ca6053161cdf4c839
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id компании'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPostsByCompany'
+  '/api/posts/{id}/comments':
+    get:
+      tags:
+        - CommentController
+      summary: 'Метод получения всех комментариев поста'
+      operationId: 08b37e91e3a6336d1fb0558b8dc2cf4d
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id поста'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getComments'
+  /api/resumes/create-from-file:
+    post:
+      tags:
+        - Resume
+      summary: 'Метод создания резюме из загруженного .doc файла'
+      operationId: 2844559213379bc0d17b91ce3833188c
+      requestBody:
+        $ref: '#/components/requestBodies/ResumeFileRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createResumeFromDoc'
+  '/api/resumes/{id}':
+    get:
+      tags:
+        - Resume
+      summary: 'Метод получения резюме по id'
+      operationId: 722fd984a509b02d02217ce2530daf73
+      parameters:
+        -
+          name: id
+          in: query
+          description: 'id резюме'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getResumeByID'
+  /api/resumes/create-resume:
+    post:
+      tags:
+        - Resume
+      summary: 'Метод создания резюме'
+      operationId: c2cbfc2867a91f3765dac713125f4900
+      requestBody:
+        $ref: '#/components/requestBodies/CreateResumeRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createResume'
+  /api/resumes/edit-resume:
+    post:
+      tags:
+        - Resume
+      summary: 'Метод обновления данных в резюме'
+      operationId: 2dba6aa968a1a4be94c23a9abc3810b7
+      requestBody:
+        $ref: '#/components/requestBodies/EditResumeRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/editResume'
+  /api/hr-panel/candidates/stages:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех "категорий" для откликов'
+      operationId: cd32d35baebfad9b4605b4d12f2b9730
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getStages'
   /api/vacancies:
     get:
       tags:
@@ -66,9 +609,163 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getVacancies'
+                $ref: '#/components/schemas/vacanciesResponse'
+  '/api/vacancies/{id}':
+    get:
+      tags:
+        - VacancyController
+      summary: 'Метод получения подробной информации о вакансии по id'
+      operationId: eaa6d5b5a84d934bfc97c0df706eddd2
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id вакансии'
+          required: true
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getVacancyByID'
+  /api/hr-panel/vacancies:
+    get:
+      tags:
+        - HR-panel
+      summary: 'Метод получения всех вакансий для hr-панели'
+      operationId: e24dc7fc37a99169a9fb384c9a0021a0
+      parameters:
+        -
+          name: status_id
+          in: query
+          description: 'id статуса (открыта, черновик, архив)'
+          required: false
+        -
+          name: specialization_id
+          in: query
+          description: 'id специализации'
+          required: false
+        -
+          name: city
+          in: query
+          description: 'регион поиска (город, строка)'
+          required: false
+        -
+          name: name
+          in: query
+          description: 'название вакансии'
+          required: false
+        -
+          name: accountable_id
+          in: query
+          description: 'id ответственного (сущность hr)'
+          required: false
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getVacanciesHR'
+  /api/hr-panel/vacancies/create-vacancy:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод добавления вакансии из формы hr-панели'
+      operationId: ab8167a52740335f5c113895d48a6125
+      requestBody:
+        $ref: '#/components/requestBodies/CreateVacancyRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vacanciesResponse'
+  /api/hr-panel/vacancies/edit-vacancy:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод изменения вакансии из формы hr-панели'
+      operationId: aaf814b5030c7e3a54a5e68298090bd6
+      requestBody:
+        $ref: '#/components/requestBodies/EditVacancyRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vacanciesResponse'
+  /api/hr-panel/vacancies/archive-vacancies:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод архивации вакансий по их id'
+      operationId: 09c7b2514b64b24d48f23f94a5e07dd9
+      requestBody:
+        $ref: '#/components/requestBodies/MassVacanciesRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vacanciesResponse'
+  /api/hr-panel/vacancies/un-archive-vacancies:
+    post:
+      tags:
+        - HR-panel
+      summary: 'Метод разархивации вакансий по их id'
+      operationId: 2774a8692f501bf3d9b56cd96ef2e075
+      requestBody:
+        $ref: '#/components/requestBodies/MassVacanciesRequest'
+      responses:
+        '200':
+          description: 'Ответ при успешном выполнении запроса'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vacanciesResponse'
 components:
   schemas:
+    attachmentDTO:
+      properties:
+        text:
+          type: string
+          nullable: true
+        file:
+          type: string
+        image:
+          type: string
+        link:
+          type: string
+          nullable: true
+      type: object
+    messageDTO:
+      properties:
+        id:
+          type: integer
+        owner_id:
+          type: integer
+        to_id:
+          description: 'либо id пользователя, либо id чата, либо id чата компании'
+          type: string
+        owner:
+          $ref: '#/components/schemas/detailUser'
+        attachmentDTO:
+          $ref: '#/components/schemas/attachmentDTO'
+        created_at:
+          type: string
+          format: date
+      type: object
+    messageType:
+      type: string
+      enum:
+        - message
+        - chatMessage
+        - companyMessage
     registerUser:
       properties:
         success:
@@ -79,12 +776,213 @@ components:
         access_token:
           type: string
       type: object
+    loginUser:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        user:
+          $ref: '#/components/schemas/user'
+        token:
+          type: string
+      type: object
+    show:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          $ref: '#/components/schemas/userWithResume'
+      type: object
+    getApplication:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/application'
+      type: object
+    getApplicationByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailApplication'
+      type: object
+    getUsers:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/userWithResume'
+      type: object
+    shareApplications:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+      type: object
+    link:
+      properties:
+        link:
+          type: string
+      type: object
+    getApplicationsByGroupCode:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/userWithResumeAndApplication'
+      type: object
+    sendApprove:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/approve'
+      type: object
+    getAllChats:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
+      type: object
+    getChatMessagesByChatID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/messageDTO'
+      type: object
+    getChatDetail:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
+      type: object
+    sendComment:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/comment'
+      type: object
+    showCompany:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          $ref: '#/components/schemas/detailCompany'
+      type: object
+    getAllFilters:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/filter'
+      type: object
+    getChats:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/previewChat'
+      type: object
+    getMessagesByUserID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/messageDTO'
+      type: object
+    getCompanyMessagesByCompanyChatID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/messageDTO'
+      type: object
+    sendMessage:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/messageDTO'
+      type: object
+    joinChat:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
+      type: object
+    quitChat:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/chat'
+      type: object
     getPosts:
       properties:
         success:
           type: boolean
           example: 'true'
-        posts:
+        response:
           type: array
           items:
             $ref: '#/components/schemas/post'
@@ -94,28 +992,160 @@ components:
         success:
           type: boolean
           example: 'true'
-        post:
-          $ref: '#/components/schemas/post'
+        response:
+          $ref: '#/components/schemas/detailPost'
       type: object
-    getVacancies:
+    getPostsByUser:
       properties:
         success:
           type: boolean
           example: 'true'
-        vacancies:
+        response:
+          $ref: '#/components/schemas/post'
+      type: object
+    getPostsByCompany:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          $ref: '#/components/schemas/post'
+      type: object
+    getComments:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailComment'
+      type: object
+    createResumeFromDoc:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    getResumeByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    createResume:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    editResume:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/resume'
+      type: object
+    getStages:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/stage'
+      type: object
+    vacanciesResponse:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
           type: array
           items:
             $ref: '#/components/schemas/vacancy'
       type: object
+    getVacancyByID:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/detailVacancy'
+      type: object
+    getVacanciesHR:
+      properties:
+        success:
+          type: boolean
+          example: 'true'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/HRPanelVacancy'
+      type: object
+    programSchoolsSchema:
+      properties:
+        program_id:
+          type: integer
+        school_id:
+          type: integer
+        start_date:
+          format: date
+        end_date:
+          format: date
+      type: object
+    userPositionsSchema:
+      properties:
+        company_id:
+          type: integer
+        position_id:
+          type: integer
+        start_date:
+          format: date
+        end_date:
+          format: date
+        description: {  }
+      type: object
+    languageLevelSchema:
+      properties:
+        level_id:
+          type: integer
+        language_id:
+          type: integer
+      type: object
     vacancy:
       properties:
-        department_id:
+        id:
           type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        department:
+          $ref: '#/components/schemas/department'
         position:
           $ref: '#/components/schemas/position'
         description:
-          type: string
-        salary:
           type: string
         is_online:
           type: boolean
@@ -127,21 +1157,232 @@ components:
           type: boolean
         link_to_test_document:
           type: string
-        is_fulltime:
-          type: boolean
-        city_id:
-          type: integer
+        city:
+          $ref: '#/components/schemas/city'
         is_closed:
           type: boolean
         is_outer:
           type: boolean
+        responsibilities:
+          type: string
+        requirements:
+          type: string
+        conditions:
+          type: string
+        additional:
+          type: string
+          nullable: true
+        experience:
+          $ref: '#/components/schemas/experience'
+        employment:
+          $ref: '#/components/schemas/employment'
+        lower_salary:
+          type: number
+          format: float
+          nullable: true
+        higher_salary:
+          type: number
+          format: float
+          nullable: true
+        image_id:
+          type: integer
+          nullable: true
+      type: object
+    detailVacancy:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/vacancy'
+        -
+          properties:
+            specialization:
+              $ref: '#/components/schemas/specialization'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/skill'
+          type: object
+    HRPanelVacancy:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/vacancy'
+        -
+          properties:
+            accountable:
+              $ref: '#/components/schemas/HR'
+            image:
+              $ref: '#/components/schemas/image'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/skill'
+            specialization:
+              $ref: '#/components/schemas/specialization'
+          type: object
+    department:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company:
+          $ref: '#/components/schemas/company'
+      type: object
+    detailDepartment:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/department'
+        -
+          properties:
+            company:
+              $ref: '#/components/schemas/detailCompany'
+          type: object
+    detailCompany:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/company'
+        -
+          properties:
+            preview:
+              $ref: '#/components/schemas/image'
+            building:
+              $ref: '#/components/schemas/building'
+          type: object
+    company:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        established_at:
+          format: date
+        nick_name:
+          type: string
+        image:
+          $ref: '#/components/schemas/image'
+        building_id:
+          type: integer
+          nullable: true
+      type: object
+    building:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        street:
+          $ref: '#/components/schemas/street'
+      type: object
+    street:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        city:
+          $ref: '#/components/schemas/detailCity'
+      type: object
+    skill:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
         created_at:
           format: date
         updated_at:
           format: date
       type: object
+    city:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        country_id:
+          type: integer
+          nullable: true
+      type: object
+    detailCity:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/city'
+        -
+          properties:
+            country:
+              $ref: '#/components/schemas/country'
+          type: object
+    country:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    image:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        image:
+          type: string
+        description:
+          type: string
+      type: object
+    file:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        file:
+          type: string
+        mime:
+          type: string
+      type: object
     position:
       properties:
+        id:
+          type: integer
         name:
           type: string
         created_at:
@@ -156,12 +1397,24 @@ components:
         - habr
     post:
       properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        comment_count:
+          type: integer
         title:
           type: string
         text:
           type: string
+        is_from_company:
+          type: boolean
         user:
-          $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/detailUser'
         attributes:
           $ref: '#/components/schemas/attributes'
         likes:
@@ -175,13 +1428,917 @@ components:
         source_url:
           type: string
           format: url
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/image'
+      type: object
+    detailPost:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/post'
+        -
+          properties:
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/detailComment'
+          type: object
+    attributes: {  }
+    user:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        email:
+          type: string
+        workingStatus_id:
+          type: integer
+        position_id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        sex:
+          type: boolean
+        date_of_birth:
+          format: date
+        hrable_id:
+          type: integer
+          nullable: true
+        hrable_type:
+          type: string
+        image:
+          $ref: '#/components/schemas/image'
+        preview:
+          $ref: '#/components/schemas/image'
+        company:
+          $ref: '#/components/schemas/company'
+      type: object
+    evenMoreDetailUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/user'
+        -
+          properties:
+            city:
+              $ref: '#/components/schemas/detailCity'
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/applicationTag'
+          type: object
+    userWithResume:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/evenMoreDetailUser'
+        -
+          properties:
+            resumes:
+              type: array
+              items:
+                $ref: '#/components/schemas/resume'
+          type: object
+    userWithResumeAndApplication:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/userWithResume'
+        -
+          properties:
+            application_id:
+              type: integer
+          type: object
+    previewChat:
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
+        body:
+          type: string
+        updated_at:
+          type: string
+          format: date
+        type:
+          $ref: '#/components/schemas/messageType'
+        id:
+          description: "'id может быть как чата, так и пользователя. Смотри type"
+          type: integer
+      type: object
+    message:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        from_id:
+          type: integer
+        to_id:
+          type: integer
+        body:
+          type: string
+      type: object
+    chatMessage:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        owner_id:
+          type: integer
+        chat_id:
+          type: integer
+        body:
+          type: string
+      type: object
+    comment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        text:
+          type: string
+        post_id:
+          type: integer
+        parent_id:
+          description: 'id комментария, на который отвечаем'
+          type: integer
+          nullable: true
+      type: object
+    detailComment:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/comment'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/detailUser'
+            all_children:
+              type: array
+              items:
+                $ref: '#/components/schemas/detailComment'
+          type: object
+    detailUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/user'
+        -
+          properties:
+            hrable:
+              $ref: '#/components/schemas/detailHR'
+          type: object
+    HR:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company_id:
+          type: integer
+      type: object
+    detailHR:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/HR'
+        -
+          properties:
+            company:
+              $ref: '#/components/schemas/company'
+          type: object
+    hrWithUser:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/HR'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/user'
+          type: object
+    chat:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        member_count:
+          type: integer
+        image:
+          $ref: '#/components/schemas/image'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/tag'
+      type: object
+    tag:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
         created_at:
           format: date
         updated_at:
           format: date
       type: object
-    attributes: {  }
-    user: {  }
+    filter:
+      properties:
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/status'
+        employments:
+          type: array
+          items:
+            $ref: '#/components/schemas/employment'
+        experiences:
+          type: array
+          items:
+            $ref: '#/components/schemas/experience'
+        formats:
+          type: array
+          items:
+            $ref: '#/components/schemas/format'
+        specializations:
+          type: array
+          items:
+            $ref: '#/components/schemas/specialization'
+        departments:
+          type: array
+          items:
+            $ref: '#/components/schemas/department'
+        accountables:
+          type: array
+          items:
+            $ref: '#/components/schemas/hrWithUser'
+        program_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/programType'
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/stage'
+      type: object
+    status:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    employment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    experience:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    format:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    specialization:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    resume:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        user_id:
+          type: integer
+        contact_phone:
+          type: string
+        contact_mail:
+          type: string
+        salary:
+          type: string
+        resumeProgramSchools:
+          type: array
+          items:
+            $ref: '#/components/schemas/resumeProgramSchool'
+        userPositions:
+          type: array
+          items:
+            $ref: '#/components/schemas/userPosition'
+        employment:
+          $ref: '#/components/schemas/employment'
+        specialization:
+          $ref: '#/components/schemas/specialization'
+        position:
+          $ref: '#/components/schemas/position'
+        languageLevel:
+          type: array
+          items:
+            $ref: '#/components/schemas/languageLevel'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/skill'
+        format:
+          $ref: '#/components/schemas/format'
+      type: object
+    evenMoreDetailResume:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/resume'
+        -
+          properties:
+            user:
+              $ref: '#/components/schemas/evenMoreDetailUser'
+          type: object
+    notSoDetatilResume:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        description:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        contact_phone:
+          type: string
+        contact_mail:
+          type: string
+        salary:
+          type: string
+      type: object
+    languageLevel:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        language:
+          $ref: '#/components/schemas/language'
+        level:
+          $ref: '#/components/schemas/level'
+      type: object
+    resumeProgramSchool:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        programSchool:
+          $ref: '#/components/schemas/programSchool'
+        start_date:
+          format: date
+        end_date:
+          format: date
+      type: object
+    userPosition:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company:
+          $ref: '#/components/schemas/company'
+        position:
+          $ref: '#/components/schemas/position'
+        start_date:
+          format: date
+        end_date:
+          format: date
+        description:
+          type: string
+      type: object
+    programSchool:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        program:
+          $ref: '#/components/schemas/program'
+        school:
+          $ref: '#/components/schemas/school'
+      type: object
+    program:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        programType:
+          $ref: '#/components/schemas/programType'
+      type: object
+    programType:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    school:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    language:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    level:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    stage:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        stageType:
+          $ref: '#/components/schemas/stageType'
+      type: object
+    stageType:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+      type: object
+    application:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        resume:
+          $ref: '#/components/schemas/notSoDetatilResume'
+      type: object
+    detailApplication:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        resume:
+          $ref: '#/components/schemas/evenMoreDetailResume'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/applicationComment'
+        approves:
+          type: array
+          items:
+            $ref: '#/components/schemas/approve'
+      type: object
+    applicationComment:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/user'
+        application_id:
+          type: integer
+      type: object
+    applicationTag:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        company_id:
+          type: integer
+      type: object
+    approve:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          format: date
+        updated_at:
+          format: date
+        surname:
+          type: string
+        application_id:
+          type: integer
+        status_id:
+          type: boolean
+      type: object
+  requestBodies:
+    CreateResumeRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              contact_phone:
+                type: string
+              contact_mail:
+                type: string
+              salary:
+                type: string
+              description:
+                type: string
+              programSchools:
+                type: array
+                items:
+                  $ref: '#/components/schemas/programSchoolsSchema'
+              userPositions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/userPositionsSchema'
+              employment_id:
+                type: integer
+              specialization_id:
+                type: integer
+              format_id:
+                type: integer
+              position:
+                type: string
+              languageLevels:
+                type: array
+                items:
+                  $ref: '#/components/schemas/languageLevelSchema'
+              skills:
+                type: array
+                items:
+                  type: string
+            type: object
+    CreateVacancyRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              position_name: {  }
+              department_id:
+                type: integer
+              specialization_id:
+                type: integer
+              city_id:
+                type: integer
+              lower_salary:
+                type: number
+                format: float
+              higher_salary:
+                type: number
+                format: float
+              responsibilities: {  }
+              requirements: {  }
+              conditions: {  }
+              additional: {  }
+              additional_title: {  }
+              skills:
+                type: array
+                items:
+                  type: string
+              experience_id:
+                type: integer
+              employment_id:
+                type: integer
+              format_id:
+                type: integer
+              test: {  }
+              status_id:
+                type: integer
+              image: {  }
+            type: object
+    EditResumeRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: integer
+              contact_phone:
+                type: string
+              contact_mail:
+                type: string
+              salary:
+                type: string
+              description:
+                type: string
+              programSchools:
+                type: array
+                items:
+                  $ref: '#/components/schemas/programSchoolsSchema'
+              userPositions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/userPositionsSchema'
+              employment_id:
+                type: integer
+              specialization_id:
+                type: integer
+              format_id:
+                type: integer
+              position:
+                type: string
+              languageLevels:
+                type: array
+                items:
+                  $ref: '#/components/schemas/languageLevelSchema'
+              skills:
+                type: array
+                items:
+                  type: string
+            type: object
+    EditVacancyRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: integer
+              position_name: {  }
+              department_id:
+                type: integer
+              specialization_id:
+                type: integer
+              city_id:
+                type: integer
+              lower_salary:
+                type: number
+                format: float
+              higher_salary:
+                type: number
+                format: float
+              responsibilities: {  }
+              requirements: {  }
+              conditions: {  }
+              additional: {  }
+              additional_title: {  }
+              skills:
+                type: array
+                items:
+                  type: string
+              experience_id:
+                type: integer
+              employment_id:
+                type: integer
+              format_id:
+                type: integer
+              test: {  }
+              status_id:
+                type: integer
+              image: {  }
+            type: object
+    JoinChatRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              chat_id:
+                type: integer
+            type: object
+    LoginRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            type: object
+    MassVacanciesRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              vacancy_ids:
+                type: array
+                items: {  }
+            type: object
+    RegisterRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+              login:
+                type: string
+            type: object
+    ResumeFileRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              file: {  }
+            type: object
+    SendApproveRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              application_id:
+                type: integer
+              name: {  }
+              surname: {  }
+              is_approved:
+                type: boolean
+              comment: {  }
+            type: object
+    SendCommentRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              text:
+                type: string
+              post_id:
+                type: integer
+              parent_id:
+                description: "id комментария, на который отвечаем. Необязательный\n * параметр"
+                type: integer
+            type: object
+    SendMessageRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              to_id:
+                type: integer
+              body:
+                type: string
+              type:
+                type: string
+              files:
+                type: array
+                items:
+                  description: 'Массив файлов, без base64'
+                  type: string
+                  format: binary
+              images:
+                type: array
+                items:
+                  description: 'Массив изображений, без base64'
+                  type: string
+                  format: binary
+            type: object
+    ShareApplicationsRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              application_ids:
+                type: array
+                items: {  }
+            type: object
 externalDocs:
   description: 'Как документировать этот код'
   url: 'https://zircote.github.io/swagger-php/guide/annotations.html'

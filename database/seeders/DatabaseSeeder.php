@@ -15,16 +15,20 @@ class DatabaseSeeder extends Seeder
         // в родительских.
         $this->call([
             WorkingStatusSeeder::class,
+            CountrySeeder::class,
             CitySeeder::class,
+            StreetSeeder::class,
+            BuildingSeeder::class,
+            ImageSeeder::class,
             CompanySeeder::class,
             HRSeeder::class,
             UserSeeder::class,
             MessageSeeder::class,
             ChatSeeder::class,
+            TagsSeeder::class,
             UserChatsSeeder::class,
             ChatMessageSeeder::class,
             CategorySeeder::class,
-            ImageSeeder::class,
             DepartmentSeeder::class,
             PositionSeeder::class,
             SchoolSeeder::class,
@@ -39,9 +43,23 @@ class DatabaseSeeder extends Seeder
             PostSeeder::class,
             CategoryPostSeeder::class,
             PostImageSeeder::class,
+            ExperienceSeeder::class,
+            EmploymentSeeder::class,
+            FormatSeeder::class,
+            StatusSeeder::class,
             VacancySeeder::class,
             VacancySkillSeeder::class,
-            CommentSeeder::class
+            CommentSeeder::class,
+            FileSeeder::class,
+            ImageMessageSeeder::class,
+            FileMessageSeeder::class,
+            LinkMessageSeeder::class,
+            StageTypeSeeder::class,
+            StagesSeeder::class,
+            UserCityIDSeeder::class,
+            ApplicationSeeder::class,
+            ApplicationTagsSeeder::class,
+            ApplicationApplicationTagsSeeder::class
         ]);
     }
 }

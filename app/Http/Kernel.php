@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Http\Middleware\HandleCors;
 use OpenApi\Annotations as OA;
 
 /**
@@ -18,6 +19,10 @@ use OpenApi\Annotations as OA;
  *         description="Боевой сервер",
  *         url="https://venari.backend.rfld.ru"
  *     ),
+ *     @OA\Server(
+ *          description="dev",
+ *          url="http://127.0.0.1:8000"
+ *      ),
  *     @OA\ExternalDocumentation(
  *         description="Как документировать этот код",
  *         url="https://zircote.github.io/swagger-php/guide/annotations.html"
@@ -63,6 +68,7 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            HandleCors::class
         ],
     ];
 

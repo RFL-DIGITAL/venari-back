@@ -2,9 +2,15 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequset extends FormRequest
+/**
+ * @OA\RequestBody(request="ResumeFileRequest", @OA\JsonContent(
+ *     @OA\Property(property="file"),
+ * ))
+ */
+class ResumeFileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,14 +23,12 @@ class RegisterRequset extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'email' => 'email',
-            'login' => 'required|string|min:8',
-            'password' => 'required|string|min:8',
+            'file'=>'required|file',
         ];
     }
 }

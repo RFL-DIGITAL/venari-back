@@ -6,15 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 /**
  * Связывающая сущность, реализующая многие-ко-многим между Program и School
  */
 class ProgramSchool extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
-    protected $table = 'program_schools';
+    protected $fillable = [
+        'program_id',
+        'school_id'
+    ];
 
     public function program(): BelongsTo
     {
@@ -27,6 +31,6 @@ class ProgramSchool extends Model
     }
 
     public function resumeProgramSchools(): HasMany {
-        return $this->hasMany(ResumeProgramSchool::class);
+        return $this->hasMany(ResumeProgramSchool::class, 'programSchool_id', 'id');
     }
 }

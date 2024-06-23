@@ -2,11 +2,19 @@
 
 namespace App\Services;
 
+use App\Models\City;
 use App\Models\Department;
+use App\Models\Employment;
+use App\Models\Experience;
+use App\Models\Image;
+use App\Models\Notification;
 use App\Models\Position;
 use App\Models\Skill;
+use App\Models\User;
 use App\Models\Vacancy;
 use App\Parser;
+use Exception;
+use Illuminate\Http\UploadedFile;
 use phpQuery;
 
 
@@ -24,7 +32,7 @@ class VacancyService
      *
      * @return array массив вакансий с внещнего сервиса
      */
-    public function getOuterVacancies(): array
+    public function getOuterVacancies(?int $userID): array
     {
         $page = Parser::getDocument('https://rntgroup.com/career/vacancies/');
         $pq = phpQuery::newDocument($page);
@@ -35,7 +43,7 @@ class VacancyService
         foreach ($vacancyCards as $vacancy) {
             $link = pq($vacancy)->find('.btn')->attr('href');
             if ($link[0] != 'h') {
-                $link = 'https://www.rntgroup.com'.$link;
+                $link = 'https://www.rntgroup.com' . $link;
             }
             if (!in_array($link, $vacancyLinks)) {
                 $vacancyLinks[] = $link;
@@ -57,47 +65,101 @@ class VacancyService
                 ->where('is_closed', false)->first();
 
 
-            if ($foundVacancy != null)
-            {
-                $vacancies[] = $foundVacancy->toArray();
+            if ($foundVacancy != null) {
+                $vacancies[] = $foundVacancy->load(
+                    [
+                        'applications.resume',
+                        'employment',
+                        'department.company.image',
+                        'experience',
+                        'city',
+                        'position'
+                    ])
+                    ->toArray();
                 continue;
             }
 
-            $description = trim($pq->find('.block-subtitle')->text());
-            $hasSocialSupport = false;
-            $isFlexible = false;
+            // Парсим блок Задачи - это блок обязаннасти во внутренних вакансиях
+            try {
+                $responsibilities = $this->cleanFromLinebreaks($pq->find('.block-subtitle h3')->next()->html());
+            } catch (Exception $e) {
+                $responsibilities = null;
+            }
+
+            // Парсим требуемый опыт работы
+            $fullPageText = $pq->text();
+
+            try {
+                preg_match_all('/от \d+/', $fullPageText, $matches);
+                $experienceInt = (int)mb_substr($matches[0][0], 3);
+
+                if ($experienceInt < 3) {
+                    $experience = Experience::where('name', 'Опыт от 1 года')->first();
+                } else if ($experienceInt < 5) {
+                    $experience = Experience::where('name', 'Опыт от 3 лет')->first();
+                } else {
+                    $experience = Experience::where('name', 'Опыт от 5 лет')->first();
+                }
+            } catch (Exception $e) {
+                $experience = null;
+            }
+
+
+            // Парсим описание
+            $description = $pq->find('.block-subtitle');
+            try {
+                $description->find('h3')->next()->remove();
+                $description->find('h3')->remove();
+                $description = $this->cleanFromLinebreaks($description->text());
+
+            } catch (Exception $e) {
+                $description = $this->cleanFromLinebreaks($pq->find('.block-subtitle')->text());
+            }
+
+            // Парсим данные из карточек внизу вакансии
+            $hasSocialSupport = false; // Есть ли соц поддержка
+            $isFlexible = false; // Гибкий ли график
             $isOnline = false;
-            $schedule = '';
-            $isFullTime = true;
+            $schedule = ''; // Иногда в этих карточках указан график работы
+            $employment = Employment::where('name', 'Полная занятость')->first();
 
             foreach ($pq->find('.service-container .service-name') as $service) {
-                switch (trim($service->textContent)) {
+                switch (trim(pq($service)->text())) {
                     case 'Социальный пакет':
                         $hasSocialSupport = true;
                         break;
                     case 'Гибкий график работы':
                         $isFlexible = true;
-                        $schedule = trim($service->nextElementSibling->textContent);
+                        $schedule = trim($this->cleanFromLinebreaks(pq($service)->next()->text()));
                         break;
                     case 'Удалённый формат работы':
-                        $isOnline=true;
-                        $schedule = trim($service->nextElementSibling->textContent);
+                        $isOnline = true;
+                        $schedule = trim($this->cleanFromLinebreaks(pq($service)->next()->text()));
                         break;
-                    // todo: добавить проверку на полный/неполный рабочий день
                 }
             }
 
+            // Парсим блок Требуемые навыки и знания - блок Требования во внутренних
+            $requirements = $this->cleanFromLinebreaks($pq->find('.block-desc ul')->eq(0)->html());
+
+            // Парсим блок Будет плюсом - блок Дополнительно во внутренних вакансиях
+            try {
+                $additional = $this->cleanFromLinebreaks($pq->find('.block-desc ul')->eq(1)->html());
+            } catch (Exception $e) {
+                $additional = null;
+            }
+
+            // Парсим скиллы. Если скила нет в нашей базе - добавляем. Сейчас скилы - это все иностранные слова
             $skills = $pq->find('.block-desc ul li');
             $skillNames = [];
 
             foreach ($skills as $skill) {
                 $names = [];
-                preg_match_all ('([a-zA-Z#+]+)', $skill->textContent, $names);
+                preg_match_all('([a-zA-Z#+]+)', pq($skill)->text(), $names);
 
                 // Потому что возвращает двумерный массив
                 if (count($names[0]) != 0) {
-                    foreach ($names[0] as $name)
-                    {
+                    foreach ($names[0] as $name) {
                         $skillNames[] = $name;
                     }
                 }
@@ -106,28 +168,52 @@ class VacancyService
             $vacancy = new Vacancy();
             $vacancy->position()->associate($position);
 
+            $vacancy->description = $description;
+            $vacancy->department()->associate(
+                Department::where('id', Vacancy::$DEFAULT_DEPARTMENT_ID)->first());
+            $vacancy->has_social_support = $hasSocialSupport;
+//            $vacancy->is_flexible = $isFlexible;
+            $vacancy->experience()->associate($experience);
+            $vacancy->employment()->associate($employment);
+//            $vacancy->is_online = $isOnline;
+            $vacancy->schedule = $schedule;
+            $vacancy->is_outer = true;
+            $vacancy->is_closed = false;
+            $vacancy->responsibilities = $responsibilities;
+            $vacancy->requirements = $requirements;
+            $vacancy->additional = $additional;
+
+            $vacancy->save();
+
             foreach ($skillNames as $skillName) {
                 $vacancy->skills()->attach(Skill::firstOrCreate(['name' => $skillName]));
             }
 
-            $vacancy->description = $description;
-            $vacancy->salary = null;
-            $vacancy->department()->associate(
-                Department::where('id', Vacancy::$DEFAULT_DEPARTMENT_ID)->first());
-            $vacancy->has_social_support = $hasSocialSupport;
-            $vacancy->is_flexible = $isFlexible;
-            $vacancy->is_fulltime = $isFullTime;
-            $vacancy->is_online = $isOnline;
-            $vacancy->schedule = $schedule;
-            $vacancy->is_outer = true;
-            $vacancy->is_closed = false;
             $vacancy->save();
-            $vacancy->refresh();
+
+            $vacancy->load(
+                [
+                    'applications.resume',
+                    'employment',
+                    'department.company.image',
+                    'experience',
+                    'city',
+                    'position'
+                ]);
 
             $vacancies[] = $vacancy->toArray();
         }
 
-        return $vacancies;
+        $updatedVacancies = $vacancies;
+
+        if ($userID != null) {
+            $updatedVacancies = [];
+            foreach ($vacancies as $vacancy) {
+                $updatedVacancies[] = $this->setAvailabilityStatusToVacancy($vacancy, $userID);;
+            }
+        }
+
+        return $updatedVacancies;
     }
 
     /**
@@ -137,9 +223,409 @@ class VacancyService
      *
      * @return array массив вакансий из нашей системы
      */
-    public function getInnerVacancies(): array
+    public function getInnerVacancies(?int $userID): array
     {
-        return Vacancy::where('is_closed', false)->where('is_outer', false)->get()->toArray();
+        $vacancies = Vacancy::where('is_closed', false)->where('is_outer', false)->get()->load(
+            [
+                'applications.resume',
+                'employment',
+                'department.company.image',
+                'experience',
+                'city',
+                'position'
+            ])->toArray();
+
+        if ($userID != null) {
+            $updatedVacancies = [];
+            foreach ($vacancies as $vacancy) {
+                $updatedVacancies[] = $this->setAvailabilityStatusToVacancy($vacancy, $userID);;
+            }
+        }
+
+        return $updatedVacancies;
+    }
+
+    public function setAvailabilityStatusToVacancy($vacancy, $userID)
+    {
+        if (count($vacancy['applications']) != 0) {
+            foreach ($vacancy['applications'] as $application) {
+                if ($application['resume']['user_id'] == $userID) {
+                    $vacancy['can_apply'] = false;
+                    break;
+
+                } else {
+                    $vacancy['can_apply'] = true;
+                }
+            }
+        } else {
+            $vacancy['can_apply'] = true;
+        }
+
+        return $vacancy;
+    }
+
+    /**
+     * Метод для получения вакансий изнутри системы для hr-панели
+     *
+     * @return array массив вакансий из нашей системы
+     */
+    public function getInnerVacanciesHR(
+        ?int    $statusID,
+        ?int    $specializationID,
+        ?string $city,
+        ?string $name,
+        ?int    $accountable_id
+    ): array
+    {
+        $statusID = $statusID != null ? $statusID : 1;
+        $vacanciesBuilder = Vacancy::where('status_id', $statusID)->where('is_outer', false);
+
+        if ($specializationID != null) {
+            $vacanciesBuilder->where('specialization_id', $specializationID);
+        }
+
+        if ($city != null) {
+            $vacanciesBuilder->where('city_id', City::firstOrCreate(['name' => $city])->id);
+        }
+
+        if ($name != null) {
+            $vacanciesBuilder->where('position_id', Position::firstOrCreate(['name' => $name])->id);
+        }
+
+        if ($accountable_id != null) {
+            $vacanciesBuilder->where('accountable_id', $accountable_id);
+        }
+
+        $vacancies = $vacanciesBuilder->get()
+            ->load(
+                [
+                    'department.company.image',
+                    'accountable.user',
+                    'city',
+                    'experience',
+                    'employment',
+                    'position',
+                    'skills',
+                    'image',
+                    'specialization',
+                ]);
+
+        return $vacancies->toArray();
+    }
+
+    /**
+     * Метод получения подробной информации о вакансии по id
+     *
+     * @param int $id - id вакансии
+     * @return array
+     */
+    public function getVacancyByID(int $id, $userID): array
+    {
+        $vacancy = Vacancy::where('id', $id)->get()->first()
+            ->load(
+                [
+                    'applications.resume',
+                    'employment',
+                    'department.company.image',
+                    'department.company.building.street.city.country',
+                    'experience',
+                    'city',
+                    'position',
+                    'skills',
+                    'image',
+                ])->toArray();
+
+        return $this->setAvailabilityStatusToVacancy($vacancy, $userID);
+    }
+
+    /**
+     * Метод создания новой вакансии
+     *
+     * @param string $position_name
+     * @param int $department_id
+     * @param int $specialization_id
+     * @param int $cityName
+     * @param float|null $lower_salary
+     * @param float|null $upper_salary
+     * @param string $responsibilities
+     * @param string $requirements
+     * @param string $conditions
+     * @param string|null $additional
+     * @param string|null $additional_title
+     * @param array|null $skills
+     * @param int $experience_id
+     * @param int $employment_id
+     * @param int $format_id
+     * @param string|null $test
+     * @param int $status_id
+     * @param int $accountable_user_id
+     * @param UploadedFile|null $image
+     * @return array
+     */
+    public function createVacancy(
+        string        $position_name,
+        int           $department_id,
+        int           $specialization_id,
+        string        $cityName,
+        ?float        $lower_salary,
+        ?float        $upper_salary,
+        string        $responsibilities,
+        string        $requirements,
+        string        $conditions,
+        ?string       $additional,
+        ?string       $additional_title,
+        ?array        $skills,
+        int           $experience_id,
+        int           $employment_id,
+        int           $format_id,
+        ?string       $test,
+        int           $status_id,
+        int           $accountable_user_id,
+        ?UploadedFile $image,
+    ): array
+    {
+        $position = Position::firstOrCreate(['name' => $position_name]);
+        $hr = User::where('id', $accountable_user_id)->first()->hrable;
+
+        $city_id = City::firstOrCreate(['name' => $cityName])->id;
+
+        $vacancy = new Vacancy(
+            [
+                'responsibilities' => $responsibilities,
+                'requirements' => $requirements,
+                'conditions' => $conditions,
+                'additional' => $additional,
+                'experience_id' => $experience_id,
+                'employment_id' => $employment_id,
+                'lower_salary' => $lower_salary,
+                'higher_salary' => $upper_salary,
+                'department_id' => $department_id,
+                'has_social_support' => true, // hardcode, лучше так не делать
+                'schedule' => '',
+                'link_to_test_document' => $test,
+                'city_id' => $city_id,
+                'is_outer' => false,
+                'additional_title' => $additional_title,
+                'unarchived_at' => now(),
+                'format_id' => $format_id,
+                'accountable_id' => $hr->id,
+                'status_id' => $status_id,
+                'specialization_id' => $specialization_id,
+                'position_id' => $position->id,
+                'description' => '',
+            ]
+        );
+
+        $users = User::whereHas('position', function ($query) use ($position) {
+            $query->where('id', $position->id);
+        })->get();
+
+        foreach ($users as $user) {
+            $notificationForUser = new Notification();
+            $notificationForUser->text = 'Появилась новая вакансия по вашей специальности!';
+            $notificationForUser->user_id = $user->id;
+            $notificationForUser->save();
+        }
+
+        if ($image != null) {
+            $imageModel = new Image(
+                [
+                    'image' => base64_encode(file_get_contents($image)),
+                    'description' => 'Картинка вакансии'
+                ]
+            );
+            $imageModel->save();
+
+            $vacancy->image()->associate($imageModel);
+        }
+
+        $vacancy->save();
+
+        if ($skills != null) {
+            foreach ($skills as $skill) {
+                $vacancy->skills()->attach(Skill::firstOrCreate(['name' => $skill])->id);
+            }
+
+            $vacancy->save();
+        }
+
+        $vacancy->load([
+            'skills',
+            'experience',
+            'employment',
+            'department',
+            'city',
+            'format',
+            'accountable',
+            'status',
+            'specialization',
+            'position',
+        ]);
+
+        return $vacancy->toArray();
+    }
+
+    /**
+     * Метод изменения вакансии по id
+     *
+     * @param int $id
+     * @param string $position_name
+     * @param int $department_id
+     * @param int $specialization_id
+     * @param int $cityName
+     * @param float|null $lower_salary
+     * @param float|null $upper_salary
+     * @param string $responsibilities
+     * @param string $requirements
+     * @param string $conditions
+     * @param string|null $additional
+     * @param string|null $additional_title
+     * @param array|null $skills
+     * @param int $experience_id
+     * @param int $employment_id
+     * @param int $format_id
+     * @param string|null $test
+     * @param int $status_id
+     * @param int $accountable_user_id
+     * @param UploadedFile|null $image
+     * @return array
+     */
+    public function editVacancy(
+        int           $id,
+        string        $position_name,
+        int           $department_id,
+        int           $specialization_id,
+        string        $cityName,
+        ?float        $lower_salary,
+        ?float        $upper_salary,
+        string        $responsibilities,
+        string        $requirements,
+        string        $conditions,
+        ?string       $additional,
+        ?string       $additional_title,
+        ?array        $skills,
+        int           $experience_id,
+        int           $employment_id,
+        int           $format_id,
+        ?string       $test,
+        int           $status_id,
+        int           $accountable_user_id,
+        ?UploadedFile $image,
+    ): array
+    {
+        $vacancy = Vacancy::where('id', $id)->first();
+
+        $position = Position::firstOrCreate(['name' => $position_name]);
+        $hr = User::where('id', $accountable_user_id)->first()->hrable;
+
+        $city_id = City::firstOrCreate(['name' => $cityName])->id;
+
+        $vacancy->update(
+            [
+                'responsibilities' => $responsibilities,
+                'requirements' => $requirements,
+                'conditions' => $conditions,
+                'additional' => $additional,
+                'experience_id' => $experience_id,
+                'employment_id' => $employment_id,
+                'lower_salary' => $lower_salary,
+                'higher_salary' => $upper_salary,
+                'department_id' => $department_id,
+                'has_social_support' => true, // hardcode, лучше так не делать
+                'schedule' => '',
+                'link_to_test_document' => $test,
+                'city_id' => $city_id,
+                'is_outer' => false,
+                'additional_title' => $additional_title,
+                'unarchived_at' => now(),
+                'format_id' => $format_id,
+                'accountable_id' => $hr->id,
+                'status_id' => $status_id,
+                'specialization_id' => $specialization_id,
+                'position_id' => $position->id,
+                'description' => '',
+            ]
+        );
+
+        if ($image != null) {
+            $imageModel = new Image(
+                [
+                    'image' => base64_encode(file_get_contents($image)),
+                    'description' => 'Картинка вакансии'
+                ]
+            );
+            $imageModel->save();
+
+            $vacancy->image()->associate($imageModel);
+        }
+
+        $vacancy->save();
+
+        if ($skills != null) {
+            $skillModelIDs = [];
+
+            foreach ($skills as $skill) {
+                $skillModelIDs[] = Skill::firstOrCreate(['name' => $skill])->id;
+            }
+
+            $vacancy->skills()->sync($skillModelIDs);
+
+            $vacancy->save();
+        }
+
+        $vacancy->load([
+            'skills',
+            'experience',
+            'employment',
+            'department',
+            'city',
+            'format',
+            'accountable',
+            'status',
+            'specialization',
+            'position',
+        ]);
+
+        return $vacancy->toArray();
+    }
+
+    /**
+     * Метод удаления перенос \r\n из строки
+     *
+     * @param string $string - строка
+     * @return string - строка без переносов
+     */
+    private function cleanFromLinebreaks(string $string): string
+    {
+        return preg_replace('/[\r\n]+/', '', $string);
+    }
+
+    public function changeVacanciesStatus($vacancyIDs, $statusID): array
+    {
+        $vacancies = [];
+
+        foreach ($vacancyIDs as $id) {
+            $vacancy = Vacancy::where('id', $id)->first();
+            $vacancy->status_id = $statusID;
+            $vacancy->save();
+            $vacancy->load([
+                'department.company.image',
+                'accountable.user',
+                'city',
+                'experience',
+                'employment',
+                'position',
+                'skills',
+                'image',
+                'specialization',
+
+            ]);
+
+            $vacancies[] = $vacancy->toArray();
+        }
+
+        return $vacancies;
     }
 
 }
+

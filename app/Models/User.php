@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Models\City;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +27,22 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'hrable_type',
+        'hrable_id',
+        'sex',
+        'date_of_birth',
+        'workingStatus_id',
+        'position_id',
+        'image_id',
+        'first_name',
+        'last_name',
+        'user_name',
+        'preview_id',
+        'company_id',
+    ];
+
+    protected $appends = [
+        'post_count',
     ];
 
     /**
@@ -46,8 +64,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    /** @var string Стаж работы */
-    public string $work_record;
 
     public function hrable(): MorphTo
     {
@@ -75,5 +91,55 @@ class User extends Authenticatable
     public function resumes(): HasMany
     {
         return $this->hasMany(Resume::class);
+    }
+
+    public function preview(): BelongsTo
+    {
+        return $this->belongsTo(Image::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function getPostCountAttribute() {
+        return Post::where('user_id', $this->id)->where('is_from_company', false)->get()->count();
+    }
+
+    public function companyChats(): HasMany {
+        return $this->hasMany(CompanyChat::class);
+    }
+
+    public function city(): BelongsTo {
+        return $this->belongsTo(City::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(ApplicationTag::class, 'application_tag_users');
+    }
+
+    /**
+     * Переопределение массива индекса модели по умолчанию
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+        $array['search_country'] = implode(',',$this->city()->pluck('name')->toArray());
+        $array['resume_description'] = implode(',', $this->resumes()->pluck('description')->toArray());
+        $array['resume_solary'] = implode(',', $this->resumes()->with('userPositions')->pluck('salary')->toArray());
+        $skillsCollection = User::with('resumes.skills')->get();
+        $skills = [];
+        foreach ($skillsCollection as $skill)
+        {
+            if($skill?->skill?->name) {
+                $skills[] = $skill?->skill?->name;
+            }
+        }
+        $array['skills'] = implode(',', $skills);
+        return $array;
     }
 }

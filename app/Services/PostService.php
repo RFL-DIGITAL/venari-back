@@ -2,36 +2,60 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\PostController;
+use App\Helper;
+use App\Models\Heading;
+use App\Models\ImageBlock;
+use App\Models\Part;
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\Text;
+use App\Models\Title;
+use App\Models\User;
 use App\Parser;
+use Google\Service\ShoppingContent\Resource\Pos;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use phpQuery;
-use SimpleXMLElement;
 
 class PostService
 {
-    private string $HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
-    private string $SYMBOLS_TO_ESCAPE = ' \n\r\t\v\x00';
+    private const HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
+    private const HABR_USER_ID = 33;
 
 
-    public function getInnerPosts(): array
+    public function getInnerPosts(?string $search = null): array
     {
-        $posts = Post::all();
+
+        if($search) {
+            $posts = Post::search($search)->get()->load([
+                'user.image',
+                'user.hrable.company.image',
+                'images',
+            ]);
+            return $posts->toArray();
+        }
+
+        $posts = Post::where('source', 'venari')->get()
+            ->load([
+                'user.image',
+                'user.hrable.company.image',
+                'images',
+            ]);
 
         return $posts->toArray();
     }
 
     public function getOuterPosts(int $postCount): array
     {
-        $xml = simplexml_load_file($this->HABR_RSS_LINK.'&limit='.$postCount,
+        $xml = simplexml_load_file(self::HABR_RSS_LINK . '&limit=' . $postCount,
             'SimpleXMLElement',
             LIBXML_NOCDATA);
 
         $posts = [];
 
         foreach ($xml->channel->item as $item) {
-            $title = (string) $item->title;
-            $user_name = (string) $item->children('dc', true)
+            $title = (string)$item->title;
+            $user_name = (string)$item->children('dc', true)
                 ->creator;
 
             $foundPost = Post::where('title', $title)
@@ -39,8 +63,7 @@ class PostService
                 ->first();
 
 
-            if ($foundPost != null)
-            {
+            if ($foundPost != null) {
                 $posts[] = $foundPost->toArray();
                 continue;
             }
@@ -48,32 +71,38 @@ class PostService
             $post = new Post();
             $post->title = $title;
             $post->user_name = $user_name;
-            $post->source_url = (string) $item->guid;
+            $post->source_url = (string)$item->guid;
             $post->description =
                 strip_tags(
                     str_replace(
                         '&nbsp;',
                         '',
-                    str_replace(
-                        'Читать далее',
-                        '',
-                    str_replace(
-                    'Читать дальше &rarr;',
-                    '',
-                    trim(
-                        strip_tags(
-                            (string) $item->description)
-                    )))));
+                        str_replace(
+                            'Читать далее',
+                            '',
+                            str_replace(
+                                'Читать дальше &rarr;',
+                                '',
+                                trim(
+                                    strip_tags(
+                                        (string)$item->description)
+                                )))));
 
-            $detailPostPage = Parser::getDocument((string) $item->guid);
+            $detailPostPage = Parser::getDocument((string)$item->guid);
             $pq = phpQuery::newDocument($detailPostPage);
 
             $postText = $pq->find('.tm-article-body')->text();
 
             $post->text = trim($postText);
             $post->source = 'habr';
+            $post->user_id = self::HABR_USER_ID;
             $post->save();
-            $post->refresh();
+            $post->categories()->attach(Category::where('name', 'Новости')->first()->id);
+            $post->load([
+                'user.image',
+                'user.hrable.company.image',
+                'images',
+            ]);
 
             $posts[] = $post->toArray();
         }
@@ -83,6 +112,110 @@ class PostService
 
     public function getPostByID($id)
     {
-        return Post::where('id', $id)->first()->toArray();
+        $post = Post::where('id', $id)->first();
+
+        if ($post->is_from_company) {
+            return $post->load([
+                'user.hrable.company.image',
+                'images',
+            ])->toArray();
+        } else {
+            return $post->load([
+                'user.image',
+                'images',
+            ])->toArray();
+        }
+    }
+
+    public function getPostByUserID(int $id)
+    {
+        $post = Post::where('user_id', $id)->where('is_from_company', false)->get()->load(
+            [
+                'user.image',
+                'images',
+            ]
+        );
+
+        return $post->toArray();
+    }
+
+    public function getPostByCompanyID(int $id)
+    {
+        $post = Post::whereHas('user', function (Builder $query) use ($id) {
+            $query->whereHas('hrable', function (Builder $query) use ($id) {
+                $query->whereHas('company', function (Builder $query) use ($id) {
+                    $query->where('id', $id);
+                });
+            });
+        })->where('is_from_company', true)->get();
+
+        $post->load(
+            [
+                'user.hrable.company.image',
+                'images',
+            ]
+        );
+
+        return $post->toArray();
+    }
+
+    public function createPost($user_id, array $post_parts): array
+    {
+        $post = new Post();
+        $user = User::where('id', $user_id)->first();
+        $post->user_id = $user->id;
+        $post->user_name = $user->user_name;
+
+        foreach ($post_parts as $part) {
+            $partModel = new Part();
+            $partModel->order = $part['order'];
+
+            $isAddedText = false;
+            $isAddedPhotos = false;
+
+            switch ($part['type']) {
+                case 'title':
+                    $title = new Title();
+                    $title->name = $part['content'];
+                    $title->save();
+                    $partModel->content()->associate($title);
+                    $post->title = $title->name;
+                    break;
+                case 'text':
+                    $text = new Text();
+                    $text->name = $part['content'];;
+                    $text->save();
+                    $partModel->content()->associate($text);
+                    if (!$isAddedText) {
+                        $post->text = $text->name;
+                        $isAddedText = true;
+                    }
+                    break;
+                case 'heading':
+                    $heading = new Heading();
+                    $heading->name = $part['content'];
+                    $heading->save();
+                    $partModel->content()->associate($heading);
+                    break;
+                case 'image_block':
+                    $image_block = new ImageBlock();
+                    foreach ($part['content'] as $image) {
+                        $imageID = Helper::createNewImageModel($image)->id;
+                        if(!$isAddedPhotos) {
+                            $post->images()->attach($imageID);
+                        }
+                        $image_block->images()->attach($imageID);
+                    }
+                    $isAddedPhotos = true;
+                    $image_block->save();
+                    $partModel->content()->associate($image_block);
+                    break;
+            }
+            $post->save();
+            $partModel->post_id = $post->id;
+            $partModel->save();
+        }
+
+        return ['message' => 'Post created successfully'];
     }
 }

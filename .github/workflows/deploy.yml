@@ -19,13 +19,14 @@ jobs:
             cd ${{secrets.PROJECT_FOLDER }};
             cd venari-back;
             git checkout master;
+            git reset --hard origin/master;
             git pull origin master;
             php artisan swag:generate;
             cd ..;
             cp -r venari-back/* public_html/;
             cd public_html;
-            composer install;
             php artisan migrate;
+            php artisan optimize;
             chmod -R ugo+rw vendor;
             chmod -R ugo+rw database;
             chmod -R ugo+rw storage;
