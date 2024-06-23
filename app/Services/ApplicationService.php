@@ -264,7 +264,7 @@ class ApplicationService
 
             $companyChat = CompanyChat::where('company_id',
                 User::where('id', $from_id)->first()?->hrable?->company_id)
-                ->where('user_id', $application->resume->user->id)->first();
+                ->where('user_id', $application->resume?->user?->id)->first();
 
             if(!$companyChat?->id) {
                $companyChat = CompanyChat::create([
@@ -294,7 +294,7 @@ class ApplicationService
                         'companyMessage',
                         null,
                         null,
-                        User::where('id', $from_id)->first()->hrable->id
+                        User::where('id', $from_id)->first()->hrable_id
                     );
 
                     $notificationForUser = new Notification();
