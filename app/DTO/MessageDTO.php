@@ -28,7 +28,7 @@ class MessageDTO implements Jsonable, JsonSerializable
     /**
      * @OA\Property(ref="#/components/schemas/detailUser")
      */
-    private User $owner;
+    private User|null $owner;
 
     /**
      * @OA\Property()
@@ -116,7 +116,7 @@ class MessageDTO implements Jsonable, JsonSerializable
 
     public function getOwner(): User|null
     {
-        return $this->owner;
+        return $this?->owner;
     }
 
     public function setOwner(User $owner): void
