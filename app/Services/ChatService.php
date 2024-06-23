@@ -223,7 +223,7 @@ class ChatService
         foreach ($companyMessages as $companyMessage) {
             $owner = $companyMessage->owner;
             // todo: в будущем стоит учесть ситуацию, когда в такой чат заходит hr.
-            if ($owner->hrable->company->id == CompanyChat::where('id', $companyChatID)->first()->company->id) {
+            if ($owner->hrable->company->id == CompanyChat::where('id', $companyChatID)->first()->company_id) {
                 $owner->name = $owner->hrable->company->name;
                 $owner->image_id = $owner->hrable->company->image_id;
             }
