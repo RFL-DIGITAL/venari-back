@@ -12,7 +12,7 @@ class Helper
     {
         $imageModel = new Image(
             [
-                'image' => $image,
+                'image' => 'data:image/jpeg;base64, '.base64_encode($image),
                 'description' => 'Картинка в чате'
             ]
         );
