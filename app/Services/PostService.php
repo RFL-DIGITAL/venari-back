@@ -182,11 +182,10 @@ class PostService
                 case 'image_block':
                     $image_block = new ImageBlock();
                     foreach ($part->content as $image) {
-                        $image_block->images()->append(Helper::createNewImageModel($image));
+                        $image_block->images()->attach(Helper::createNewImageModel($image)->id);
                     }
-                    $heading->name = $part->content;
-                    $heading->save();
-                    $partModel->content()->associate($heading);
+                    $image_block->save();
+                    $partModel->content()->associate($image_block);
                     break;
             }
         }
