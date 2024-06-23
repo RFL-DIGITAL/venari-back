@@ -167,7 +167,7 @@ class ChatService
                     $message->id,
                     $message->from_id,
                     $message->to_id,
-                    $message->owner->load('images'),
+                    $message?->owner?->images,
                     $this->createAttachment(
                         $message?->body,
                         $message?->fileMessage?->file->id,
