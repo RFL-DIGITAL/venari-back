@@ -6,6 +6,7 @@ use App\Helper;
 use App\Models\Heading;
 use App\Models\ImageBlock;
 use App\Models\Part;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\Text;
 use App\Models\Title;
@@ -16,7 +17,8 @@ use phpQuery;
 
 class PostService
 {
-    private string $HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
+    private const HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
+    private const HABR_USER_ID = 33;
 
 
     public function getInnerPosts(?string $search = null): array
@@ -43,7 +45,7 @@ class PostService
 
     public function getOuterPosts(int $postCount): array
     {
-        $xml = simplexml_load_file($this->HABR_RSS_LINK . '&limit=' . $postCount,
+        $xml = simplexml_load_file(self::HABR_RSS_LINK . '&limit=' . $postCount,
             'SimpleXMLElement',
             LIBXML_NOCDATA);
 
@@ -91,7 +93,9 @@ class PostService
 
             $post->text = trim($postText);
             $post->source = 'habr';
+            $post->user_id = self::HABR_USER_ID;
             $post->save();
+            $post->categories()->attach(Category::where('name', 'Новости')->first()->id);
             $post->load([
                 'user.image',
                 'user.hrable.company.image',
