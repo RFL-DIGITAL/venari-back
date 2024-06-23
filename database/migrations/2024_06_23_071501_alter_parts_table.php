@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parts', function (Blueprint $table) {
-            $table->foreignId('post_id')->nullable();
-
-            $table->foreign('post_id')->references('id')->on('posts')
-                ->onUpdate('cascade')->onDelete('set null');
+        Schema::table('parts', function (Blueprint $table) {
+            $table->foreignId('post_id');
+            $table->morphs('content');
         });
     }
 
@@ -24,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::create('parts', function (Blueprint $table) {
+        Schema::table('parts', function (Blueprint $table) {
             $table->dropForeign(['post_id']);
+            $table->dropMorphs('content');
         });
     }
 };
