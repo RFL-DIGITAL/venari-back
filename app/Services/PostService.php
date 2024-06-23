@@ -10,7 +10,8 @@ use phpQuery;
 
 class PostService
 {
-    private string $HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
+    private const HABR_RSS_LINK = 'https://habr.com/ru/rss/news/?fl=ru';
+    private const HABR_USER_ID = 33;
 
 
     public function getInnerPosts(?string $search = null): array
@@ -37,7 +38,7 @@ class PostService
 
     public function getOuterPosts(int $postCount): array
     {
-        $xml = simplexml_load_file($this->HABR_RSS_LINK . '&limit=' . $postCount,
+        $xml = simplexml_load_file(self::HABR_RSS_LINK . '&limit=' . $postCount,
             'SimpleXMLElement',
             LIBXML_NOCDATA);
 
@@ -85,6 +86,7 @@ class PostService
 
             $post->text = trim($postText);
             $post->source = 'habr';
+            $post->user_id = self::HABR_USER_ID;
             $post->save();
             $post->load([
                 'user.image',
