@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helper;
 use App\Models\Heading;
+use App\Models\Image;
 use App\Models\ImageBlock;
 use App\Models\Part;
 use App\Models\Category;
@@ -12,10 +13,10 @@ use App\Models\Text;
 use App\Models\Title;
 use App\Models\User;
 use App\Parser;
-use Google\Service\ShoppingContent\Resource\Pos;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
 use phpQuery;
+use Naxon\UrlUploadedFile\UrlUploadedFile;
+
 
 class PostService
 {
@@ -26,7 +27,7 @@ class PostService
     public function getInnerPosts(?string $search = null): array
     {
 
-        if($search) {
+        if ($search) {
             $posts = Post::search($search)->get()->load([
                 'user.image',
                 'user.hrable.company.image',
@@ -64,6 +65,12 @@ class PostService
 
 
             if ($foundPost != null) {
+                $foundPost->load([
+                    'user.image',
+                    'user.hrable.company.image',
+                    'images',
+                    'parts'
+                ]);
                 $posts[] = $foundPost->toArray();
                 continue;
             }
@@ -72,26 +79,25 @@ class PostService
             $post->title = $title;
             $post->user_name = $user_name;
             $post->source_url = (string)$item->guid;
+
             $post->description =
-                strip_tags(
+                str_replace(
+                    '&nbsp;',
+                    '',
                     str_replace(
-                        '&nbsp;',
+                        'Читать далее',
                         '',
                         str_replace(
-                            'Читать далее',
+                            'Читать дальше &rarr;',
                             '',
-                            str_replace(
-                                'Читать дальше &rarr;',
-                                '',
-                                trim(
-                                    strip_tags(
-                                        (string)$item->description)
-                                )))));
+                            trim(
+                                preg_replace('/<img\s+[^>]*src="([^"]*)"[^>]*>/', '', (string)$item->description))
+                        )));
 
             $detailPostPage = Parser::getDocument((string)$item->guid);
             $pq = phpQuery::newDocument($detailPostPage);
 
-            $postText = $pq->find('.tm-article-body')->text();
+            $postText = $pq->find('#post-content-body p')->text();
 
             $post->text = trim($postText);
             $post->source = 'habr';
@@ -104,7 +110,57 @@ class PostService
                 'images',
             ]);
 
-            $posts[] = $post->toArray();
+            $order = 1;
+
+            $partModel = new Part();
+            $title = new Title();
+            $title->name = $post->title;
+            $title->save();
+            $partModel->content()->associate($title);
+            $partModel->post_id = $post->id;
+            $partModel->order = $order;
+            $partModel->save();
+            $order++;
+
+            $isAddedPhotos = false;
+
+            foreach ($pq->find('.article-formatted-body_version-2 div *')->elements as $element) {
+                if (pq($element)->is('p')) {
+                    $partModel = new Part();
+                    $partModel->order = $order;
+                    $text = new Text();
+                    $text->name = pq($element)->html();
+                    $text->save();
+                    $partModel->content()->associate($text);
+                    $partModel->post_id = $post->id;
+                    $partModel->save();
+                    $order++;
+
+                } else if (pq($element)->is('img')) {
+                    $partModel = new Part();
+                    $partModel->order = $order;
+                    $image_block = new ImageBlock();
+                    $image_block->save();
+                    $imageID = Helper::createNewImageModel(
+                        file_get_contents(UrlUploadedFile::createFromUrl(
+                            pq($element)->attr('src'))
+                        ))->id;
+                    if (!$isAddedPhotos) {
+                        $post->images()->attach($imageID);
+                        $isAddedPhotos = true;
+                    }
+                    $image_block->images()->attach($imageID);
+                    $image_block->save();
+                    $partModel->content()->associate($image_block);
+                    $partModel->post_id = $post->id;
+                    $partModel->save();
+                    $order++;
+                }
+                $post->save();
+            }
+
+            $post->save();
+            $posts[] = $post->load('parts')->toArray();
         }
 
         return $posts;
@@ -115,15 +171,50 @@ class PostService
         $post = Post::where('id', $id)->first();
 
         if ($post->is_from_company) {
-            return $post->load([
+            $post->load([
                 'user.hrable.company.image',
                 'images',
-            ])->toArray();
+                'parts.content',
+            ]);
+
+            $post = $post->toArray();
+
+            $parts = [];
+
+            foreach ($post['parts'] as $part) {
+                if ($part['content_type'] == 'App\\Models\\ImageBlock') {
+                    $part['images'] = Image::whereHas('imageBlocks', function ($query) use ($part) {
+                        $query->where('image_block_id', $part['content_id']);
+                    })->get()->toArray();
+                }
+                $parts[] = $part;
+            }
+
+            $post['parts'] = $parts;
+
+            return $post;
         } else {
-            return $post->load([
+            $post->load([
                 'user.image',
                 'images',
-            ])->toArray();
+                'parts.content',
+            ]);
+
+            $post = $post->toArray();
+
+            $parts = [];
+
+            foreach ($post['parts'] as $part) {
+                if ($part['content_type'] == 'App\\Models\\ImageBlock') {
+                    $part['images'] = Image::whereHas('imageBlocks', function ($query) use ($part) {
+                        $query->where('image_block_id', $part['content_id']);
+                    })->get()->toArray();
+                }
+                $parts[] = $part;
+            }
+
+            $post['parts'] = $parts;
+            return $post;
         }
     }
 
@@ -201,12 +292,12 @@ class PostService
                     $image_block = new ImageBlock();
                     foreach ($part['content'] as $image) {
                         $imageID = Helper::createNewImageModel($image)->id;
-                        if(!$isAddedPhotos) {
+                        if (!$isAddedPhotos) {
                             $post->images()->attach($imageID);
+                            $isAddedPhotos = true;
                         }
                         $image_block->images()->attach($imageID);
                     }
-                    $isAddedPhotos = true;
                     $image_block->save();
                     $partModel->content()->associate($image_block);
                     break;

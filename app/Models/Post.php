@@ -12,7 +12,7 @@ use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $appends = [
         'comment_count'
@@ -49,7 +49,7 @@ class Post extends Model
 
     public function images(): BelongsToMany
     {
-        return $this->belongsToMany(Image::class);
+        return $this->belongsToMany(Image::class, 'image_post');
     }
 
 

@@ -40,7 +40,7 @@ class PostController extends Controller
      */
     public function getPosts(): JsonResponse
     {
-        $innerPosts = $this->postService->getInnerPosts();
+//        $innerPosts = $this->postService->getInnerPosts();
 
         if (request()->get('force_outer')) {
            $outerPosts = [];
@@ -56,7 +56,7 @@ class PostController extends Controller
 
 
         $posts = array_merge(
-            $innerPosts,
+//            $innerPosts,
             $outerPosts
         );
 
