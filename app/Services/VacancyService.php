@@ -278,7 +278,7 @@ class VacancyService
     ): array
     {
         $statusID = $statusID != null ? $statusID : 1;
-        $vacanciesBuilder = Vacancy::where('status_id', $statusID)->where('is_outer', false);
+        $vacanciesBuilder = Vacancy::where('status_id', $statusID);
 
         if ($specializationID != null) {
             $vacanciesBuilder->where('specialization_id', $specializationID);
