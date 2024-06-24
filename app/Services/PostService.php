@@ -250,10 +250,10 @@ class PostService
         return $post->toArray();
     }
 
-    public function createPost($user_id = null, array $post_parts, $title): array
+    public function createPost(array $post_parts, $title): array
     {
         $post = new Post();
-        $user = User::where('id', $user_id ?? auth()->id())->first();
+        $user = User::where('id', auth()->id())->first();
         $post->user_id = $user->id;
         $post->user_name = $user->user_name;
         $post->title = $title;
