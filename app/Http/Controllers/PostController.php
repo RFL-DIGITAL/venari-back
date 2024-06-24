@@ -211,6 +211,7 @@ class PostController extends Controller
         return $this->successResponse(
             $this->postService->createPost(
                 request()->post_parts,
+                request()->category_id,
                 request()->title
             )
         );
