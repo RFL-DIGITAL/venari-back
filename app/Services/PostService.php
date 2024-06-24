@@ -274,7 +274,7 @@ class PostService
                     break;
                 case 'text':
                     $text = new Text();
-                    $text->name = $part['content'];;
+                    $text->name = $part['content'];
                     $text->save();
                     $partModel->content()->associate($text);
                     if (!$isAddedText) {

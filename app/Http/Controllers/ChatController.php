@@ -9,7 +9,6 @@ class ChatController extends Controller
 {
     public function __construct(protected ChatService $chatService)
     {
-        $this->middleware('auth:api');
     }
 
     /**
