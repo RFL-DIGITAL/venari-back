@@ -81,7 +81,7 @@ Route::prefix('posts')->group(function () {
     Route::get('{id}/comments', [PostController::class, 'getComments'])->name('getComments');
     Route::get('{id}', [PostController::class, 'getPostByID'])->name('getPostByID');
     Route::get('', [PostController::class, 'getPosts'])->name('getPosts');
-    Route::post('create-post', [PostController::class, 'createPost'])->name('createPost');
+    Route::post('create-post', [PostController::class, 'createPost'])->name('createPost')->middleware('auth:api');;
 });
 
 Route::prefix('comments')->middleware('auth:api')->group(function () {

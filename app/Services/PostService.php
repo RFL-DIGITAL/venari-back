@@ -257,7 +257,7 @@ class PostService
         $post->user_id = $user->id;
         $post->user_name = $user->user_name;
         $post->title = $title;
-        $post->category_id = $category_id;
+        $post->categories()->attach($category_id);
 
         foreach ($post_parts as $part) {
             $partModel = new Part();
