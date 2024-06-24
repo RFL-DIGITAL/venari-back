@@ -172,7 +172,7 @@ class VacancyService
             $vacancy->department()->associate(
                 Department::where('id', Vacancy::$DEFAULT_DEPARTMENT_ID)->first());
             $vacancy->has_social_support = $hasSocialSupport;
-//            $vacancy->is_flexible = $isFlexible;
+            $vacancy->status_id = 1;
             $vacancy->experience()->associate($experience);
             $vacancy->employment()->associate($employment);
 //            $vacancy->is_online = $isOnline;
@@ -278,7 +278,7 @@ class VacancyService
     ): array
     {
         $statusID = $statusID != null ? $statusID : 1;
-        $vacanciesBuilder = Vacancy::where('status_id', $statusID)->where('is_outer', false);
+        $vacanciesBuilder = Vacancy::where('status_id', $statusID);
 
         if ($specializationID != null) {
             $vacanciesBuilder->where('specialization_id', $specializationID);

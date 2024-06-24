@@ -40,7 +40,7 @@ class PostController extends Controller
      */
     public function getPosts(): JsonResponse
     {
-//        $innerPosts = $this->postService->getInnerPosts();
+     $innerPosts = $this->postService->getInnerPosts();
 
         if (request()->get('force_outer')) {
            $outerPosts = [];
@@ -56,7 +56,7 @@ class PostController extends Controller
 
 
         $posts = array_merge(
-//            $innerPosts,
+            $innerPosts,
             $outerPosts
         );
 
@@ -207,10 +207,11 @@ class PostController extends Controller
 
     public function createPost(): JsonResponse
     {
+        $this->middleware('auth:api');
         return $this->successResponse(
             $this->postService->createPost(
-                request()->user_id,
-                request()->post_parts
+                request()->post_parts,
+                request()->title
             )
         );
     }
