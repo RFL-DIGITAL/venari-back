@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\City;
 use App\Models\Company;
 use App\Models\Department;
@@ -68,6 +69,7 @@ class FilterController extends Controller
             'stages' => Stage::all()->load('stageType')->toArray(),
             'templates' => Template::all()->toArray(),
             'reject_reasons' => RejectReason::all()->toArray(),
+            'categories' => Category::all()->toArray()
         ]);
     }
 
