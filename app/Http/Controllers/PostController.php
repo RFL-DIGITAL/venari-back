@@ -207,10 +207,10 @@ class PostController extends Controller
 
     public function createPost(): JsonResponse
     {
-        $this->middleware('auth:api');
         return $this->successResponse(
             $this->postService->createPost(
                 request()->post_parts,
+                request()->category_id,
                 request()->title
             )
         );
