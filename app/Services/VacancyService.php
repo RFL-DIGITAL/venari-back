@@ -172,7 +172,7 @@ class VacancyService
             $vacancy->department()->associate(
                 Department::where('id', Vacancy::$DEFAULT_DEPARTMENT_ID)->first());
             $vacancy->has_social_support = $hasSocialSupport;
-//            $vacancy->is_flexible = $isFlexible;
+            $vacancy->status_id = 1;
             $vacancy->experience()->associate($experience);
             $vacancy->employment()->associate($employment);
 //            $vacancy->is_online = $isOnline;
